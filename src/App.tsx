@@ -1,28 +1,13 @@
 import { Route, Routes, BrowserRouter } from "react-router-dom";
 import { ThemeProvider } from "@emotion/react";
 import { createTheme } from "@mui/material";
-import { auth, db } from "./utils/firebase-config";
-import { useEffect, useState } from "react";
-import { onAuthStateChanged, User } from "firebase/auth";
-import { doc, onSnapshot } from "firebase/firestore";
 import { HelmetProvider } from "react-helmet-async";
-import { UserInterface } from "./interfaces/interfaces";
 import Splash from "./pages/Splash";
 import Error404 from "./pages/Error404";
 import Authentication from "./pages/Authentication";
+import { UserProvider } from "./contexts/UserContext";
 
 const theme = createTheme({
-  overrides: {
-    MuiCssBaseline: {
-      "@global": {
-        "::selection": {
-          // color: "#561AD9",
-          color: "#662483",
-          background: "#fff",
-        },
-      },
-    },
-  },
   palette: {
     primary: {
       main: "#662483",
@@ -33,24 +18,12 @@ const theme = createTheme({
   },
   typography: {
     fontFamily: "Poppins, sans-serif",
-    h1: {
-      fontFamily: "Mulish, sans-serif",
-    },
-    h2: {
-      fontFamily: "Mulish, sans-serif",
-    },
-    h3: {
-      fontFamily: "Mulish, sans-serif",
-    },
-    h4: {
-      fontFamily: "Mulish, sans-serif",
-    },
-    h5: {
-      fontFamily: "Mulish, sans-serif",
-    },
-    h6: {
-      fontFamily: "Mulish, sans-serif",
-    },
+    h1: { fontFamily: "Mulish, sans-serif" },
+    h2: { fontFamily: "Mulish, sans-serif" },
+    h3: { fontFamily: "Mulish, sans-serif" },
+    h4: { fontFamily: "Mulish, sans-serif" },
+    h5: { fontFamily: "Mulish, sans-serif" },
+    h6: { fontFamily: "Mulish, sans-serif" },
   },
   components: {
     MuiCard: {
@@ -102,14 +75,14 @@ const theme = createTheme({
     MuiFormHelperText: {
       styleOverrides: {
         root: {
-          fontSize: "15px", 
+          fontSize: "15px",
         },
       },
     },
     MuiInputLabel: {
       styleOverrides: {
         root: {
-          fontSize: "17px", 
+          fontSize: "17px",
         },
       },
     },
@@ -117,39 +90,12 @@ const theme = createTheme({
 });
 
 const App = () => {
-  const [user, setUser] = useState<null | User>(null);
-  const [isAdmin, setIsAdmin] = useState<boolean>(false);
-
-  useEffect(() => {
-    onAuthStateChanged(auth, (fireBaseUser) => {
-      if (fireBaseUser) {
-        setUser(fireBaseUser);
-
-        onSnapshot(doc(db, "users", fireBaseUser.uid), (snapshot) => {
-          const userInfo = snapshot.data() as UserInterface;
-          setIsAdmin(userInfo.admin ?? false);
-        });
-      } else {
-        setUser(null);
-      }
-    });
-
-    const unsubscribe = onAuthStateChanged(auth, (fireBaseUser) => {
-      if (fireBaseUser) {
-        setUser(fireBaseUser);
-      } else {
-        setUser(null);
-      }
-    });
-
-    return () => unsubscribe(); 
-  }, []);
-
   const helmetContext = {};
 
   return (
     <ThemeProvider theme={theme}>
-      <HelmetProvider context={helmetContext}>
+      <UserProvider>
+        <HelmetProvider context={helmetContext}>
           <BrowserRouter>
             <Routes>
               <Route path="/" Component={Splash} />
@@ -158,7 +104,8 @@ const App = () => {
               <Route path="*" Component={Error404} />
             </Routes>
           </BrowserRouter>
-      </HelmetProvider>
+        </HelmetProvider>
+      </UserProvider>
     </ThemeProvider>
   );
 };
