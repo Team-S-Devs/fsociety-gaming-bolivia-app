@@ -13,7 +13,7 @@ export enum RangeUser {
     RANGE_1 = "RANGE 1"
 }
 
-export interface User {
+export interface UserInterface {
     id?: string;
     name: string;
     email: string;
@@ -23,9 +23,9 @@ export interface User {
     type: UserType;
 }
 
-export interface TournamentUser {
+export interface TournamentUserInterface {
     id?: string;
-    user: User; 
+    user: UserInterface; 
     payment: boolean;
     type: TournamentUserType;
 }
