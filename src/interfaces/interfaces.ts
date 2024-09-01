@@ -21,7 +21,6 @@ export interface UserInterface {
     range?: RangeUser;
     teamId?: string;
     type: UserType;
-    admin?: boolean;
 }
 
 export interface TournamentUserInterface {

@@ -6,18 +6,25 @@ import Splash from "./pages/Splash";
 import Error404 from "./pages/Error404";
 import Authentication from "./pages/Authentication";
 import { UserProvider } from "./contexts/UserContext";
+import Registration from "./pages/Registration";
 
 const theme = createTheme({
   palette: {
     primary: {
-      main: "#662483",
+      main: "#3b3e8f",
     },
     secondary: {
-      main: "#604F83",
+      main: "#3253bc",
     },
+    success: {
+      main: "#42d546"
+    }
   },
   typography: {
-    fontFamily: "Poppins, sans-serif",
+    allVariants: {
+      color: "#FFF",
+    },
+    fontFamily: "Orbitron, sans-serif",
     h1: { fontFamily: "Mulish, sans-serif" },
     h2: { fontFamily: "Mulish, sans-serif" },
     h3: { fontFamily: "Mulish, sans-serif" },
@@ -59,6 +66,20 @@ const theme = createTheme({
       styleOverrides: {
         root: {
           fontSize: 40,
+          "& .MuiOutlinedInput-root": {
+            "& fieldset": {
+              borderColor: "white",
+            },
+            "&:hover fieldset": {
+              borderColor: "#72f7f7",
+            },
+            "&.Mui-focused fieldset": {
+              borderColor: "#72f7f7",
+            },
+            "& .MuiInputBase-input": {
+              color: "white",
+            },
+          },
         },
       },
     },
@@ -82,7 +103,11 @@ const theme = createTheme({
     MuiInputLabel: {
       styleOverrides: {
         root: {
+          color: "#fff",
           fontSize: "17px",
+          "&.Mui-focused": {
+            color: "#72f7f7",
+          },
         },
       },
     },
@@ -100,6 +125,7 @@ const App = () => {
             <Routes>
               <Route path="/" Component={Splash} />
               <Route path="/auth" Component={Authentication} />
+              <Route path="/registration" Component={Registration} />
               <Route path="/error" Component={Error404} />
               <Route path="*" Component={Error404} />
             </Routes>
