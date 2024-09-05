@@ -25,7 +25,7 @@ const WhatsAppButton: React.FC = () => {
   const { width } = useWindowSize();
 
   return (
-    <Link to={`https://wa.me/${WPP_NUMBER}`}>
+    <Link to={`https://wa.me/${WPP_NUMBER}`} target="_blank">
       <FloatingButton size="large" width={width}>
         <FaWhatsapp size={width < 768 ? 32 : 40} />
       </FloatingButton>
