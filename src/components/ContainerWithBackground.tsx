@@ -30,7 +30,8 @@ const ContainerWithBackground: React.FC<ContainerWithBackgroundProps> = ({
           left: 0,
           width: "100%",
           height: "100%",
-          backgroundColor: "rgba(0, 0, 0, 0.5)",
+          // backgroundColor: "rgba(0, 0, 0, 0.7)", PREGUNTAR POR CUAL PREFIERE EL SABADO
+          background: "linear-gradient(to right, rgb(4, 4, 26), rgba(6, 6, 61, 0.5))",
           zIndex: 1,
         },
       }}
