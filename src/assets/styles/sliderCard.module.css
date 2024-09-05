@@ -1,0 +1,84 @@
+.homeSlide {
+    margin-top: 100px;
+}
+
+
+.homeSlide .box {
+    margin-top: 50px;
+    padding: 70px 60px;
+    background-color: #f7f7f7;
+    min-height: 500px;
+    border-radius: 25px;   
+}
+
+.isBannerStyle {
+    background-size: cover;
+    background-position: center;
+    color: #fff;
+}
+
+.descContainer {
+    background: rgba(11, 13, 14, 0.74);
+    padding: 0 .3rem;
+    border-radius: 10px;
+}
+
+.btnPrimary {
+    padding: .2rem .4rem;
+    font-weight: 600;
+    border-radius: 15px;
+}
+
+.homeSlide h1 {
+    font-size: 45px;
+    line-height: 55px;
+    margin: 50px 0 20px 0;
+}
+
+.homeSlide p {
+    margin: 20px 0;
+}
+
+.homeSlide ul {
+    position: absolute;
+    bottom: 20px;
+}
+
+.homeSlide ul li {
+    border: 2px solid #b8b7b7;
+    border-radius: 50%;
+    padding: 10px;
+}
+
+.homeSlide ul li button {
+    background: transparent !important;
+    color: transparent !important;
+}
+
+.homeSlide ul li button::before {
+    font-size: 15px !important;
+    color: var(--primary-color);
+    position: absolute;
+    top: 2px;
+    left: 0;
+    margin: auto;
+}
+
+.homeSlide .box img {
+    width: 100%;
+    max-height: 300px;
+    object-fit: contain;
+}
+
+@media (max-width: 700px) {
+    .descContainer {
+        text-align: center;
+        padding-bottom: 1rem;
+    } 
+
+    .homeSlide .box {
+        min-height: 60vh;
+        margin-top: 20px;
+        padding: 70px 50px;
+    }
+}

@@ -48,3 +48,15 @@ export interface Team {
     captainPhone: string;
     members: string[];
 }
+
+
+/* Slider */
+
+export interface SliderItem {
+    id: number;
+    isBanner: boolean;
+    dual: boolean;
+    title: string;
+    desc: string;
+    cover: string;
+}
