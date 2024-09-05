@@ -1,21 +1,40 @@
 import React, { useState } from "react";
 import { TextField, Typography, Container } from "@mui/material";
-import { getAuth, sendSignInLinkToEmail } from "firebase/auth";
 import ContainerWithBackground from "../components/ContainerWithBackground";
-import { WEB_URL } from "../utils/constants";
 import { LoadingButton } from "@mui/lab";
 import BlurBoxContainer from "../components/BlurBoxContainer";
 import "../assets/styles/auth.css";
+import Registration from "./Registration";
+import { collection, getDocs, query, where } from "firebase/firestore";
+import { db } from "../utils/firebase-config";
+import { CollectionNames } from "../utils/collectionNames";
 
 const Authentication: React.FC = () => {
   const [email, setEmail] = useState<string>("");
   const [emailSent, setEmailSent] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
+  const [isForSignUp, setIsForSignUp] = useState<boolean>(true);
 
-  const auth = getAuth();
+  const handleCheckEmail = async () => {
+    try {
+      const usersRef = collection(db, CollectionNames.Users);
+      const q = query(usersRef, where("email", "==", email.toLowerCase()));
+      const querySnapshot = await getDocs(q);
+      console.log(querySnapshot.docs)
 
-  const handleSendLink = async () => {
+      if (querySnapshot.empty) {
+        setIsForSignUp(true);
+      } else {
+        setIsForSignUp(false);
+      }
+      setEmailSent(true);
+    } catch (error) {
+      setError("Error al comprobar el correo. Por favor, inténtalo de nuevo");
+    }
+  };
+
+  const handleManageAuth = async () => {
     if (!email) {
       setError("El email es requerido.");
       return;
@@ -27,63 +46,47 @@ const Authentication: React.FC = () => {
     }
 
     setError(null);
-
-    const actionCodeSettings = {
-      url: `${WEB_URL}/registration?email=${encodeURIComponent(email)}`,
-      handleCodeInApp: true,
-    };
-
     setLoading(true);
-
-    try {
-      await sendSignInLinkToEmail(auth, email, actionCodeSettings);
-      window.localStorage.setItem("emailForSignIn", email);
-      setEmailSent(true);
-    } catch (error) {
-      setError("Error al enviar el enlace de autenticación.");
-    }
+    await handleCheckEmail();
 
     setLoading(false);
   };
 
   return (
-    <ContainerWithBackground urlImage="/src/assets/background.jpg">
+    <ContainerWithBackground urlImage="/src/assets/bannerFsociety.jpg">
       <Container maxWidth="sm">
         <BlurBoxContainer>
-          <Typography variant="h4" gutterBottom align="center">
-            ¡Bienvenido!
-          </Typography>
-          <Typography style={{ marginTop: "24px" }}>
-            Introduce tu e-mail para iniciar sesión o registrarte.
-          </Typography>
-          <TextField
-            label="Email"
-            name="email"
-            type="email"
-            fullWidth
-            margin="normal"
-            value={email}
-            onChange={(e) => setEmail(e.target.value.trim())}
-            error={!!error}
-            helperText={error}
-          />
-          <LoadingButton
-            variant="contained"
-            onClick={handleSendLink}
-            fullWidth
-            className="continue-button"
-            loading={loading}
-          >
-            CONTINUAR
-          </LoadingButton>
-          {emailSent && (
-            <Typography
-              variant="body1"
-              color="success"
-              style={{ marginTop: 20 }}
-            >
-              Enlace de autenticación enviado. Por favor revisa tu correo.
-            </Typography>
+          {emailSent ? (
+            <Registration email={email} isforSignUp={isForSignUp} />
+          ) : (
+            <>
+              <Typography variant="h4" gutterBottom align="center">
+                ¡Bienvenido!
+              </Typography>
+              <Typography style={{ marginTop: "24px" }}>
+                Introduce tu e-mail para iniciar sesión o registrarte.
+              </Typography>
+              <TextField
+                label="Email"
+                name="email"
+                type="email"
+                fullWidth
+                margin="normal"
+                value={email}
+                onChange={(e) => setEmail(e.target.value.trim())}
+                error={!!error}
+                helperText={error}
+              />
+              <LoadingButton
+                variant="contained"
+                onClick={handleManageAuth}
+                fullWidth
+                className="continue-button"
+                loading={loading}
+              >
+                CONTINUAR
+              </LoadingButton>
+            </>
           )}
         </BlurBoxContainer>
       </Container>

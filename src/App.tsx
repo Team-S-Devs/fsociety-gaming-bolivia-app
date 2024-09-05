@@ -1,12 +1,8 @@
-import { Route, Routes, BrowserRouter } from "react-router-dom";
 import { ThemeProvider } from "@emotion/react";
 import { createTheme } from "@mui/material";
 import { HelmetProvider } from "react-helmet-async";
-import Splash from "./pages/Splash";
-import Error404 from "./pages/Error404";
-import Authentication from "./pages/Authentication";
 import { UserProvider } from "./contexts/UserContext";
-import Registration from "./pages/Registration";
+import AppRouter from "./AppRouter";
 
 const theme = createTheme({
   palette: {
@@ -17,8 +13,8 @@ const theme = createTheme({
       main: "#3253bc",
     },
     success: {
-      main: "#42d546"
-    }
+      main: "#42d546",
+    },
   },
   typography: {
     allVariants: {
@@ -121,15 +117,7 @@ const App = () => {
     <ThemeProvider theme={theme}>
       <UserProvider>
         <HelmetProvider context={helmetContext}>
-          <BrowserRouter>
-            <Routes>
-              <Route path="/" Component={Splash} />
-              <Route path="/auth" Component={Authentication} />
-              <Route path="/registration" Component={Registration} />
-              <Route path="/error" Component={Error404} />
-              <Route path="*" Component={Error404} />
-            </Routes>
-          </BrowserRouter>
+          <AppRouter />
         </HelmetProvider>
       </UserProvider>
     </ThemeProvider>
