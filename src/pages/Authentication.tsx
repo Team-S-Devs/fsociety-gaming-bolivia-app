@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { TextField, Typography, Container } from "@mui/material";
 import ContainerWithBackground from "../components/ContainerWithBackground";
 import { LoadingButton } from "@mui/lab";
@@ -8,13 +8,22 @@ import Registration from "./Registration";
 import { collection, getDocs, query, where } from "firebase/firestore";
 import { db } from "../utils/firebase-config";
 import { CollectionNames } from "../utils/collectionNames";
+import { useUserContext } from "../contexts/UserContext";
+import { useNavigate } from "react-router-dom";
 
 const Authentication: React.FC = () => {
+  const { user } = useUserContext();
+  const navigate = useNavigate();
+
   const [email, setEmail] = useState<string>("");
   const [emailSent, setEmailSent] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
   const [isForSignUp, setIsForSignUp] = useState<boolean>(true);
+
+  useEffect(() => {
+    if(user) navigate("/")
+  }, [user])
 
   const handleCheckEmail = async () => {
     try {
