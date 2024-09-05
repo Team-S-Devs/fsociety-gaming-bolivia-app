@@ -1,49 +1,21 @@
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { BiSolidUser } from "react-icons/bi";
-import { GoFileDirectoryFill } from "react-icons/go";
-import { FaStore, FaUsersCog } from "react-icons/fa";
-// import { onAuthStateChanged } from "firebase/auth";
-// import { doc, onSnapshot } from "firebase/firestore";
-// import { auth, db } from "../utils/firebase-config";
+import { FaUsersCog } from "react-icons/fa";
 import useWindowSize from "../hooks/useWindowSize";
 import styles from "../assets/styles/header.module.css";
 import imageLogo from "../assets/logoFsociety3.png";
+import { useUserContext } from "../contexts/UserContext";
+import { PagesNames } from "../utils/constants";
 
 const Header: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false);
   const { width } = useWindowSize();
-  const [user, setUser] = useState<string | null>(null);
-  const [fullname, setFullname] = useState<string>("");
-  const [isAdmin, setIsAdmin] = useState<boolean>(false);
+  const { user, isAdmin, userInfo } = useUserContext();
 
   useEffect(() => {
-    console.log("vino acaaaaaa");
     setIsOpen(false);
   }, [useWindowSize]);
-
-  //   useEffect(() => {
-  //     const unsubscribe = onAuthStateChanged(auth, (fireBaseUser) => {
-  //       if (fireBaseUser) {
-  //         setUser(fireBaseUser.uid);
-  //         const userDocRef = doc(db, "users", fireBaseUser.uid);
-  //         onSnapshot(userDocRef, (snapshot) => {
-  //           const userData = snapshot.data();
-  //           if (userData) {
-  //             setFullname(userData.fullname);
-  //             setIsAdmin(userData.admin);
-  //           } else {
-  //             setFullname("Perfil");
-  //           }
-  //         });
-  //       } else {
-  //         setUser(null);
-  //         setFullname("Perfil");
-  //       }
-  //     });
-
-  //     return () => unsubscribe();
-  //   }, []);
 
   const onClickHeader = () => {
     setIsOpen(!isOpen);
@@ -58,42 +30,45 @@ const Header: React.FC = () => {
         <div className={styles.logo_img}>
           <Link to="/">
             <div className={styles.logoHeader}>
-              <img
-                src={imageLogo}
-                alt="fsociety logo"
-                width={70}
-                height={70}
-              />
+              <img src={imageLogo} alt="fsociety logo" width={70} height={70} />
             </div>
           </Link>
         </div>
         <nav className={`${styles.navigation} ${conditional}`}>
-          <div className={conditional !== styles.navigationResponsive ? styles.navCont : ""}>
+          <div
+            className={
+              conditional !== styles.navigationResponsive ? styles.navCont : ""
+            }
+          >
             {isAdmin && (
               <>
                 <div className={styles.headerLink}>
                   <FaUsersCog className={styles.iconHeader} />
-                  <Link to="/admin">
+                  <Link to={PagesNames.Admin}>
                     <span className={`${styles.link} ml-1`}>Admin Panel</span>
                   </Link>
                 </div>
               </>
             )}
             <div className={styles.headerLink}>
-              <Link to="/tournaments">
+              <Link to={PagesNames.Tournments}>
                 <span className={`${styles.link} ml-1`}>Torneos</span>
               </Link>
             </div>
             <div className={styles.headerLink}>
-              <Link to="/teams">
+              <Link to={PagesNames.Teams}>
                 <span className={`${styles.link} ml-1`}>Equipos</span>
               </Link>
             </div>
             <div className={styles.headerLink}>
               <BiSolidUser className={styles.iconHeader} />
-              <Link to={user ? "/profile" : "/auth"}>
+              <Link to={user ? PagesNames.Profile : PagesNames.Auth}>
                 <span className={`${styles.link} ${styles.mainButton} ml-1`}>
-                  {user ? fullname : "Iniciar Sesion"}
+                  {user
+                    ? userInfo
+                      ? userInfo.name.split(" ")[0]
+                      : ""
+                    : "Iniciar Sesion"}
                 </span>
               </Link>
             </div>
@@ -101,7 +76,11 @@ const Header: React.FC = () => {
         </nav>
         <div className={styles.menuButton} onClick={onClickHeader}>
           <button
-            className={isOpen && isResponsive ? styles.cancelButtonHeader : styles.headerButton}
+            className={
+              isOpen && isResponsive
+                ? styles.cancelButtonHeader
+                : styles.headerButton
+            }
             aria-label={isOpen ? "Cerrar menú" : "Abrir menú"}
           >
             <span></span>
