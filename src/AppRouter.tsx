@@ -4,14 +4,18 @@ import Splash from "./pages/Splash";
 import Error404 from "./pages/Error404";
 import Authentication from "./pages/Authentication";
 import { useUserContext } from "./contexts/UserContext";
-import Admin from "./pages/Admin";
 import { PagesNames } from "./utils/constants";
 import Header from "./components/Header";
 import Home from "./pages/Home";
 import WhatsAppButton from "./components/buttons/WhatsappButton";
+import AddTournament from "./pages/admin/AddTournament";
+import Admin from "./pages/admin/Admin";
 
 const AppRouter: React.FC = () => {
   const { isAdmin, loading } = useUserContext();
+
+  const getAdminComponent = (Component: React.FC<{}>) =>
+    loading ? Splash : isAdmin ? Component : Error404;
 
   return (
     <>
@@ -27,13 +31,17 @@ const AppRouter: React.FC = () => {
               <Route path={PagesNames.Auth} Component={Authentication} />
               <Route
                 path={PagesNames.Admin}
-                Component={loading ? Splash : isAdmin ? Admin : Error404}
+                Component={getAdminComponent(Admin)}
+              />
+               <Route
+                path={PagesNames.AdminAddTournament}
+                Component={getAdminComponent(AddTournament)}
               />
               <Route path={PagesNames.Error} Component={Error404} />
               <Route path="*" Component={Error404} />
             </Routes>
 
-            <WhatsAppButton/>
+            <WhatsAppButton />
           </BrowserRouter>
         </>
       )}
