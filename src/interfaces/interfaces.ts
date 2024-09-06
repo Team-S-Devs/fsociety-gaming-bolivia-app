@@ -1,3 +1,5 @@
+import { Timestamp } from "firebase/firestore";
+
 export enum UserType {
     USER = "USER",
     ADMIN = "ADMIN"
@@ -30,13 +32,13 @@ export interface TournamentUserInterface {
     type: TournamentUserType;
 }
 
-  
 export interface Tournament {
     id?: string;
     name: string;
-    startDate: Date;
-    endDate: Date;
+    startDate: Timestamp;
+    endDate: Timestamp;
     teams: string[];
+    createdAt: Timestamp;
 }
 
 export interface Team {

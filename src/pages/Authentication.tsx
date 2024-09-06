@@ -30,7 +30,6 @@ const Authentication: React.FC = () => {
       const usersRef = collection(db, CollectionNames.Users);
       const q = query(usersRef, where("email", "==", email.toLowerCase()));
       const querySnapshot = await getDocs(q);
-      console.log(querySnapshot.docs)
 
       if (querySnapshot.empty) {
         setIsForSignUp(true);
@@ -93,7 +92,9 @@ const Authentication: React.FC = () => {
                 className="continue-button"
                 loading={loading}
               >
-                CONTINUAR
+                {
+                  loading ? "Cargando..." : "CONTINUAR"
+                }
               </LoadingButton>
             </>
           )}

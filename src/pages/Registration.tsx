@@ -193,7 +193,13 @@ const Registration: React.FC<RegistrationProps> = ({
         loading={loading}
         className="continue-button"
       >
-        {isforSignUp ? "Registrarme" : "Iniciar Sesión"}
+        {isforSignUp
+          ? loading
+            ? "Registrándote..."
+            : "Registrarme"
+          : loading
+          ? "Iniciando Sesión..."
+          : "Iniciar Sesión"}
       </LoadingButton>
       {registrationSuccess && (
         <Typography variant="body1" color="success">
