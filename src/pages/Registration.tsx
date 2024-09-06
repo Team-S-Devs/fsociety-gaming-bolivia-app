@@ -39,6 +39,7 @@ const Registration: React.FC<RegistrationProps> = ({
   const [nameError, setNameError] = useState<string | null>(null);
   const [phoneError, setPhoneError] = useState<string | null>(null);
   const [passwordError, setPasswordError] = useState<string | null>(null);
+  const [generalError, setGeneralError] = useState<string | null>(null);
   const [registrationSuccess, setRegistrationSuccess] =
     useState<boolean>(false);
 
@@ -49,12 +50,21 @@ const Registration: React.FC<RegistrationProps> = ({
       if (!name.trim()) {
         setNameError("El nombre es requerido.");
         valid = false;
+      } else if (!/^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s'-]+$/.test(name)) {
+        setNameError("El nombre introducido no es válido.");
+        valid = false;
+      } else if (name.length < 3) {
+        setNameError("El nombre debe tener por lo menos 3 caracteres.");
+        valid = false;
       } else {
         setNameError(null);
       }
 
       if (!phone.trim()) {
         setPhoneError("El teléfono es requerido.");
+        valid = false;
+      } else if (!/^[67][0-9]{7}$/.test(email)) {
+        setPhoneError("Por favor, introduce un teléfono válido.");
         valid = false;
       } else {
         setPhoneError(null);
@@ -103,9 +113,9 @@ const Registration: React.FC<RegistrationProps> = ({
       navigate("/");
     } catch (error: any) {
       if (error.code === "auth/email-already-in-use") {
-        setNameError("El correo ya está registrado.");
+        setGeneralError("El email ya está registrado.");
       } else if (error.code === "auth/invalid-email") {
-        setNameError("El correo no es válido.");
+        setGeneralError("El email no es válido.");
       } else if (error.code === "auth/weak-password") {
         setPasswordError("La contraseña es muy débil.");
       } else if (error.code === "auth/wrong-password") {
@@ -118,15 +128,20 @@ const Registration: React.FC<RegistrationProps> = ({
   };
 
   return (
-    <>
+    <form onChange={() => setGeneralError(null)} onSubmit={handleRegister}>
       <Typography variant="h4" gutterBottom align="center">
-        Completa tu Registro
+        {isforSignUp ? "Completa tu Registro" : "Iniciar sesión"}
       </Typography>
       <Typography>
         {isforSignUp
           ? `Completa los datos para registrarte con el correo ${email}`
           : `Introduce tu contraseña asociada al correo ${email} para iniciar sesión`}
       </Typography>
+      {generalError && (
+        <Typography color="error" marginTop={1}>
+          {generalError}
+        </Typography>
+      )}
       {isforSignUp && (
         <>
           <TextField
@@ -135,7 +150,10 @@ const Registration: React.FC<RegistrationProps> = ({
             fullWidth
             margin="normal"
             value={name}
-            onChange={(e) => setName(e.target.value.trim())}
+            onChange={(e) => {
+              setName(e.target.value.trim());
+              setNameError(null);
+            }}
             error={!!nameError}
             required
             helperText={nameError}
@@ -147,7 +165,10 @@ const Registration: React.FC<RegistrationProps> = ({
             fullWidth
             margin="normal"
             value={phone}
-            onChange={(e) => setPhone(e.target.value.trim())}
+            onChange={(e) => {
+              setPhone(e.target.value.trim());
+              setPhoneError(null);
+            }}
             error={!!phoneError}
             required
             helperText={phoneError}
@@ -163,7 +184,10 @@ const Registration: React.FC<RegistrationProps> = ({
         label={"Contraseña"}
         required={true}
         fullWidth
-        onChange={(event) => setPassword(event.target.value)}
+        onChange={(event) => {
+          setPassword(event.target.value);
+          setPasswordError(null);
+        }}
         error={!!passwordError}
         helperText={passwordError}
         slotProps={{
@@ -206,7 +230,7 @@ const Registration: React.FC<RegistrationProps> = ({
           Registro completado con éxito.
         </Typography>
       )}
-    </>
+    </form>
   );
 };
 
