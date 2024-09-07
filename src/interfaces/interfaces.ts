@@ -35,6 +35,7 @@ export interface TournamentUserInterface {
 export interface Tournament {
     id?: string;
     name: string;
+    imagePath: string;
     startDate: Timestamp;
     endDate: Timestamp;
     teams: string[];
@@ -49,4 +50,16 @@ export interface Team {
     captainEmail: string;
     captainPhone: string;
     members: string[];
+}
+
+
+/* Slider */
+
+export interface SliderItem {
+    id: number;
+    isBanner: boolean;
+    dual: boolean;
+    title: string;
+    desc: string;
+    cover: string;
 }
