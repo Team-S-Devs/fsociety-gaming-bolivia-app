@@ -16,6 +16,8 @@
     "@mui/lab": "^6.0.0-beta.8",
     "@mui/material": "^6.0.1",
     "bootstrap": "^5.3.3",
+    "antd": "^5.20.5",
+    "dayjs": "^1.11.13",
     "firebase": "^10.13.1",
     "ionicons": "^7.4.0",
     "react": "^18.3.1",

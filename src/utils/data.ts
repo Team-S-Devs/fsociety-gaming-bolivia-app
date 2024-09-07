@@ -3,6 +3,7 @@ import slide2 from '../assets/backgroundSplash.jpg';
 import slide3 from '../assets/tournamentExample.png';
 import imageTour from '../assets/bannerFsociety.jpg';
 import { Tournament } from '../interfaces/interfaces';
+import { Timestamp } from 'firebase/firestore';
 
 interface SliderItem {
   id: number;
@@ -37,8 +38,9 @@ export const Tournaments: Tournament[] = [
     id: "1",
     name: "Torneo MLBB",
     imagePath: imageTour,
-    startDate: new Date(2024, 3, 20),
-    endDate: new Date(2024, 4, 5),
+    startDate: Timestamp.fromDate(new Date(2024, 3, 20)), 
+    endDate: Timestamp.fromDate(new Date(2024, 4, 5)),
     teams: ["Team 1", "Team 2"],
+    createdAt: Timestamp.now(),
   },
 ];

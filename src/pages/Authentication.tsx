@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { TextField, Typography, Container } from "@mui/material";
 import ContainerWithBackground from "../components/ContainerWithBackground";
 import { LoadingButton } from "@mui/lab";
@@ -8,20 +8,28 @@ import Registration from "./Registration";
 import { collection, getDocs, query, where } from "firebase/firestore";
 import { db } from "../utils/firebase-config";
 import { CollectionNames } from "../utils/collectionNames";
+import { useUserContext } from "../contexts/UserContext";
+import { useNavigate } from "react-router-dom";
 
 const Authentication: React.FC = () => {
+  const { user } = useUserContext();
+  const navigate = useNavigate();
+
   const [email, setEmail] = useState<string>("");
   const [emailSent, setEmailSent] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
   const [isForSignUp, setIsForSignUp] = useState<boolean>(true);
 
+  useEffect(() => {
+    if(user) navigate("/")
+  }, [user])
+
   const handleCheckEmail = async () => {
     try {
       const usersRef = collection(db, CollectionNames.Users);
       const q = query(usersRef, where("email", "==", email.toLowerCase()));
       const querySnapshot = await getDocs(q);
-      console.log(querySnapshot.docs)
 
       if (querySnapshot.empty) {
         setIsForSignUp(true);
@@ -30,7 +38,7 @@ const Authentication: React.FC = () => {
       }
       setEmailSent(true);
     } catch (error) {
-      setError("Error al comprobar el correo. Por favor, inténtalo de nuevo");
+      setError("Error al comprobar el email. Por favor, inténtalo de nuevo");
     }
   };
 
@@ -40,8 +48,8 @@ const Authentication: React.FC = () => {
       return;
     }
 
-    if (!/\S+@\S+\.\S+/.test(email)) {
-      setError("Email no válido.");
+    if (!/[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i.test(email)) {
+      setError("Por favor, introduce un email válido.");
       return;
     }
 
@@ -59,12 +67,12 @@ const Authentication: React.FC = () => {
           {emailSent ? (
             <Registration email={email} isforSignUp={isForSignUp} />
           ) : (
-            <>
+            <form onChange={() => setError(null)} onSubmit={handleManageAuth}>
               <Typography variant="h4" gutterBottom align="center">
                 ¡Bienvenido!
               </Typography>
               <Typography style={{ marginTop: "24px" }}>
-                Introduce tu e-mail para iniciar sesión o registrarte.
+                Introduce tu email para iniciar sesión o registrarte.
               </Typography>
               <TextField
                 label="Email"
@@ -76,6 +84,7 @@ const Authentication: React.FC = () => {
                 onChange={(e) => setEmail(e.target.value.trim())}
                 error={!!error}
                 helperText={error}
+                required
               />
               <LoadingButton
                 variant="contained"
@@ -84,9 +93,11 @@ const Authentication: React.FC = () => {
                 className="continue-button"
                 loading={loading}
               >
-                CONTINUAR
+                {
+                  loading ? "Cargando..." : "CONTINUAR"
+                }
               </LoadingButton>
-            </>
+            </form>
           )}
         </BlurBoxContainer>
       </Container>
