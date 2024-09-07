@@ -34,6 +34,7 @@ export interface TournamentUserInterface {
 export interface Tournament {
     id?: string;
     name: string;
+    imagePath: string;
     startDate: Date;
     endDate: Date;
     teams: string[];

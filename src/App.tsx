@@ -2,6 +2,7 @@ import { ThemeProvider } from "@emotion/react";
 import { createTheme } from "@mui/material";
 import { HelmetProvider } from "react-helmet-async";
 import { UserProvider } from "./contexts/UserContext";
+import 'bootstrap/dist/css/bootstrap.min.css';
 import AppRouter from "./AppRouter";
 
 const theme = createTheme({

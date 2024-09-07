@@ -8,6 +8,7 @@ import Admin from "./pages/Admin";
 import { PagesNames } from "./utils/constants";
 import Header from "./components/Header";
 import Home from "./pages/Home";
+import Footer from "./components/Footer";
 
 const AppRouter: React.FC = () => {
   const { isAdmin, loading } = useUserContext();

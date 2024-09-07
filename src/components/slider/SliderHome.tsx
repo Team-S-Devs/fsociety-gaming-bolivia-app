@@ -2,7 +2,7 @@ import Slider from "react-slick";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import { Container } from "@mui/material";
-import SlideCard from "./SlideCard";
+import SlideCard from "./SliderImage";
 import { SliderData } from '../../utils/data';
 import { SliderItem } from "../../interfaces/interfaces";
 import styles from "../../assets/styles/sliderCard.module.css";
@@ -15,6 +15,7 @@ const SliderHome: React.FC = () => {
     slidesToShow: 1,
     slidesToScroll: 1,
     autoplay: true,
+    adaptiveHeight: true,
   };
 
   return (
@@ -27,7 +28,6 @@ const SliderHome: React.FC = () => {
                 key={index}
                 title={value.title}
                 cover={value.cover}
-                desc={value.desc}
               />
             );
           })}

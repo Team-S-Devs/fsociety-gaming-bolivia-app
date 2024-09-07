@@ -30,7 +30,7 @@ const Header: React.FC = () => {
       <Container>
           <div className={styles.headerContainer}>
             <div className={styles.logo_img}>
-              <Link to="/">
+              <Link to='/'>
                 <div className={styles.logoHeader}>
                   <img src={imageLogo} alt="fsociety logo" width={70} height={70} />
                 </div>

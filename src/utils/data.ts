@@ -1,5 +1,8 @@
-import slide1 from '../assets/bannerFsociety.jpg';
+import slide1 from '../assets/bannerPremios.png';
 import slide2 from '../assets/backgroundSplash.jpg';
+import slide3 from '../assets/tournamentExample.png';
+import imageTour from '../assets/bannerFsociety.jpg';
+import { Tournament } from '../interfaces/interfaces';
 
 interface SliderItem {
   id: number;
@@ -16,7 +19,7 @@ export const SliderData: SliderItem[] = [
     isBanner: true,
     dual: false,
     title: "Inscribete al torneo",
-    desc: "Participa en el torneo y gana millones",
+    desc: "Participa en el torneo mas reciente y gana muchos premios",
     cover: slide1,
   },
   {
@@ -24,7 +27,18 @@ export const SliderData: SliderItem[] = [
     isBanner: true,
     dual: true,
     title: "Premios Unicos",
-    desc: "Que estas esperando",
-    cover: slide2,
+    desc: "Incribe a tu equipo que estas esperando",
+    cover: slide3,
+  },
+];
+
+export const Tournaments: Tournament[] = [
+  {
+    id: "1",
+    name: "Torneo MLBB",
+    imagePath: imageTour,
+    startDate: new Date(2024, 3, 20),
+    endDate: new Date(2024, 4, 5),
+    teams: ["Team 1", "Team 2"],
   },
 ];
