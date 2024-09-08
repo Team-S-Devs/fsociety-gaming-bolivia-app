@@ -53,7 +53,7 @@ const Header: React.FC = () => {
                   </>
                 )}
                 <div className={styles.headerLink}>
-                  <Link to={PagesNames.Tournments}>
+                  <Link to={PagesNames.Tournaments}>
                     <span className={`${styles.link} ml-1`}>Torneos</span>
                   </Link>
                 </div>
