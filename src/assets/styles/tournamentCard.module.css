@@ -28,7 +28,7 @@
 .tournamentTitle {
   font-size: 22px;
   font-weight: bold;
-  color: #FFD700;
+  color: var(--third-color);
   margin-bottom: 12px;
 }
 

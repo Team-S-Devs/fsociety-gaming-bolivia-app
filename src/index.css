@@ -11,6 +11,9 @@
   text-rendering: optimizeLegibility;
   
   /* --header-color: #0d0827; */
+  --primary-color: #3b3e8f ;
+  --secondary-color: #3253bc;
+  --third-color: #FFD700;
   --bg: rgb(39, 7, 124);
   --header-color: transparent;
   --header-links-color: #ffffff;

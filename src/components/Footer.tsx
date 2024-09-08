@@ -17,7 +17,7 @@ const Footer: React.FC = () => {
                 <img src={logoImg} alt="Logo" title="Logo" />
               </h3>
               <p>
-              En FSOCIETY GAMING BOLIVIA, nuestra misión es abrir puertas para que los jugadores de toda América Latina puedan destacar y prosperar en el mundo de los deportes electrónicos. Nuestra visión es ser el puente que conecta a los jugadores con oportunidades reales, desarrollando una plataforma accesible y eficiente que elimine las barreras económicas y técnicas que a menudo limitan a los gamers en la región.
+              En FSOCIETY GAMING BOLIVIA, nuestra misión es abrir puertas para que los jugadores puedan destacar y prosperar en el mundo de los deportes electrónicos. Nuestra visión es ser el puente que conecta a los jugadores con oportunidades reales, desarrollando una plataforma accesible y eficiente.
               </p>
             </Col>
 
