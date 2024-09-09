@@ -1,9 +1,9 @@
 import React, { useState } from "react";
 import { Timestamp, collection, addDoc } from "firebase/firestore";
-import { TextField, Typography, Container, Box } from "@mui/material";
+import { TextField, Typography, Container, Box, MenuItem } from "@mui/material";
 import { db } from "../../utils/firebase-config";
 import { CollectionNames } from "../../utils/collectionNames";
-import { Tournament } from "../../interfaces/interfaces";
+import { Tournament, TournamentModality } from "../../interfaces/interfaces";
 import { LoadingButton } from "@mui/lab";
 import ContainerWithBackground from "../../components/ContainerWithBackground";
 import BlurBoxContainer from "../../components/BlurBoxContainer";
@@ -12,6 +12,7 @@ import dayjs, { Dayjs } from "dayjs";
 import { IoCalendarOutline } from "react-icons/io5";
 import { IoMdClose } from "react-icons/io";
 import "../../assets/styles/auth.css";
+import { modalities } from "../../interfaces/enumsData";
 
 const darkDatePickerStyle = {
   backgroundColor: "transparent",
@@ -25,6 +26,11 @@ const darkDatePickerStyle = {
 const AddTournament: React.FC = () => {
   const [tournament, setTournament] = useState<Tournament>({
     name: "",
+    inscriptionPrice: 0,
+    imagePath: "",
+    participants: 0,
+    teamLimit: 0,
+    modality: TournamentModality.ELIMINATION, // Default modality
     startDate: Timestamp.now(),
     endDate: Timestamp.now(),
     teams: [],
@@ -54,23 +60,27 @@ const AddTournament: React.FC = () => {
     setLoading(true);
     try {
       await addDoc(collection(db, CollectionNames.TOURNAMENTS), {
-        name: tournament.name,
+        ...tournament,
         startDate: tournament.startDate,
         endDate: tournament.endDate,
-        teams: tournament.teams,
         createdAt: Timestamp.now(),
       });
 
-      setSuccess("Torneo añadido exitósamente.");
+      setSuccess("Torneo añadido exitosamente.");
       setTournament({
         name: "",
+        inscriptionPrice: 0,
+        imagePath: "",
+        participants: 0,
+        teamLimit: 0,
+        modality: TournamentModality.ELIMINATION,
         startDate: Timestamp.now(),
         endDate: Timestamp.now(),
         teams: [],
         createdAt: Timestamp.now(),
       });
     } catch (err) {
-      setError("Error añadiendo el torneo. Inténtalo de nuevo");
+      setError("Error añadiendo el torneo. Inténtalo de nuevo.");
     }
     setLoading(false);
   };
@@ -118,9 +128,6 @@ const AddTournament: React.FC = () => {
                 setError(null);
               }}
             >
-              <Typography marginTop={2} marginLeft={0.5}>
-                Nombre del torneo:
-              </Typography>
               <TextField
                 fullWidth
                 margin="normal"
@@ -128,8 +135,68 @@ const AddTournament: React.FC = () => {
                 value={tournament.name}
                 onChange={handleInputChange}
                 placeholder="Nombre"
+                label="Nombre del torneo"
                 required
               />
+              <TextField
+                fullWidth
+                margin="normal"
+                name="inscriptionPrice"
+                value={tournament.inscriptionPrice}
+                onChange={handleInputChange}
+                placeholder="Precio de inscripción"
+                label="Precio de inscripción"
+                type="number"
+                required
+              />
+              <TextField
+                fullWidth
+                margin="normal"
+                name="participants"
+                value={tournament.participants}
+                onChange={handleInputChange}
+                placeholder="Número de participantes"
+                label="Participantes"
+                type="number"
+                required
+              />
+              <TextField
+                fullWidth
+                margin="normal"
+                name="teamLimit"
+                value={tournament.teamLimit}
+                onChange={handleInputChange}
+                placeholder="Límite de equipos"
+                label="Límite de equipos"
+                type="number"
+                required
+              />
+              <TextField
+                fullWidth
+                margin="normal"
+                name="imagePath"
+                value={tournament.imagePath}
+                onChange={handleInputChange}
+                placeholder="Ruta de la imagen"
+                label="Ruta de la imagen"
+                required
+              />
+              <TextField
+                fullWidth
+                select
+                margin="normal"
+                name="modality"
+                value={tournament.modality}
+                onChange={handleInputChange}
+                label="Modalidad"
+                required
+              >
+                {modalities.map((modality, index) => (
+                  <MenuItem value={modality} key={`Modality ${index}`}>
+                    {modality}
+                  </MenuItem>
+                ))}
+              </TextField>
               <Typography marginTop={2} marginLeft={0.5} marginBottom={1}>
                 Fecha de inicio:
               </Typography>
@@ -137,8 +204,6 @@ const AddTournament: React.FC = () => {
                 value={dayjs(tournament.startDate.toDate())}
                 onChange={handleStartDateChange}
                 format="DD-MM-YYYY"
-                variant="outlined"
-                minDate={dayjs(new Date())}
                 style={darkDatePickerStyle}
                 suffixIcon={<IoCalendarOutline color="#fff" size={24} />}
                 allowClear={{
@@ -150,7 +215,6 @@ const AddTournament: React.FC = () => {
                     />
                   ),
                 }}
-                size="large"
               />
               <Typography marginTop={3} marginLeft={0.5} marginBottom={1}>
                 Fecha de finalización:
@@ -160,18 +224,10 @@ const AddTournament: React.FC = () => {
                 onChange={handleEndDateChange}
                 disabledDate={(current) =>
                   current &&
-                  current.isBefore(
-                    dayjs(tournament.startDate.toDate()).add(1, "day")
-                  )
+                  current.isBefore(dayjs(tournament.startDate.toDate()))
                 }
-                minDate={dayjs(
-                  tournament.startDate.toDate()
-                    ? new Date(
-                        tournament.startDate.toDate().getTime() +
-                          24 * 60 * 60 * 1000
-                      )
-                    : new Date()
-                )}
+                format="DD-MM-YYYY"
+                style={darkDatePickerStyle}
                 suffixIcon={<IoCalendarOutline color="#fff" size={24} />}
                 allowClear={{
                   clearIcon: (
@@ -182,16 +238,11 @@ const AddTournament: React.FC = () => {
                     />
                   ),
                 }}
-                format="DD-MM-YYYY"
-                variant="outlined"
-                style={darkDatePickerStyle}
-                size="large"
               />
               <LoadingButton
                 type="submit"
                 fullWidth
                 variant="contained"
-                className="continue-button"
                 color="primary"
                 disabled={loading}
                 loading={loading}

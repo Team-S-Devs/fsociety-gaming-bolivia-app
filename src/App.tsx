@@ -108,6 +108,17 @@ const theme = createTheme({
         },
       },
     },
+    MuiMenuItem: {
+      styleOverrides: {
+        root: {
+          backgroundColor: "#333", // Fondo oscuro
+          color: "#000",           // Texto blanco
+          '&:hover': {
+            backgroundColor: "#000", // Fondo al hacer hover
+          },
+        },
+      },
+    },
   },
 });
 

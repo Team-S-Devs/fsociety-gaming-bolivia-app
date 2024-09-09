@@ -17,11 +17,12 @@ const ContainerWithBackground: React.FC<ContainerWithBackgroundProps> = ({
         flexDirection: "column",
         alignItems: "center",
         justifyContent: "center",
-        height: "100vh",
+        minHeight: "100vh",
         width: "100vw",
         backgroundImage: `url(${urlImage})`,
         backgroundSize: "cover",
         backgroundPosition: "center",
+        overflowX: "hidden",
         position: "relative",
         "&::before": {
           content: '""',
