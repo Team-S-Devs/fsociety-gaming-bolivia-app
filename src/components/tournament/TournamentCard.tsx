@@ -1,6 +1,8 @@
 import React from 'react';
 import { Tournament } from '../../interfaces/interfaces';
 import styles from '../../assets/styles/tournamentCard.module.css';
+import ItemInfoText from './ItemInfoText';
+import { FaCodeBranch, FaUsers, FaUserPlus, FaDollarSign } from 'react-icons/fa'; // Ejemplo de iconos
 
 interface TournamentCardProps {
   tournament: Tournament;
@@ -8,20 +10,26 @@ interface TournamentCardProps {
 
 const TournamentCard: React.FC<TournamentCardProps> = ({ tournament }) => {
   const startDate = tournament.startDate.toDate();
-  const endDate = tournament.endDate.toDate();
   
   return (
     <div className={styles.tournamentCard}>
       <img src={tournament.imagePath} alt={tournament.name} className={styles.tournamentCoverImage} />
       <div className={styles.tournamentContent}>
         <h2 className={styles.tournamentTitle}>{tournament.name}</h2>
-        <p className={styles.tournamentDates}>
-          {`Inicio: ${startDate.toLocaleDateString()} - Fin: ${endDate.toLocaleDateString()}`}
-        </p>
-        <p className={styles.tournamentTeams}>
-          Equipos participantes: {tournament.teams.join(', ')}
-        </p>
+        <div className='mb-1'>
+          <div className='d-flex flex-wrap justify-content-between mb-1'>
+            <ItemInfoText text={tournament.modality} icon={<FaCodeBranch />} />
+            <ItemInfoText text={`${tournament.teamLimit.toString()}v${tournament.teamLimit.toString()}`} icon={<FaUsers />} />
+          </div>
+          <div>
+            <ItemInfoText text={`Participantes: ${tournament.participants}/64`} icon={<FaUserPlus />} />
+          </div>
+        </div>
       </div>
+        <div className={`${styles.bottomTournCard} d-flex flex-wrap justify-content-between`}>
+            <ItemInfoText text={`Inicio: ${startDate.toLocaleDateString()}`} backColor='transparent' />
+            <ItemInfoText text={`${tournament.inscriptionPrice}Bs.`} icon={<FaDollarSign />} textColor='var(--third-color)' />
+          </div>
     </div>
   );
 };
