@@ -10,6 +10,8 @@ import { Timestamp } from "firebase/firestore";
 import { modalities } from "../../../interfaces/enumsData";
 import AwardsForm from "./AwardsForm";
 import Grid from "@mui/material/Grid2";
+import FileUpload from "../../inputs/FileUpload";
+import "../../../assets/styles/auth.css";
 
 const darkDatePickerStyle = {
   backgroundColor: "transparent",
@@ -28,6 +30,8 @@ interface TournamentFormProps {
   success: string | null;
   setError: React.Dispatch<React.SetStateAction<string | null>>;
   title: string;
+  file: File | null;
+  setFile: React.Dispatch<React.SetStateAction<File | null>>;
 }
 
 const TournamentForm: React.FC<TournamentFormProps> = ({
@@ -38,6 +42,8 @@ const TournamentForm: React.FC<TournamentFormProps> = ({
   setError,
   success,
   title,
+  file,
+  setFile,
 }) => {
   const [loading, setLoading] = React.useState<boolean>(false);
   const [participantsError, setParticipantsError] = React.useState<
@@ -54,10 +60,10 @@ const TournamentForm: React.FC<TournamentFormProps> = ({
     const { name, value } = e.target;
 
     const parsedValue =
-      name === "inscriptionPrice" ||
+      (name === "inscriptionPrice" ||
       name === "participants" ||
-      name === "teamLimit"
-        ? Number(value)
+      name === "teamLimit")
+        ? Number(value) == 0 ? "" : Number(value)
         : value;
 
     setTournament({
@@ -111,7 +117,7 @@ const TournamentForm: React.FC<TournamentFormProps> = ({
     }
 
     if (isNaN(tournament.teamLimit) || tournament.teamLimit <= 0) {
-      setTeamLimitError("El límite de equipos debe ser un número positivo.");
+      setTeamLimitError("El límite por equipo debe ser un número positivo.");
       return false;
     }
 
@@ -170,7 +176,7 @@ const TournamentForm: React.FC<TournamentFormProps> = ({
           onChange={handleInputChange}
           fullWidth
           multiline
-          rows={4}
+          rows={5}
           margin="normal"
           required
         />
@@ -184,7 +190,7 @@ const TournamentForm: React.FC<TournamentFormProps> = ({
                 value={tournament.inscriptionPrice}
                 onChange={handleInputChange}
                 placeholder="Precio de inscripción en Bs"
-                label="Precio de inscripción"
+                label="Precio de inscripción (Bs)"
                 type="number"
                 required
                 error={!!priceError}
@@ -213,8 +219,8 @@ const TournamentForm: React.FC<TournamentFormProps> = ({
                 name="teamLimit"
                 value={tournament.teamLimit}
                 onChange={handleInputChange}
-                placeholder="Límite de equipos"
-                label="Límite de equipos"
+                placeholder="Límite por equipos"
+                label="Límite de jugadores por equipo"
                 type="number"
                 required
                 error={!!teamLimitError}
@@ -223,16 +229,6 @@ const TournamentForm: React.FC<TournamentFormProps> = ({
             </Grid>
           </Grid>
         </div>
-        <TextField
-          fullWidth
-          margin="normal"
-          name="imagePath"
-          value={tournament.imagePath}
-          onChange={handleInputChange}
-          placeholder="Ruta de la imagen"
-          label="Ruta de la imagen"
-          required
-        />
 
         <TextField
           fullWidth
@@ -283,6 +279,10 @@ const TournamentForm: React.FC<TournamentFormProps> = ({
             ),
           }}
         />
+        <div style={{ marginTop: 24 }}>
+          <Typography>Banner del torneo:</Typography>
+          <FileUpload setFile={setFile} file={file} />
+        </div>
         <AwardsForm tournament={tournament} setTournament={setTournament} />
         <LoadingButton
           type="submit"
@@ -291,9 +291,10 @@ const TournamentForm: React.FC<TournamentFormProps> = ({
           color="primary"
           disabled={loading}
           loading={loading}
+          className="continue-button"
           style={{ marginTop: 24 }}
         >
-          {loading ? "Añadiendo..." : "Añadir Torneo"}
+          {loading ? "Creando..." : "Crear Torneo"}
         </LoadingButton>
       </form>
     </Box>

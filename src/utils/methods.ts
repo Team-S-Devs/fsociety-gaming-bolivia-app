@@ -7,7 +7,10 @@ export const getEmptyTournament = (): Tournament => {
     description: "",
     awards: [],
     inscriptionPrice: 0,
-    imagePath: "",
+    imagePath: {
+      ref: "",
+      url: ""
+    },
     participants: 0,
     teamLimit: 0,
     modality: TournamentModality.ELIMINATION,
