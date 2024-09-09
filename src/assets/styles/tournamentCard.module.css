@@ -3,8 +3,8 @@
   overflow: hidden;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
   margin: 20px;
-  max-width: 400px;
-  background-color: #0A192F;
+  max-width: 350px;
+  background-color: #102646;
   color: #E1E1E6;
   cursor: pointer;
   transition: transform 0.3s, box-shadow 0.3s;
@@ -51,4 +51,11 @@
   flex-wrap: wrap;
   gap: 20px;
   justify-content: center;
+}
+
+.bottomTournCard {
+  display: flex;
+  padding: 8px 20px;
+  background-color: #263d5f;
+
 }

@@ -9,10 +9,18 @@
 
 .subtitleHome {
   margin-top: 4rem;
-  font-size: 1.8rem;
-  font-weight: 600;
-  color: #eee;
+  font-size: 1.6rem;
+  color: transparent;
+  background: linear-gradient(90deg, #df2424, rgb(243, 243, 243));
+  background: linear-gradient(90deg,#ff36a9,#ffdab4);
+  background: linear-gradient(90deg,#36ffea,#b4b6ff);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  color: transparent;
 }
+
+
 
 .backgroundImage {
   position: absolute;

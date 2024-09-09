@@ -15,6 +15,10 @@ export enum RangeUser {
     RANGE_1 = "RANGE 1"
 }
 
+export enum TournamentModality {
+    ELIMINATION = "Eliminación"
+}
+
 export interface UserInterface {
     id?: string;
     name: string;
@@ -35,7 +39,11 @@ export interface TournamentUserInterface {
 export interface Tournament {
     id?: string;
     name: string;
+    inscriptionPrice: number;
     imagePath: string;
+    participants: number;
+    teamLimit: number;
+    modality: TournamentModality;
     startDate: Timestamp;
     endDate: Timestamp;
     teams: string[];

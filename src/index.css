@@ -14,10 +14,11 @@
   --primary-color: #3b3e8f ;
   --secondary-color: #3253bc;
   --third-color: #FFD700;
+  --gradient-color: linear-gradient(90deg, var(--secondary-color), #ffff);
   --bg: rgb(39, 7, 124);
-  --header-color: transparent;
+  --header-color: rgb(6, 6, 31);
   --header-links-color: #ffffff;
-  --active-header: rgba(8, 5, 44, 0.815);
+  --active-header: rgba(8, 5, 44, 0.945);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }

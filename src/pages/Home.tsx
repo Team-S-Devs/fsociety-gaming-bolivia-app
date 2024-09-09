@@ -12,7 +12,7 @@ const Home: React.FC = () => {
       <img src={bannerApp} alt="banner app" className={styles.backgroundImage} />
       <div className={styles.homeContent}>
         <SliderHome />
-        <h2 className={styles.subtitleHome}>Torneo Actual</h2>
+        <h2 className={styles.subtitleHome}>TORNEOS ACTUALES</h2>
         <TournamentList tournaments={Tournaments} />
       </div>
       <Footer/>
