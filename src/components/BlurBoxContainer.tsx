@@ -12,7 +12,11 @@ const BlurBoxContainer: React.FC<BlurBoxContainerProps> = ({ children }) => {
         background:
           "linear-gradient(rgba(94, 131, 249, 0.2), rgba(94, 131, 249, 0.2))",
         borderRadius: 10,
-        padding: "56px",
+        padding: {
+          xs: "32px 20px", 
+          sm: "48px 24px", 
+          md: "56px",      
+        },
         paddingBottom: "64px",
         paddingTop: "64px",
         backdropFilter: "blur(10px)",

@@ -39,6 +39,8 @@ export interface TournamentUserInterface {
 export interface Tournament {
     id?: string;
     name: string;
+    description: string;
+    awards: string[],
     inscriptionPrice: number;
     imagePath: string;
     participants: number;

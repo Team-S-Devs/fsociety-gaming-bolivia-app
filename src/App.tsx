@@ -111,10 +111,49 @@ const theme = createTheme({
     MuiMenuItem: {
       styleOverrides: {
         root: {
-          backgroundColor: "#333", // Fondo oscuro
-          color: "#000",           // Texto blanco
-          '&:hover': {
-            backgroundColor: "#000", // Fondo al hacer hover
+          color: "#000",           
+        },
+      },
+    },
+    MuiSelect: {
+      styleOverrides: {
+        root: {
+          color: "#fff",
+          borderColor: "#fff",
+          "& .MuiOutlinedInput-root": {
+            "& fieldset": {
+              borderColor: "white",
+            },
+            "&:hover fieldset": {
+              borderColor: "#72f7f7",
+            },
+            "&.Mui-focused fieldset": {
+              borderColor: "#72f7f7",
+            },
+            "& .MuiInputBase-input": {
+              color: "white",
+            },
+          },
+        },
+        icon: {
+          color: '#fff',
+        },
+      },
+    },
+    MuiOutlinedInput: {
+      styleOverrides: {
+        root: {
+          "& .MuiOutlinedInput-notchedOutline": {
+            borderColor: "white", 
+          },
+          "&:hover .MuiOutlinedInput-notchedOutline": {
+            borderColor: "#72f7f7", 
+          },
+          "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
+            borderColor: "#72f7f7",
+          },
+          "& .MuiInputBase-input": {
+            color: "white", 
           },
         },
       },

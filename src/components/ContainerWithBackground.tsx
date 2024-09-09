@@ -41,7 +41,6 @@ const ContainerWithBackground: React.FC<ContainerWithBackgroundProps> = ({
         sx={{
           position: "relative",
           zIndex: 2,
-          padding: 4,
         }}
       >
         {children}
