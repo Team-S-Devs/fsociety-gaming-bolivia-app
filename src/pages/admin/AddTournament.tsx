@@ -83,6 +83,7 @@ const AddTournament: React.FC = () => {
             title="Añadir Nuevo Torneo"
             file={file}
             setFile={setFile}
+            setSuccess={setSuccess}
           />
         </BlurBoxContainer>
       </Container>

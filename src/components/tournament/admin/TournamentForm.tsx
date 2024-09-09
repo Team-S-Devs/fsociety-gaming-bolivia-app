@@ -32,6 +32,7 @@ interface TournamentFormProps {
   title: string;
   file: File | null;
   setFile: React.Dispatch<React.SetStateAction<File | null>>;
+  setSuccess: React.Dispatch<React.SetStateAction<string | null>>
 }
 
 const TournamentForm: React.FC<TournamentFormProps> = ({
@@ -44,6 +45,7 @@ const TournamentForm: React.FC<TournamentFormProps> = ({
   title,
   file,
   setFile,
+  setSuccess
 }) => {
   const [loading, setLoading] = React.useState<boolean>(false);
   const [participantsError, setParticipantsError] = React.useState<
@@ -139,6 +141,12 @@ const TournamentForm: React.FC<TournamentFormProps> = ({
     setLoading(false);
   };
 
+  const clearSuccessMessageWhenChange = () => {
+    if(success){
+      setSuccess(null)
+    }
+  }
+
   return (
     <Box>
       <Typography variant="h4" gutterBottom>
@@ -156,7 +164,7 @@ const TournamentForm: React.FC<TournamentFormProps> = ({
         </Typography>
       )}
 
-      <form onSubmit={handleSubmit}>
+      <form onSubmit={handleSubmit} onChange={clearSuccessMessageWhenChange}>
         <TextField
           fullWidth
           margin="normal"
