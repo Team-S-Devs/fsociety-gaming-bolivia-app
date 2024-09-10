@@ -9,7 +9,8 @@ import { collection, getDocs, query, where } from "firebase/firestore";
 import { db } from "../utils/firebase-config";
 import { CollectionNames } from "../utils/collectionNames";
 import { useUserContext } from "../contexts/UserContext";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { PagesNames } from "../utils/constants";
 
 const Authentication: React.FC = () => {
   const { user } = useUserContext();
@@ -22,8 +23,8 @@ const Authentication: React.FC = () => {
   const [isForSignUp, setIsForSignUp] = useState<boolean>(true);
 
   useEffect(() => {
-    if(user) navigate("/")
-  }, [user])
+    if (user) navigate("/");
+  }, [user]);
 
   const handleCheckEmail = async () => {
     try {
@@ -93,12 +94,19 @@ const Authentication: React.FC = () => {
                 className="continue-button"
                 loading={loading}
               >
-                {
-                  loading ? "Cargando..." : "CONTINUAR"
-                }
+                {loading ? "Cargando..." : "CONTINUAR"}
               </LoadingButton>
             </form>
           )}
+          <Typography style={{ marginTop: "24px" }}>
+            Al continuar aceptas la{" "}
+            <Link to={PagesNames.PrivacyPolicy}>Política de Privacidad</Link> y
+            la{" "}
+            <Link to={PagesNames.DisclosurePolicy}>
+              Política de Divulgación Responsable
+            </Link>{" "}
+            de FSociety Gaming Bolivia.
+          </Typography>
         </BlurBoxContainer>
       </Container>
     </ContainerWithBackground>

@@ -1,23 +1,33 @@
 import React from "react";
 import ContainerWithBackground from "../../components/ContainerWithBackground";
-import { Box, Typography } from "@mui/material";
+import {
+  Box,
+  List,
+  ListItem,
+  ListItemIcon,
+  ListItemText,
+  Typography,
+} from "@mui/material";
 import { Link } from "react-router-dom";
 import { EMAIL } from "../../utils/constants";
+import { BsDot } from "react-icons/bs";
 
 const ResponsibleDisclosurePolicy: React.FC = () => {
   return (
     <ContainerWithBackground urlImage="/src/assets/bannerFsociety.jpg">
-      <Box sx={{ padding: '16px', lineHeight: '1.5', fontFamily: 'Aptos', fontSize: '12pt' }}>
-        <Typography
-          variant="h1"
-          sx={{
-            marginTop: "18pt",
-            marginBottom: "4pt",
-            fontSize: "20pt",
-          }}
-        >
-          Política de Divulgación Responsable de FSOCIETY GAMING BOLIVIA
-        </Typography>
+      <Box
+        sx={{
+          padding: "16px",
+          lineHeight: "1.5",
+          fontFamily: "Aptos",
+          fontSize: "12pt",
+        }}
+      >
+        <Box mb={2} mt={6}>
+          <Typography variant="h3">
+            Política de Divulgación Responsable de FSOCIETY GAMING BOLIVIA
+          </Typography>
+        </Box>
 
         <Box sx={{ marginBottom: "16px" }}>
           <Typography>
@@ -30,15 +40,7 @@ const ResponsibleDisclosurePolicy: React.FC = () => {
           </Typography>
         </Box>
 
-        <Typography
-          variant="h2"
-          sx={{
-            marginTop: "8pt",
-            marginBottom: "4pt",
-            color: "#0f4761",
-            fontSize: "16pt",
-          }}
-        >
+        <Typography variant="h4" mb={2} mt={3}>
           Nuestra Política de Divulgación
         </Typography>
 
@@ -52,31 +54,40 @@ const ResponsibleDisclosurePolicy: React.FC = () => {
           situación lo más rápido posible.
         </Typography>
 
-        <Typography sx={{ marginTop: "16px" }}>
-          - Por favor, otórganos un tiempo razonable para corregir la
-          vulnerabilidad antes de hacerla pública o compartirla con terceros.
-        </Typography>
-        <Typography>
-          - Nos comprometemos a valorar tu tiempo y esfuerzo, y aunque no
+        <List style={{ listStyleType: "disc" }}>
+          <ListItem>
+            <ListItemIcon>
+              <BsDot color="#fff" size={32} />
+            </ListItemIcon>
+            <ListItemText
+              primary="Por favor, otórganos un tiempo razonable para corregir la
+          vulnerabilidad antes de hacerla pública o compartirla con terceros."
+            />
+          </ListItem>
+          <ListItem>
+            <ListItemIcon>
+              <BsDot color="#fff" size={32} />
+            </ListItemIcon>
+            <ListItemText
+              primary="Nos comprometemos a valorar tu tiempo y esfuerzo, y aunque no
           ofrecemos recompensas monetarias, siempre estaremos dispuestos a
-          reconocer tu contribución.
-        </Typography>
-        <Typography>
-          - Pedimos que, durante tu investigación, evites comprometer la
+          reconocer tu contribución."
+            />
+          </ListItem>
+          <ListItem>
+            <ListItemIcon>
+              <BsDot color="#fff" size={32} />
+            </ListItemIcon>
+            <ListItemText
+              primary="Pedimos que, durante tu investigación, evites comprometer la
           privacidad de los usuarios, destruir datos, o interrumpir nuestros
           servicios. Interactúa solo con cuentas que te pertenezcan o para las
-          que tengas el permiso del titular.
-        </Typography>
+          que tengas el permiso del titular."
+            />
+          </ListItem>
+        </List>
 
-        <Typography
-          variant="h2"
-          sx={{
-            marginTop: "8pt",
-            marginBottom: "4pt",
-            color: "#0f4761",
-            fontSize: "16pt",
-          }}
-        >
+        <Typography variant="h4" mb={2} mt={3}>
           Exclusiones
         </Typography>
 
@@ -85,13 +96,29 @@ const ResponsibleDisclosurePolicy: React.FC = () => {
           usuarios que participen en las siguientes actividades durante la
           investigación serán excluidos de cualquier colaboración:
         </Typography>
-
-        <Typography>- Ataques de denegación de servicio (DoS)</Typography>
-        <Typography>- Envío de spam</Typography>
-        <Typography>
-          - Phishing o ingeniería social dirigida a nuestros empleados o
-          colaboradores
-        </Typography>
+        <List style={{ listStyleType: "disc" }}>
+          <ListItem>
+            <ListItemIcon>
+              <BsDot color="#fff" size={32} />
+            </ListItemIcon>
+            <ListItemText primary="Ataques de denegación de servicio (DoS)." />
+          </ListItem>
+          <ListItem>
+            <ListItemIcon>
+              <BsDot color="#fff" size={32} />
+            </ListItemIcon>
+            <ListItemText primary="Envío de spam." />
+          </ListItem>
+          <ListItem>
+            <ListItemIcon>
+              <BsDot color="#fff" size={32} />
+            </ListItemIcon>
+            <ListItemText
+              primary="Phishing o ingeniería social dirigida a nuestros empleados o
+          colaboradores."
+            />
+          </ListItem>
+        </List>
 
         <Typography sx={{ marginTop: "16px" }}>
           Esta política se aplica a todos los servicios de FSOCIETY GAMING
@@ -106,24 +133,14 @@ const ResponsibleDisclosurePolicy: React.FC = () => {
           nuestros usuarios!
         </Typography>
 
-        <Typography
-          variant="h2"
-          sx={{
-            marginTop: "8pt",
-            marginBottom: "4pt",
-            color: "#0f4761",
-            fontSize: "16pt",
-          }}
-        >
+        <Typography variant="h4" mb={2} mt={3}>
           Contacto
         </Typography>
 
         <Typography>
           Estamos siempre disponibles para recibir tus comentarios, preguntas y
           sugerencias. Puedes comunicarte con nosotros a través de{" "}
-          <Link to={`mailto:${EMAIL}`}>
-            {EMAIL}
-          </Link>
+          <Link to={`mailto:${EMAIL}`}>{EMAIL}</Link>
         </Typography>
       </Box>
     </ContainerWithBackground>

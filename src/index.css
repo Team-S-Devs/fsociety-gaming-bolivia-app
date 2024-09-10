@@ -118,3 +118,13 @@ header a {
     background-color: #f9f9f9;
   }
 }
+
+a {
+  color: #72f7f7;
+  text-decoration: underline;
+}
+
+a:hover {
+  text-decoration: underline;
+  color: #39c1c1;
+}
