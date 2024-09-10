@@ -10,6 +10,9 @@ import Home from "./pages/Home";
 import WhatsAppButton from "./components/buttons/WhatsappButton";
 import AddTournament from "./pages/admin/AddTournament";
 import Admin from "./pages/admin/Admin";
+import PrivacyPolicy from "./pages/docs/PrivacyPolicy";
+import ResponsibleDisclosurePolicy from "./pages/docs/ResponsibleDisclosurePolicy";
+import TournamentRules from "./pages/docs/TournamentRules";
 
 const AppRouter: React.FC = () => {
   const { isAdmin, loading } = useUserContext();
@@ -33,11 +36,24 @@ const AppRouter: React.FC = () => {
                 path={PagesNames.Admin}
                 Component={getAdminComponent(Admin)}
               />
-               <Route
+              <Route
                 path={PagesNames.AdminAddTournament}
                 Component={getAdminComponent(AddTournament)}
               />
               <Route path={PagesNames.Error} Component={Error404} />
+              <Route
+                path={PagesNames.PrivacyPolicy}
+                Component={PrivacyPolicy}
+              />
+              <Route
+                path={PagesNames.DisclosurePolicy}
+                Component={ResponsibleDisclosurePolicy}
+              />
+              <Route
+                path={PagesNames.TournamentRules}
+                Component={TournamentRules}
+              />
+
               <Route path="*" Component={Error404} />
             </Routes>
 
