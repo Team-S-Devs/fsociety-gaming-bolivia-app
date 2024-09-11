@@ -3,7 +3,7 @@ import { TextField, Typography, Container } from "@mui/material";
 import ContainerWithBackground from "../components/ContainerWithBackground";
 import { LoadingButton } from "@mui/lab";
 import BlurBoxContainer from "../components/BlurBoxContainer";
-import "../assets/styles/auth.css";
+import styles from "../assets/styles/buttons.module.css";
 import Registration from "./Registration";
 import { collection, getDocs, query, where } from "firebase/firestore";
 import { db } from "../utils/firebase-config";
@@ -91,7 +91,7 @@ const Authentication: React.FC = () => {
                 variant="contained"
                 onClick={handleManageAuth}
                 fullWidth
-                className="continue-button"
+                className={styles.continueButton}
                 loading={loading}
               >
                 {loading ? "Cargando..." : "CONTINUAR"}

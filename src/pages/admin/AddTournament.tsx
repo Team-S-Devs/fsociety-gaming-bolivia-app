@@ -6,7 +6,6 @@ import { CollectionNames } from "../../utils/collectionNames";
 import { Tournament } from "../../interfaces/interfaces";
 import ContainerWithBackground from "../../components/ContainerWithBackground";
 import BlurBoxContainer from "../../components/BlurBoxContainer";
-import "../../assets/styles/auth.css";
 import TournamentForm from "../../components/tournament/admin/TournamentForm";
 import { getEmptyTournament } from "../../utils/methods";
 import { uploadFileToStorage } from "../../utils/storageMethods";

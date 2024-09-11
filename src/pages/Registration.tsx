@@ -15,7 +15,7 @@ import { db } from "../utils/firebase-config";
 import { useNavigate } from "react-router-dom";
 import { UserType } from "../interfaces/interfaces";
 import { LoadingButton } from "@mui/lab";
-import "../assets/styles/auth.css";
+import styles from "../assets/styles/buttons.module.css";
 import { AiOutlineEye, AiOutlineEyeInvisible } from "react-icons/ai";
 import { CollectionNames } from "../utils/collectionNames";
 
@@ -215,7 +215,7 @@ const Registration: React.FC<RegistrationProps> = ({
         onClick={handleRegister}
         fullWidth
         loading={loading}
-        className="continue-button"
+        className={styles.continueButton}
       >
         {isforSignUp
           ? loading

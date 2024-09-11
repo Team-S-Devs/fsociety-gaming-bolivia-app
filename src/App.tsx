@@ -23,6 +23,7 @@ const theme = createTheme({
       color: "#FFF",
     },
     fontFamily: "Orbitron, sans-serif",
+    fontSize: 18,
     h1: { fontFamily: "Mulish, sans-serif" },
     h2: { fontFamily: "Mulish, sans-serif" },
     h3: { fontFamily: "Mulish, sans-serif" },
