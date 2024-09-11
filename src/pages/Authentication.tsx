@@ -100,9 +100,9 @@ const Authentication: React.FC = () => {
           )}
           <Typography style={{ marginTop: "24px" }}>
             Al continuar aceptas la{" "}
-            <Link to={PagesNames.PrivacyPolicy}>Política de Privacidad</Link> y
+            <Link target="_blank" to={PagesNames.PrivacyPolicy}>Política de Privacidad</Link> y
             la{" "}
-            <Link to={PagesNames.DisclosurePolicy}>
+            <Link target="_blank" to={PagesNames.DisclosurePolicy}>
               Política de Divulgación Responsable
             </Link>{" "}
             de FSociety Gaming Bolivia.
