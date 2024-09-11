@@ -12,7 +12,9 @@ export const fetchTournaments = async (): Promise<Tournament[]> => {
     const tournament: Tournament = {
       id: doc.id,
       name: data.name || '',
+      description: data.description || '',
       imagePath: data.imagePath || imageTour,
+      awards: data.awards || [],
       inscriptionPrice: data.inscriptionPrice || 0,
       participants: data.participants || 0,
       teamLimit: data.teamLimit || 0,

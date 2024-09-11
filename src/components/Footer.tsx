@@ -39,10 +39,10 @@ const Footer: React.FC = () => {
               </p>
 
               <div className={styles.socialLinks}>
-                <a href="https://www.facebook.com/profile.php?id=100088001102232&locale=es_LA" target="_blank" rel="noopener noreferrer" className="facebook">
+                <a title="facebook" href="https://www.facebook.com/profile.php?id=100088001102232&locale=es_LA" target="_blank" rel="noopener noreferrer" className="facebook">
                   <IonIcon className={styles.smaller} icon={logoFacebook} />
                 </a>
-                <a href={`https://wa.me/${WPP_NUMBER}`} target="_blank" rel="noopener noreferrer" className="facebook">
+                <a title="wpp" href={`https://wa.me/${WPP_NUMBER}`} target="_blank" rel="noopener noreferrer" className="facebook">
                   <IonIcon className={styles.smaller} icon={logoWhatsapp} /> 
                 </a>
               </div>
