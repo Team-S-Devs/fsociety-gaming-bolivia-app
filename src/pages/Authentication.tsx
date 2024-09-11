@@ -43,7 +43,8 @@ const Authentication: React.FC = () => {
     }
   };
 
-  const handleManageAuth = async () => {
+  const handleManageAuth = async (e: any) => {
+    e.preventDefault();
     if (!email) {
       setError("El email es requerido.");
       return;

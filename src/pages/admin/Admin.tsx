@@ -3,7 +3,7 @@ import Error404 from "../Error404";
 import Splash from "../Splash";
 import { useUserContext } from "../../contexts/UserContext";
 import ContainerWithBackground from "../../components/ContainerWithBackground";
-import TournamentsTable from "../../components/tournament/admin/TournamentsTable";
+import ViewTournaments from "../../components/tournament/admin/ViewTournaments";
 
 const Admin: React.FC = () => {
   const { isAdmin, loading } = useUserContext();
@@ -16,8 +16,8 @@ const Admin: React.FC = () => {
         <Error404 />
       ) : (
         <ContainerWithBackground urlImage="/src/assets/bannerFsociety.jpg">
-          <Container maxWidth="md">
-            <TournamentsTable />
+          <Container>
+            <ViewTournaments />
           </Container>
         </ContainerWithBackground>
       )}

@@ -2,8 +2,8 @@ import { ThemeProvider } from "@emotion/react";
 import { createTheme } from "@mui/material";
 import { HelmetProvider } from "react-helmet-async";
 import { UserProvider } from "./contexts/UserContext";
-import 'bootstrap/dist/css/bootstrap.min.css';
-import 'react-toastify/dist/ReactToastify.css';
+import "bootstrap/dist/css/bootstrap.min.css";
+import "react-toastify/dist/ReactToastify.css";
 import AppRouter from "./AppRouter";
 
 const theme = createTheme({
@@ -113,7 +113,7 @@ const theme = createTheme({
     MuiMenuItem: {
       styleOverrides: {
         root: {
-          color: "#000",           
+          color: "#000",
         },
       },
     },
@@ -138,7 +138,7 @@ const theme = createTheme({
           },
         },
         icon: {
-          color: '#fff',
+          color: "#fff",
         },
       },
     },
@@ -146,17 +146,101 @@ const theme = createTheme({
       styleOverrides: {
         root: {
           "& .MuiOutlinedInput-notchedOutline": {
-            borderColor: "white", 
+            borderColor: "white",
           },
           "&:hover .MuiOutlinedInput-notchedOutline": {
-            borderColor: "#72f7f7", 
+            borderColor: "#72f7f7",
           },
           "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
             borderColor: "#72f7f7",
           },
           "& .MuiInputBase-input": {
-            color: "white", 
+            color: "white",
           },
+        },
+      },
+    },
+    MuiTable: {
+      styleOverrides: {
+        root: {
+          backgroundColor: "#1a064f", 
+          color: "#fff", 
+        },
+      },
+    },
+    MuiTableCell: {
+      styleOverrides: {
+        root: {
+          borderBottom: "1px solid rgba(255, 255, 255, 0.12)",
+        },
+        head: {
+          fontWeight: "bold",
+          backgroundColor: "#120438", 
+          color: "#fff"
+        },
+        body: {
+          color: "#fff"
+        },
+      },
+    },
+    MuiTablePagination: {
+      styleOverrides: {
+        root: {
+          color: '#fff',
+        },
+        toolbar: {
+          color: '#fff', 
+        },
+        actions: {
+          color: '#fff', 
+        },
+        selectIcon: {
+          color: '#fff', 
+        },
+        select: {
+          color: '#fff', 
+        },
+        input: {
+          color: '#fff', 
+        },
+      },
+    },
+    MuiDialog: {
+      styleOverrides: {
+        root: {
+          color: "#fff"
+        }
+      }
+    },
+    MuiDialogTitle: {
+      styleOverrides: {
+        root: {
+          backgroundColor: "#120438",
+
+          color: "#ffffff", 
+        },
+      },
+    },
+    MuiDialogContent: {
+      styleOverrides: {
+        root: {
+          backgroundColor: "#120438",
+          color: "#ffffff",
+        },
+      },
+    },
+    MuiDialogContentText: {
+      styleOverrides: {
+        root: {
+          color: "#ffffff", 
+        },
+      }
+    },
+    MuiDialogActions: {
+      styleOverrides: {
+        root: {
+          backgroundColor: "#120438",
+          color: "#ffffff",
         },
       },
     },

@@ -9,8 +9,11 @@ import BlurBoxContainer from "../../components/BlurBoxContainer";
 import TournamentForm from "../../components/tournament/admin/TournamentForm";
 import { getEmptyTournament } from "../../utils/methods";
 import { uploadFileToStorage } from "../../utils/storageMethods";
+import { useNavigate } from "react-router-dom";
+import { PagesNames } from "../../utils/constants";
 
 const AddTournament: React.FC = () => {
+  const navigate = useNavigate();
   const [tournament, setTournament] = useState<Tournament>(
     getEmptyTournament()
   );
@@ -55,6 +58,7 @@ const AddTournament: React.FC = () => {
         setSuccess("Torneo añadido exitosamente.");
         setTournament(getEmptyTournament());
         setFile(null);
+        navigate(PagesNames.Admin)
       } else {
         setError("Error subiendo la imagen. Inténtalo de nuevo.");
       }

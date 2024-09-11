@@ -63,7 +63,7 @@ const Registration: React.FC<RegistrationProps> = ({
       if (!phone.trim()) {
         setPhoneError("El teléfono es requerido.");
         valid = false;
-      } else if (!/^[67][0-9]{6}$/.test(phone)) {
+      } else if (!/^[67][0-9]{7}$/.test(phone)) {
         setPhoneError("Por favor, introduce un teléfono válido.");
         valid = false;
       } else {
@@ -84,7 +84,8 @@ const Registration: React.FC<RegistrationProps> = ({
     return valid;
   };
 
-  const handleRegister = async () => {
+  const handleRegister = async (e: any) => {
+    e.preventDefault();
     if (!validateFields()) return;
 
     setLoading(true);

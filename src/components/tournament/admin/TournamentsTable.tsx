@@ -1,159 +1,221 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
+import { Tournament } from "../../../interfaces/interfaces";
 import {
-  collection,
-  query,
-  where,
-  orderBy,
-  getDocs,
-  updateDoc,
-  doc,
-} from "firebase/firestore";
-import { useNavigate } from "react-router-dom";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TableRow,
-  Button,
   IconButton,
   Paper,
-  useMediaQuery,
+  TablePagination,
   Typography,
+  Box,
+  useMediaQuery,
 } from "@mui/material";
-import { useTheme } from "@mui/material/styles";
-import { Tournament } from "../../../interfaces/interfaces";
+import { BiEdit, BiTrash } from "react-icons/bi";
+import { doc, updateDoc } from "firebase/firestore";
 import { db } from "../../../utils/firebase-config";
 import { CollectionNames } from "../../../utils/collectionNames";
-import { BiEdit, BiPlus, BiTrash } from "react-icons/bi";
-import BlurBoxContainer from "../../BlurBoxContainer";
-import Loader from "../../Loader";
+import { useNavigate } from "react-router-dom";
 import { PagesNames } from "../../../utils/constants";
-import styles from "../../../assets/styles/buttons.module.css"
+import { useTheme } from "@mui/material/styles";
+import { Table, Tbody, Td, Th, Thead, Tr } from "react-super-responsive-table";
+import "react-super-responsive-table/dist/SuperResponsiveTableStyle.css";
+import DeleteConfirmationDialog from "./DeleteConfirmationDialog";
 
-const TournamentsTable: React.FC = () => {
-  const [tournaments, setTournaments] = useState<Tournament[]>([]);
-  const [loading, setLoading] = useState<boolean>(false);
-  const [error, setError] = useState<boolean>(false);
+interface TournamentsTableProps {
+  tournaments: Tournament[];
+  totalDocs: number;
+  setTournaments: React.Dispatch<React.SetStateAction<Tournament[]>>;
+  rowsPerPage: number;
+  setRowsPerPage: React.Dispatch<React.SetStateAction<number>>;
+  setPage: React.Dispatch<React.SetStateAction<number>>;
+  page: number;
+  setLastDoc: React.Dispatch<any>;
+}
+
+const TournamentsTable: React.FC<TournamentsTableProps> = ({
+  tournaments,
+  totalDocs,
+  setTournaments,
+  rowsPerPage,
+  setRowsPerPage,
+  setPage,
+  page,
+  setLastDoc,
+}) => {
   const navigate = useNavigate();
   const theme = useTheme();
   const isSmallScreen = useMediaQuery(theme.breakpoints.down("sm"));
+  const [openDialog, setOpenDialog] = useState<boolean>(false);
+  const [loadingDelete, setLoadingDelete] = useState<boolean>(false);
+  const [selectedTournamentId, setSelectedTournamentId] = useState<
+    string | null
+  >(null);
 
-  useEffect(() => {
-    const fetchTournaments = async () => {
-      setError(false);
-      setLoading(true);
-      try {
-        const q = query(
-          collection(db, CollectionNames.TOURNAMENTS),
-          where("deleted", "==", false),
-          orderBy("startDate", "desc")
-        );
-        const querySnapshot = await getDocs(q);
-        const tournamentsData = querySnapshot.docs.map((doc) => ({
-          id: doc.id,
-          ...doc.data(),
-        })) as Tournament[];
-        setTournaments(tournamentsData);
-      } catch (error) {
-        setError(true);
-      }
-      setLoading(false);
-    };
+  const handleDelete = (id: string) => {
+    setSelectedTournamentId(id);
+    setOpenDialog(true);
+  };
 
-    fetchTournaments();
-  }, []);
+  const handleCloseDialog = () => {
+    setOpenDialog(false);
+    setSelectedTournamentId(null);
+  };
 
-  const handleDelete = async (id: string) => {
-    const tournamentRef = doc(db, CollectionNames.TOURNAMENTS, id);
-    await updateDoc(tournamentRef, { deleted: true });
-    setTournaments((prev) => prev.filter((tournament) => tournament.id !== id));
+  const confirmDelete = async () => {
+    try {
+      if (!selectedTournamentId) return;
+      const tournamentRef = doc(
+        db,
+        CollectionNames.TOURNAMENTS,
+        selectedTournamentId
+      );
+      setLoadingDelete(true);
+      await updateDoc(tournamentRef, { deleted: true });
+      setTournaments((prev) =>
+        prev.filter((tournament) => tournament.id !== selectedTournamentId)
+      );
+      setOpenDialog(false);
+      setSelectedTournamentId(null);
+      setLoadingDelete(false);
+    } catch (error) {
+      alert("No se pudo eliminar el torneo");
+    }
   };
 
   const handleEdit = (id: string) => {
     navigate(`${PagesNames.AdminUpdateTournament}/${id}`);
   };
 
-  const handleAdd = () => {
-    navigate(PagesNames.AdminAddTournament);
+  const handleChangePage = (_event: any, newPage: number) => {
+    setPage(newPage);
+    setLastDoc(null);
+  };
+
+  const handleChangeRowsPerPage = (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    setRowsPerPage(parseInt(event.target.value, 10));
+    setPage(0);
   };
 
   return (
-    <div>
-      <BlurBoxContainer>
-        <Button
-          variant="contained"
-          color="primary"
-          startIcon={<BiPlus />}
-          onClick={handleAdd}
-          fullWidth={isSmallScreen}
-          style={{ marginBottom: "16px" }}
-          className={styles.continueButton}
-        >
-          Añadir Torneo
-        </Button>
-        {loading ? (
-          <Loader />
-        ) : error ? (
-          <Typography
-            color="error"
-            variant="h5"
-            textAlign={"center"}
-            mt={4}
-            mb={3}
-          >
-            Eror obteniendo los torneos. Por favor, recarga la página.
-          </Typography>
-        ) : tournaments.length > 0 ? (
-          <TableContainer component={Paper}>
-            <Table>
-              <TableHead>
-                <TableRow>
-                  <TableCell>Imagen</TableCell>
-                  <TableCell>Nombre</TableCell>
-                  <TableCell>Fecha de inicio</TableCell>
-                  <TableCell>Fecha de fin</TableCell>
-                  <TableCell>Acciones</TableCell>
-                </TableRow>
-              </TableHead>
-              <TableBody>
-                {tournaments.map((tournament) => (
-                  <TableRow key={tournament.id}>
-                    <TableCell>
-                      <img
-                        src={tournament.imagePath.url}
-                        alt={tournament.name}
-                        width="100"
-                      />
-                    </TableCell>
-                    <TableCell>{tournament.name}</TableCell>
-                    <TableCell>
-                      {tournament.startDate.toDate().toLocaleDateString()}
-                    </TableCell>
-                    <TableCell>
-                      {tournament.endDate.toDate().toLocaleDateString()}
-                    </TableCell>
-                    <TableCell>
-                      <IconButton onClick={() => handleEdit(tournament.id!)}>
-                        <BiEdit />
-                      </IconButton>
-                      <IconButton onClick={() => handleDelete(tournament.id!)}>
-                        <BiTrash />
-                      </IconButton>
-                    </TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </TableContainer>
-        ) : (
-          <Typography variant="h5" textAlign={"center"} mt={4} mb={3}>
-            No hay torneos creados.
-          </Typography>
-        )}
-      </BlurBoxContainer>
-    </div>
+    <Box p={isSmallScreen ? 1 : 3} width="100%">
+      <Paper>
+        <Table>
+          <Thead>
+            <Tr>
+              <Th>Banner</Th>
+              <Th>Nombre</Th>
+              <Th>Fecha de inicio</Th>
+              <Th>Fecha de fin</Th>
+              <Th>Estado</Th>
+              <Th>Acciones</Th>
+            </Tr>
+          </Thead>
+          <Tbody>
+            {tournaments.map((tournament) => (
+              <Tr key={tournament.id}>
+                <Td>
+                  <img
+                    src={tournament.imagePath.url}
+                    alt={tournament.name}
+                    width="100"
+                    style={{ maxWidth: "100%" }}
+                  />
+                </Td>
+                <Td>{tournament.name}</Td>
+                <Td>{tournament.startDate.toDate().toLocaleDateString()}</Td>
+                <Td>{tournament.endDate.toDate().toLocaleDateString()}</Td>
+                <Td>
+                  <Typography
+                    color={
+                      new Date() < tournament.endDate.toDate()
+                        ? "success"
+                        : "error"
+                    }
+                  >
+                    {new Date() < tournament.endDate.toDate()
+                      ? "Activo"
+                      : "Disactivo"}
+                  </Typography>
+                </Td>
+                <Td>
+                  <IconButton onClick={() => handleEdit(tournament.id!)}>
+                    <BiEdit color="#fff" />
+                  </IconButton>
+                  <IconButton onClick={() => handleDelete(tournament.id!)}>
+                    <BiTrash color="#fff" />
+                  </IconButton>
+                </Td>
+              </Tr>
+            ))}
+          </Tbody>
+        </Table>
+      </Paper>
+
+      <TablePagination
+        component="div"
+        count={totalDocs}
+        page={page}
+        style={{ justifyContent: "center", marginTop: 24 }}
+        onPageChange={handleChangePage}
+        rowsPerPage={rowsPerPage}
+        onRowsPerPageChange={handleChangeRowsPerPage}
+        rowsPerPageOptions={[5, 10, 25]}
+        labelRowsPerPage="Torneos por página:"
+        labelDisplayedRows={({ from, to, count }) =>
+          `${from}–${to} de ${count !== -1 ? count : `más de ${to}`}`
+        }
+        getItemAriaLabel={(type) => {
+          if (type === "previous") {
+            return "Página anterior";
+          }
+          if (type === "next") {
+            return "Página siguiente";
+          }
+          return "";
+        }}
+        sx={{
+          display: "flex",
+          flexDirection: "column",
+          flexWrap: "wrap",
+          alignItems: "center",
+          justifyContent: "center",
+          ".MuiTablePagination-spacer": {
+            marginBottom: 0,
+          },
+          ".MuiTablePagination-selectLabel": {
+            marginBottom: 0,
+          },
+          ".MuiTablePagination-displayedRows": {
+            marginBottom: 0,
+          },
+          [`@media (max-width: 600px)`]: {
+            ".MuiTablePagination-toolbar": {
+              flexWrap: "wrap",
+              justifyContent: "center",
+            },
+            ".MuiTablePagination-spacer": {
+              display: "none",
+            },
+            ".MuiTablePagination-selectLabel": {
+              display: "none",
+            },
+            ".MuiTablePagination-displayedRows": {
+              fontSize: "0.8rem",
+              marginBottom: 0,
+            },
+            ".MuiTablePagination-select": {
+              fontSize: "0.8rem",
+            },
+          },
+        }}
+      />
+      <DeleteConfirmationDialog
+        open={openDialog}
+        onClose={handleCloseDialog}
+        onConfirm={confirmDelete}
+        loadingDelete={loadingDelete}
+      />
+    </Box>
   );
 };
 
