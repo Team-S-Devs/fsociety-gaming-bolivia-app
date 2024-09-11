@@ -3,6 +3,7 @@ import { createTheme } from "@mui/material";
 import { HelmetProvider } from "react-helmet-async";
 import { UserProvider } from "./contexts/UserContext";
 import 'bootstrap/dist/css/bootstrap.min.css';
+import 'react-toastify/dist/ReactToastify.css';
 import AppRouter from "./AppRouter";
 
 const theme = createTheme({
