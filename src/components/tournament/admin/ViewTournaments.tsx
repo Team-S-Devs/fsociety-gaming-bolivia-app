@@ -78,7 +78,7 @@ const ViewTournaments: React.FC = () => {
   return (
     <div>
       <BlurBoxContainer>
-        <Typography variant="h5">Torneos creados</Typography>
+        <Typography variant="h5" mt={4}>Torneos creados</Typography>
         <Button
           variant="contained"
           color="primary"

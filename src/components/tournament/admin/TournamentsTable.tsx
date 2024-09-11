@@ -159,7 +159,7 @@ const TournamentsTable: React.FC<TournamentsTableProps> = ({
         onPageChange={handleChangePage}
         rowsPerPage={rowsPerPage}
         onRowsPerPageChange={handleChangeRowsPerPage}
-        rowsPerPageOptions={[5, 10, 25]}
+        rowsPerPageOptions={[10]}
         labelRowsPerPage="Torneos por página:"
         labelDisplayedRows={({ from, to, count }) =>
           `${from}–${to} de ${count !== -1 ? count : `más de ${to}`}`
