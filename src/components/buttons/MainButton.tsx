@@ -1,15 +1,16 @@
 import React from "react";
-import { Button } from "@mui/material";
+import { Button, CircularProgress } from "@mui/material";
 import { styled } from "@mui/system";
-import useWindowSize from "../../hooks/useWindowSize";
 
 interface MainButtonProps {
   title: string;
   onClick: () => void;
+  loading?: boolean;
+  color?: string;
 }
 
-const PrimaryButton = styled(Button)<{}>(() => ({
-  backgroundColor: "var(--primary-color)",
+const PrimaryButton = styled(Button)<{ customcolor?: string }>(({ customcolor }) => ({
+  backgroundColor: customcolor || "var(--primary-color)",
   color: "#fff",
   padding: "12px 24px",
   fontSize: "16px",
@@ -17,15 +18,18 @@ const PrimaryButton = styled(Button)<{}>(() => ({
   borderRadius: "8px",
   textTransform: "none",
   "&:hover": {
-    backgroundColor: "#0056b3",
+    backgroundColor: customcolor ? `${customcolor}CC` : "#0056b3",
   },
 }));
 
-const MainButton: React.FC<MainButtonProps> = ({title, onClick }) => {
-
+const MainButton: React.FC<MainButtonProps> = ({ title, onClick, loading, color }) => {
   return (
-    <PrimaryButton color="primary" onClick={onClick}>
+    <PrimaryButton 
+      customcolor={color} 
+      onClick={onClick}
+    >
       {title}
+      {loading && <CircularProgress style={{ marginLeft: 18 }} size={20} color="inherit" />}
     </PrimaryButton>
   );
 };

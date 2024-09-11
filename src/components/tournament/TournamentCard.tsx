@@ -13,7 +13,7 @@ const TournamentCard: React.FC<TournamentCardProps> = ({ tournament }) => {
   
   return (
     <div className={styles.tournamentCard}>
-      <img src={tournament.imagePath} alt={tournament.name} className={styles.tournamentCoverImage} />
+      <img src={tournament.imagePath.url} alt={tournament.imagePath.ref} className={styles.tournamentCoverImage} />
       <div className={styles.tournamentContent}>
         <h2 className={styles.tournamentTitle}>{tournament.name}</h2>
         <div className='mb-1'>

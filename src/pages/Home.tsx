@@ -7,6 +7,7 @@ import Footer from '../components/Footer';
 import { fetchTournaments } from '../contexts/TournamentContext';
 import { Tournament } from '../interfaces/interfaces';
 import Splash from './Splash';
+import { ToastContainer, toast } from 'react-toastify';
 
 const Home: React.FC = () => {
   const [tournaments, setTournaments] = useState<Tournament[]>([]);
@@ -18,7 +19,7 @@ const Home: React.FC = () => {
         const data = await fetchTournaments();
         setTournaments(data);
       } catch (error) {
-        console.error("Error fetching tournaments:", error);
+        toast.error("Error al cargar los torneos. Por favor, inténtelo de nuevo más tarde.");
       } finally {
         setLoading(false);
       }
@@ -28,7 +29,7 @@ const Home: React.FC = () => {
   }, []);
 
   if (loading) {
-    return <Splash/>;
+    return <Splash />;
   }
 
   return (
@@ -39,7 +40,19 @@ const Home: React.FC = () => {
         <h2 className={styles.subtitleHome}>TORNEOS ACTUALES</h2>
         <TournamentList tournaments={tournaments} />
       </div>
-      <Footer/>
+      <Footer />
+      <ToastContainer
+        style={{marginTop: '4rem'}}
+        position="top-right" 
+        autoClose={5000}
+        hideProgressBar 
+        newestOnTop 
+        closeOnClick 
+        rtl={false} 
+        pauseOnFocusLoss 
+        draggable 
+        pauseOnHover 
+      />
     </main>
   );
 };

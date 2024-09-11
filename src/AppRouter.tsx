@@ -13,6 +13,7 @@ import Admin from "./pages/admin/Admin";
 import PrivacyPolicy from "./pages/docs/PrivacyPolicy";
 import ResponsibleDisclosurePolicy from "./pages/docs/ResponsibleDisclosurePolicy";
 import TournamentRules from "./pages/docs/TournamentRules";
+import Profile from "./pages/Profile";
 
 const AppRouter: React.FC = () => {
   const { isAdmin, loading } = useUserContext();
@@ -41,6 +42,7 @@ const AppRouter: React.FC = () => {
                 Component={getAdminComponent(AddTournament)}
               />
               <Route path={PagesNames.Error} Component={Error404} />
+              <Route path={PagesNames.Profile} Component={Profile} />
               <Route
                 path={PagesNames.PrivacyPolicy}
                 Component={PrivacyPolicy}
