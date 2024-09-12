@@ -8,10 +8,12 @@ import { fetchTournaments } from '../contexts/TournamentContext';
 import { Tournament } from '../interfaces/interfaces';
 import Splash from './Splash';
 import { ToastContainer, toast } from 'react-toastify';
+import CustomModal from '../components/home/CustomModal';
 
 const Home: React.FC = () => {
   const [tournaments, setTournaments] = useState<Tournament[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
+  const [showModal, setShowModal] = useState<boolean>(true);
 
   useEffect(() => {
     const loadTournaments = async () => {
@@ -28,12 +30,21 @@ const Home: React.FC = () => {
     loadTournaments();
   }, []);
 
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setShowModal(true);
+    }, 5 * 60 * 1000);
+
+    return () => clearInterval(interval);
+  }, []);
+
   if (loading) {
     return <Splash />;
   }
 
   return (
     <main className={styles.homeContainer}>
+      <CustomModal show={showModal} onClose={() => setShowModal(false)} />
       <img src={bannerApp} alt="banner app" className={styles.backgroundImage} />
       <div className={styles.homeContent}>
         <SliderHome />
