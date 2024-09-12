@@ -55,6 +55,7 @@ export interface Tournament {
   endDate: Timestamp;
   teams: string[];
   createdAt: Timestamp;
+  deleted: boolean;
 }
 
 export interface Team {

@@ -15,7 +15,7 @@ import { db } from "../utils/firebase-config";
 import { useNavigate } from "react-router-dom";
 import { UserType } from "../interfaces/interfaces";
 import { LoadingButton } from "@mui/lab";
-import "../assets/styles/auth.css";
+import styles from "../assets/styles/buttons.module.css";
 import { AiOutlineEye, AiOutlineEyeInvisible } from "react-icons/ai";
 import { CollectionNames } from "../utils/collectionNames";
 
@@ -63,7 +63,7 @@ const Registration: React.FC<RegistrationProps> = ({
       if (!phone.trim()) {
         setPhoneError("El teléfono es requerido.");
         valid = false;
-      } else if (!/^[67][0-9]{6}$/.test(phone)) {
+      } else if (!/^[67][0-9]{7}$/.test(phone)) {
         setPhoneError("Por favor, introduce un teléfono válido.");
         valid = false;
       } else {
@@ -84,7 +84,8 @@ const Registration: React.FC<RegistrationProps> = ({
     return valid;
   };
 
-  const handleRegister = async () => {
+  const handleRegister = async (e: any) => {
+    e.preventDefault();
     if (!validateFields()) return;
 
     setLoading(true);
@@ -215,7 +216,7 @@ const Registration: React.FC<RegistrationProps> = ({
         onClick={handleRegister}
         fullWidth
         loading={loading}
-        className="continue-button"
+        className={styles.continueButton}
       >
         {isforSignUp
           ? loading

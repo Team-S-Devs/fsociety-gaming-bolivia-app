@@ -11,7 +11,7 @@ import { modalities } from "../../../interfaces/enumsData";
 import AwardsForm from "./AwardsForm";
 import Grid from "@mui/material/Grid2";
 import FileUpload from "../../inputs/FileUpload";
-import "../../../assets/styles/auth.css";
+import styles from "../../../assets/styles/buttons.module.css";
 
 const darkDatePickerStyle = {
   backgroundColor: "transparent",
@@ -85,9 +85,11 @@ const TournamentForm: React.FC<TournamentFormProps> = ({
 
   const handleEndDateChange = (date: Dayjs | null) => {
     if (date) {
+      const dateObj = date.toDate();
+      dateObj.setHours(23, 59, 59, 999)
       setTournament((prevTournament) => ({
         ...prevTournament,
-        endDate: Timestamp.fromDate(date.toDate()),
+        endDate: Timestamp.fromDate(dateObj),
       }));
     }
   };
@@ -299,7 +301,7 @@ const TournamentForm: React.FC<TournamentFormProps> = ({
           color="primary"
           disabled={loading}
           loading={loading}
-          className="continue-button"
+          className={styles.continueButton}
           style={{ marginTop: 24 }}
         >
           {loading ? "Creando..." : "Crear Torneo"}

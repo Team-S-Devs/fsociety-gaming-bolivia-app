@@ -2,18 +2,18 @@
   font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
   line-height: 1.5;
   font-weight: 400;
-  
+
   color-scheme: light dark;
   color: rgba(255, 255, 255, 0.87);
   background-color: #242424;
-  
+
   font-synthesis: none;
   text-rendering: optimizeLegibility;
-  
+
   /* --header-color: #0d0827; */
-  --primary-color: #3b3e8f ;
+  --primary-color: #3b3e8f;
   --secondary-color: #3253bc;
-  --third-color: #FFD700;
+  --third-color: #ffd700;
   --gradient-color: linear-gradient(90deg, var(--secondary-color), #ffff);
   --bg: rgb(39, 7, 124);
   --header-color: rgb(6, 6, 31);
@@ -33,7 +33,6 @@ h1 {
   line-height: 1.1;
 }
 
-
 header {
   display: flex;
   position: fixed;
@@ -50,10 +49,9 @@ header {
 }
 
 header a {
-	font-weight: 500;
-	text-decoration: inherit;
+  font-weight: 500;
+  text-decoration: inherit;
 }
-
 
 /* Contenedor general personalizado */
 .container-general {
@@ -95,16 +93,12 @@ header a {
   }
 }
 
-
-
-
 @media (max-width: 1268px) {
   nav {
     display: none;
-    visibility:hidden;
+    visibility: hidden;
   }
 }
-
 
 @media (prefers-color-scheme: light) {
   :root {
@@ -127,4 +121,21 @@ a {
 a:hover {
   text-decoration: underline;
   color: #39c1c1;
+}
+
+table {
+  border-color: #1a064f;
+}
+
+table th {
+  background-color: #120438;
+  color: #fff;
+  padding: 20px;
+}
+
+table td {
+  background-color: #1a064f;
+  border-color: #1a064f;
+  color: #fff;
+  padding: 20px;
 }

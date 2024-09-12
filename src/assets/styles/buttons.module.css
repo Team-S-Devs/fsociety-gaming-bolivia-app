@@ -1,12 +1,12 @@
-.continue-button {
+.continueButton {
   background-color: #1fc1c1 !important;
   color: #000 !important;
-  font-size: 16px !important;
+  font-size: 18px !important;
   letter-spacing: 1px !important;
   margin-top: 24px !important;
 }
 
-.continue-button:hover {
+.continueButton:hover {
     background: #15acac !important;
     color: #fff !important;
 }

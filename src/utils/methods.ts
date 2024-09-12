@@ -18,5 +18,6 @@ export const getEmptyTournament = (): Tournament => {
     endDate: Timestamp.now(),
     teams: [],
     createdAt: Timestamp.now(),
+    deleted: false
   };
 };
