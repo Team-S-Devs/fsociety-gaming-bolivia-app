@@ -1,7 +1,15 @@
 import React, { useState, useEffect } from "react";
 import { TextField, Typography } from "@mui/material";
 import { getAuth, User, signOut } from "firebase/auth";
-import { doc, getDoc, updateDoc } from "firebase/firestore";
+import {
+  collection,
+  doc,
+  getDoc,
+  getDocs,
+  query,
+  updateDoc,
+  where,
+} from "firebase/firestore";
 import { db } from "../utils/firebase-config";
 import { CollectionNames } from "../utils/collectionNames";
 import ContainerWithBackground from "../components/ContainerWithBackground";
@@ -39,7 +47,9 @@ const Profile: React.FC = () => {
     const fetchUserData = async () => {
       if (!currentUser) return;
       try {
-        const userDoc = await getDoc(doc(db, CollectionNames.Users, currentUser.uid));
+        const userDoc = await getDoc(
+          doc(db, CollectionNames.Users, currentUser.uid)
+        );
         if (userDoc.exists()) {
           const data = userDoc.data() as UserData;
           setUserData({
@@ -77,9 +87,25 @@ const Profile: React.FC = () => {
     if (!currentUser) return;
     setUpdating(true);
     try {
+      const nameLowerCase = userData.name.toLowerCase();
+      const usersCollectionRef = collection(db, CollectionNames.Users);
+      const q = query(
+        usersCollectionRef,
+        where("nameLowerCase", "==", nameLowerCase)
+      );
+      const querySnapshot = await getDocs(q);
+
+      if (!querySnapshot.empty) {
+        setNameError(
+          "El nombre de usuario ya está en uso. Por favor, elige otro."
+        );
+        setLoading(false);
+        return;
+      }
       const userDocRef = doc(db, CollectionNames.Users, currentUser.uid);
       await updateDoc(userDocRef, {
         name: userData.name,
+        nameLowerCase,
         phone: Number(userData.phone),
       });
       setSuccessMessage("Perfil actualizado con éxito.");
@@ -100,9 +126,10 @@ const Profile: React.FC = () => {
     }
   };
 
-  const handleChange = (field: keyof UserData) => (event: React.ChangeEvent<HTMLInputElement>) => {
-    setUserData({ ...userData, [field]: event.target.value });
-  };
+  const handleChange =
+    (field: keyof UserData) => (event: React.ChangeEvent<HTMLInputElement>) => {
+      setUserData({ ...userData, [field]: event.target.value });
+    };
 
   if (loading) {
     return <Splash />;
@@ -111,7 +138,10 @@ const Profile: React.FC = () => {
   return (
     <ContainerWithBackground urlImage="/src/assets/bannerFsociety.jpg">
       <div className={styles.profileContainer}>
-        <form className={styles.profileForm} onSubmit={(e) => e.preventDefault()}>
+        <form
+          className={styles.profileForm}
+          onSubmit={(e) => e.preventDefault()}
+        >
           <Typography variant="h4" gutterBottom className={styles.title}>
             {userData.name}
           </Typography>
@@ -126,7 +156,7 @@ const Profile: React.FC = () => {
             </Typography>
           )}
           <TextField
-            label="Nombre"
+            label="Nombre de usuario (nickname)"
             fullWidth
             margin="normal"
             value={userData.name}
@@ -157,8 +187,17 @@ const Profile: React.FC = () => {
             className={styles.inputFieldDisabled}
           />
           <div className="d-flex justify-content-between flex-wrap mt-3">
-            <MainButton title="Cerrar Sesión" onClick={handleLogout} color="#bb0c0c" loading={loggingOut} />
-            <MainButton title="Guardar" onClick={handleUpdateProfile} loading={updating} />
+            <MainButton
+              title="Cerrar Sesión"
+              onClick={handleLogout}
+              color="#bb0c0c"
+              loading={loggingOut}
+            />
+            <MainButton
+              title="Guardar"
+              onClick={handleUpdateProfile}
+              loading={updating}
+            />
           </div>
         </form>
       </div>

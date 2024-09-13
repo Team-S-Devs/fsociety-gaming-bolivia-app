@@ -10,14 +10,15 @@ import {
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
 } from "firebase/auth";
-import { doc, setDoc } from "firebase/firestore";
-import { db } from "../utils/firebase-config";
+import { collection, doc, getDocs, query, setDoc, where } from "firebase/firestore";
+import { db } from "../../utils/firebase-config";
 import { useNavigate } from "react-router-dom";
-import { UserType } from "../interfaces/interfaces";
+import { UserType } from "../../interfaces/interfaces";
 import { LoadingButton } from "@mui/lab";
-import styles from "../assets/styles/buttons.module.css";
+import styles from "../../assets/styles/buttons.module.css";
 import { AiOutlineEye, AiOutlineEyeInvisible } from "react-icons/ai";
-import { CollectionNames } from "../utils/collectionNames";
+import { CollectionNames } from "../../utils/collectionNames";
+import { validateName, validatePhone } from "../../utils/validatorUtil";
 
 interface RegistrationProps {
   isforSignUp: boolean;
@@ -47,28 +48,13 @@ const Registration: React.FC<RegistrationProps> = ({
     let valid = true;
 
     if (isforSignUp) {
-      if (!name.trim()) {
-        setNameError("El nombre es requerido.");
-        valid = false;
-      } else if (!/^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s'-]+$/.test(name)) {
-        setNameError("El nombre introducido no es válido.");
-        valid = false;
-      } else if (name.length < 3) {
-        setNameError("El nombre debe tener por lo menos 3 caracteres.");
-        valid = false;
-      } else {
-        setNameError(null);
-      }
+      const nameValidation = validateName(name);
+      setNameError(nameValidation);
 
-      if (!phone.trim()) {
-        setPhoneError("El teléfono es requerido.");
-        valid = false;
-      } else if (!/^[67][0-9]{7}$/.test(phone)) {
-        setPhoneError("Por favor, introduce un teléfono válido.");
-        valid = false;
-      } else {
-        setPhoneError(null);
-      }
+      const phoneValidation = validatePhone(name);
+      setPhoneError(phoneValidation);
+
+      if(nameValidation || phoneValidation) return;
     }
 
     if (!password.trim()) {
@@ -87,26 +73,38 @@ const Registration: React.FC<RegistrationProps> = ({
   const handleRegister = async (e: any) => {
     e.preventDefault();
     if (!validateFields()) return;
-
+  
     setLoading(true);
-
+  
     try {
       if (isforSignUp) {
+        const nameLowerCase = name.toLowerCase();
+        const usersCollectionRef = collection(db, CollectionNames.Users);
+        const q = query(usersCollectionRef, where("nameLowerCase", "==", nameLowerCase));
+        const querySnapshot = await getDocs(q);
+  
+        if (!querySnapshot.empty) {
+          setNameError("El nombre de usuario ya está en uso. Por favor, elige otro.");
+          setLoading(false);
+          return;
+        }
+  
         const userCredential = await createUserWithEmailAndPassword(
           auth,
           email.toLowerCase(),
           password
         );
         const user = userCredential.user;
-
+  
         const userDocRef = doc(db, CollectionNames.Users, user.uid);
         await setDoc(userDocRef, {
           name,
+          nameLowerCase, 
           email: email.toLowerCase(),
           phone: Number(phone),
           type: UserType.USER,
         });
-
+  
         setRegistrationSuccess(true);
       } else {
         await signInWithEmailAndPassword(auth, email, password);
@@ -146,7 +144,7 @@ const Registration: React.FC<RegistrationProps> = ({
       {isforSignUp && (
         <>
           <TextField
-            label="Nombre"
+            label="Nombre de usuario (nickname)"
             name="name"
             fullWidth
             margin="normal"
