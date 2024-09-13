@@ -104,7 +104,7 @@ const TournamentsTable: React.FC<TournamentsTableProps> = ({
   return (
     <Box p={isSmallScreen ? 1 : 3} width="100%">
       <Paper>
-        <Table>
+        <Table className="dark-table">
           <Thead>
             <Tr>
               <Th>Banner</Th>
@@ -139,11 +139,11 @@ const TournamentsTable: React.FC<TournamentsTableProps> = ({
                   >
                     {new Date() <= tournament.endDate.toDate()
                       ? "Activo"
-                      : "Disactivo"}
+                      : "Desactivo"}
                   </Typography>
                 </Td>
                 <Td>
-                  <IconButton onClick={() => handleEdit(tournament.id!)}>
+                  <IconButton onClick={() => handleEdit(tournament.fakeId!)}>
                     <BiEdit color="#fff" />
                   </IconButton>
                   <IconButton onClick={() => handleDelete(tournament.id!)}>

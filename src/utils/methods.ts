@@ -6,13 +6,14 @@ export const getEmptyTournament = (): Tournament => {
   dateObj.setHours(23, 59, 59, 999);
 
   return {
+    fakeId: new Date().toISOString(),
     name: "",
     description: "",
     awards: [],
     inscriptionPrice: 0,
     imagePath: {
-      ref: "",
-      url: "",
+      ref: `tournaments/${Date.now().toString()}`,
+      url: ""
     },
     participants: 0,
     teamLimit: 0,
