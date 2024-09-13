@@ -43,6 +43,7 @@ export interface ImageRefPath {
 
 export interface Tournament {
   id?: string;
+  fakeId?: string;
   name: string;
   description: string;
   awards: string[];
