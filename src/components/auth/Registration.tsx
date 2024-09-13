@@ -18,7 +18,7 @@ import { LoadingButton } from "@mui/lab";
 import styles from "../../assets/styles/buttons.module.css";
 import { AiOutlineEye, AiOutlineEyeInvisible } from "react-icons/ai";
 import { CollectionNames } from "../../utils/collectionNames";
-import { validateName, validatePhone } from "../../utils/validatorUtil";
+import { validateNickname, validatePhone } from "../../utils/validatorUtil";
 
 interface RegistrationProps {
   isforSignUp: boolean;
@@ -32,12 +32,12 @@ const Registration: React.FC<RegistrationProps> = ({
   const navigate = useNavigate();
   const auth = getAuth();
 
-  const [name, setName] = useState<string>("");
+  const [nickname, setNickname] = useState<string>("");
   const [phone, setPhone] = useState<string>("");
   const [password, setPassword] = useState<string>("");
   const [showPassword, setShowPassword] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(false);
-  const [nameError, setNameError] = useState<string | null>(null);
+  const [nicknameError, setNicknameError] = useState<string | null>(null);
   const [phoneError, setPhoneError] = useState<string | null>(null);
   const [passwordError, setPasswordError] = useState<string | null>(null);
   const [generalError, setGeneralError] = useState<string | null>(null);
@@ -48,13 +48,13 @@ const Registration: React.FC<RegistrationProps> = ({
     let valid = true;
 
     if (isforSignUp) {
-      const nameValidation = validateName(name);
-      setNameError(nameValidation);
+      const nameValidation = validateNickname(nickname);
+      setNicknameError(nameValidation);
 
-      const phoneValidation = validatePhone(name);
+      const phoneValidation = validatePhone(phone);
       setPhoneError(phoneValidation);
 
-      if(nameValidation || phoneValidation) return;
+      if(nameValidation || phoneValidation) return false;
     }
 
     if (!password.trim()) {
@@ -78,13 +78,13 @@ const Registration: React.FC<RegistrationProps> = ({
   
     try {
       if (isforSignUp) {
-        const nameLowerCase = name.toLowerCase();
+        const nicknameLowerCase = nickname.toLowerCase();
         const usersCollectionRef = collection(db, CollectionNames.Users);
-        const q = query(usersCollectionRef, where("nameLowerCase", "==", nameLowerCase));
+        const q = query(usersCollectionRef, where("nicknameLowerCase", "==", nicknameLowerCase));
         const querySnapshot = await getDocs(q);
   
         if (!querySnapshot.empty) {
-          setNameError("El nombre de usuario ya está en uso. Por favor, elige otro.");
+          setNicknameError("El nombre de usuario ya está en uso. Por favor, elige otro.");
           setLoading(false);
           return;
         }
@@ -98,8 +98,8 @@ const Registration: React.FC<RegistrationProps> = ({
   
         const userDocRef = doc(db, CollectionNames.Users, user.uid);
         await setDoc(userDocRef, {
-          name,
-          nameLowerCase, 
+          nickname,
+          nicknameLowerCase, 
           email: email.toLowerCase(),
           phone: Number(phone),
           type: UserType.USER,
@@ -145,17 +145,17 @@ const Registration: React.FC<RegistrationProps> = ({
         <>
           <TextField
             label="Nombre de usuario (nickname)"
-            name="name"
+            name="nickname"
             fullWidth
             margin="normal"
-            value={name}
+            value={nickname}
             onChange={(e) => {
-              setName(e.target.value.trim());
-              setNameError(null);
+              setNickname(e.target.value.trim());
+              setNicknameError(null);
             }}
-            error={!!nameError}
+            error={!!nicknameError}
             required
-            helperText={nameError}
+            helperText={nicknameError}
           />
           <TextField
             label="Teléfono"
@@ -178,7 +178,7 @@ const Registration: React.FC<RegistrationProps> = ({
         style={{ marginTop: 12 }}
         id="password"
         value={password}
-        name={name}
+        name={nickname}
         type={showPassword ? "text" : "password"}
         label={"Contraseña"}
         required={true}

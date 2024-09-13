@@ -21,8 +21,8 @@ export enum TournamentModality {
 
 export interface UserInterface {
   id?: string;
-  name: string;
-  nameLowerCase: string; // This attribute will be used just for name unique validation
+  nickname: string;
+  nicknameLowerCase: string; // This attribute will be used just for nickname unique validation
   email: string;
   phone: number;
   range?: RangeUser;

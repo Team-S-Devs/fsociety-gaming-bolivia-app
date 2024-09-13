@@ -1,4 +1,4 @@
-export const validateName = (name: string): string | null => {
+export const validateNickname = (name: string): string | null => {
     if (!name.trim()) {
       return "El nombre es requerido.";
     } else if (!/^[a-zA-Z0-9._-]{3,16}$/.test(name)) {

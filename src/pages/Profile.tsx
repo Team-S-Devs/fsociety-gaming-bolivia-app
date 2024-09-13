@@ -16,11 +16,12 @@ import ContainerWithBackground from "../components/ContainerWithBackground";
 import Splash from "./Splash";
 import styles from "../assets/styles/profile.module.css";
 import MainButton from "../components/buttons/MainButton";
-import { validateName, validatePhone } from "../utils/validatorUtil";
+import { validateNickname, validatePhone } from "../utils/validatorUtil";
 import { useNavigate } from "react-router-dom";
+import { useUserContext } from "../contexts/UserContext";
 
 interface UserData {
-  name: string;
+  nickname: string;
   phone: string;
   email: string;
 }
@@ -30,8 +31,10 @@ const Profile: React.FC = () => {
   const navigate = useNavigate();
   const currentUser = auth.currentUser as User | null;
 
+  const { userInfo } = useUserContext();
+
   const [userData, setUserData] = useState<UserData>({
-    name: "",
+    nickname: "",
     phone: "",
     email: "",
   });
@@ -40,7 +43,7 @@ const Profile: React.FC = () => {
   const [loggingOut, setLogOut] = useState<boolean>(false);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
-  const [nameError, setNameError] = useState<string | null>(null);
+  const [nicknameError, setNicknameError] = useState<string | null>(null);
   const [phoneError, setPhoneError] = useState<string | null>(null);
 
   useEffect(() => {
@@ -53,7 +56,7 @@ const Profile: React.FC = () => {
         if (userDoc.exists()) {
           const data = userDoc.data() as UserData;
           setUserData({
-            name: data.name || "",
+            nickname: data.nickname || "",
             phone: data.phone || "",
             email: data.email || "",
           });
@@ -76,10 +79,10 @@ const Profile: React.FC = () => {
 
   const handleUpdateProfile = async () => {
     setSuccessMessage(null);
-    const nameValidation = validateName(userData.name);
+    const nameValidation = validateNickname(userData.nickname);
     const phoneValidation = validatePhone(userData.phone);
 
-    setNameError(nameValidation);
+    setNicknameError(nameValidation);
     setPhoneError(phoneValidation);
 
     if (nameValidation || phoneValidation) return;
@@ -87,24 +90,26 @@ const Profile: React.FC = () => {
     if (!currentUser) return;
     setUpdating(true);
     try {
-      const nameLowerCase = userData.name.toLowerCase();
-      const usersCollectionRef = collection(db, CollectionNames.Users);
-      const q = query(
-        usersCollectionRef,
-        where("nameLowerCase", "==", nameLowerCase)
-      );
-      const querySnapshot = await getDocs(q);
-
-      if (!querySnapshot.empty) {
-        setNameError(
-          "El nombre de usuario ya está en uso. Por favor, elige otro."
+      const nameLowerCase = userData.nickname.toLowerCase();
+      if (userInfo?.nicknameLowerCase !== userData.nickname.toLowerCase()) {
+        const usersCollectionRef = collection(db, CollectionNames.Users);
+        const q = query(
+          usersCollectionRef,
+          where("nameLowerCase", "==", nameLowerCase)
         );
-        setLoading(false);
-        return;
+        const querySnapshot = await getDocs(q);
+
+        if (!querySnapshot.empty) {
+          setNicknameError(
+            "El nombre de usuario ya está en uso. Por favor, elige otro."
+          );
+          setLoading(false);
+          return;
+        }
       }
       const userDocRef = doc(db, CollectionNames.Users, currentUser.uid);
       await updateDoc(userDocRef, {
-        name: userData.name,
+        name: userData.nickname,
         nameLowerCase,
         phone: Number(userData.phone),
       });
@@ -143,7 +148,7 @@ const Profile: React.FC = () => {
           onSubmit={(e) => e.preventDefault()}
         >
           <Typography variant="h4" gutterBottom className={styles.title}>
-            {userData.name}
+            {userData.nickname}
           </Typography>
           {successMessage && (
             <Typography className={styles.successMessage}>
@@ -159,10 +164,10 @@ const Profile: React.FC = () => {
             label="Nombre de usuario (nickname)"
             fullWidth
             margin="normal"
-            value={userData.name}
-            onChange={handleChange("name")}
-            error={!!nameError}
-            helperText={nameError}
+            value={userData.nickname}
+            onChange={handleChange("nickname")}
+            error={!!nicknameError}
+            helperText={nicknameError}
             required
             className={styles.inputField}
           />
