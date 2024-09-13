@@ -3,12 +3,13 @@ import { Tournament, TournamentModality } from "../interfaces/interfaces";
 
 export const getEmptyTournament = (): Tournament => {
   return {
+    fakeId: new Date().toISOString(),
     name: "",
     description: "",
     awards: [],
     inscriptionPrice: 0,
     imagePath: {
-      ref: "",
+      ref: `tournaments/${Date.now().toString()}`,
       url: ""
     },
     participants: 0,
