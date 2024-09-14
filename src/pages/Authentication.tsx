@@ -4,7 +4,7 @@ import ContainerWithBackground from "../components/ContainerWithBackground";
 import { LoadingButton } from "@mui/lab";
 import BlurBoxContainer from "../components/BlurBoxContainer";
 import styles from "../assets/styles/buttons.module.css";
-import Registration from "./Registration";
+import Registration from "../components/auth/Registration";
 import { collection, getDocs, query, where } from "firebase/firestore";
 import { db } from "../utils/firebase-config";
 import { CollectionNames } from "../utils/collectionNames";

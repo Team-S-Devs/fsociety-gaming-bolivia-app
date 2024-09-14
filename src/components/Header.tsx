@@ -68,7 +68,7 @@ const Header: React.FC = () => {
                     <span className={`${styles.link} ${styles.mainButton} ml-1`}>
                       {user
                         ? userInfo
-                          ? userInfo.name.split(" ")[0]
+                          ? userInfo.nickname.split(" ")[0]
                           : ""
                         : "Iniciar Sesion"}
                     </span>
