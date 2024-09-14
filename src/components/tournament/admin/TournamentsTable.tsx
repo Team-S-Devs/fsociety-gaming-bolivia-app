@@ -24,10 +24,10 @@ interface TournamentsTableProps {
   totalDocs: number;
   setTournaments: React.Dispatch<React.SetStateAction<Tournament[]>>;
   rowsPerPage: number;
-  setRowsPerPage: React.Dispatch<React.SetStateAction<number>>;
   setPage: React.Dispatch<React.SetStateAction<number>>;
   page: number;
-  setLastDoc: React.Dispatch<any>;
+  setDirection: React.Dispatch<React.SetStateAction<"prev" | "next" | undefined>>;
+  pages: number;
 }
 
 const TournamentsTable: React.FC<TournamentsTableProps> = ({
@@ -35,10 +35,10 @@ const TournamentsTable: React.FC<TournamentsTableProps> = ({
   totalDocs,
   setTournaments,
   rowsPerPage,
-  setRowsPerPage,
   setPage,
   page,
-  setLastDoc,
+  setDirection,
+  pages
 }) => {
   const navigate = useNavigate();
   const theme = useTheme();
@@ -85,15 +85,20 @@ const TournamentsTable: React.FC<TournamentsTableProps> = ({
   };
 
   const handleChangePage = (_event: any, newPage: number) => {
-    setPage(newPage);
-    setLastDoc(null);
+    if(newPage > (page - 1)) handleNextClick()
+    else handlePreviousClick()
   };
 
-  const handleChangeRowsPerPage = (
-    event: React.ChangeEvent<HTMLInputElement>
-  ) => {
-    setRowsPerPage(parseInt(event.target.value, 10));
-    setPage(0);
+  const handlePreviousClick = () => {
+    if (page === 1) return;
+    setDirection("prev");
+    setPage((prev) => prev - 1);
+  };
+
+  const handleNextClick = () => {
+    if (page === pages) return;
+    setDirection("next");
+    setPage((prev) => prev + 1);
   };
 
   return (
@@ -132,7 +137,7 @@ const TournamentsTable: React.FC<TournamentsTableProps> = ({
                         : "error"
                     }
                   >
-                    {new Date() < tournament.endDate.toDate()
+                    {new Date() <= tournament.endDate.toDate()
                       ? "Activo"
                       : "Desactivo"}
                   </Typography>
@@ -154,11 +159,10 @@ const TournamentsTable: React.FC<TournamentsTableProps> = ({
       <TablePagination
         component="div"
         count={totalDocs}
-        page={page}
+        page={page - 1}
         style={{ justifyContent: "center", marginTop: 24 }}
         onPageChange={handleChangePage}
         rowsPerPage={rowsPerPage}
-        onRowsPerPageChange={handleChangeRowsPerPage}
         rowsPerPageOptions={[10]}
         labelRowsPerPage="Torneos por página:"
         labelDisplayedRows={({ from, to, count }) =>
