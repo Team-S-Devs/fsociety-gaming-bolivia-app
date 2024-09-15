@@ -43,12 +43,17 @@ export interface ImageRefPath {
     url: string;
 }
 
+export interface RawContent {
+  blocks: [],
+  entityMap: {}
+}
+
 export interface Tournament {
   id?: string;
   fakeId?: string;
   name: string;
-  description: {};
-  rules: {};
+  description: RawContent;
+  rules: RawContent;
   awards: string[];
   inscriptionPrice: number | "";
   imagePath: ImageRefPath;
