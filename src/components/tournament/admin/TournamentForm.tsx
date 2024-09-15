@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { TextField, Typography, Box, MenuItem, Switch } from "@mui/material";
 import { DatePicker } from "antd";
 import dayjs, { Dayjs } from "dayjs";
@@ -12,6 +12,9 @@ import AwardsForm from "./AwardsForm";
 import Grid from "@mui/material/Grid2";
 import FileUpload from "../../inputs/FileUpload";
 import styles from "../../../assets/styles/buttons.module.css";
+import { Editor } from "react-draft-wysiwyg";
+import { EditorState, convertToRaw } from "draft-js";
+import "react-draft-wysiwyg/dist/react-draft-wysiwyg.css";
 
 const darkDatePickerStyle = {
   backgroundColor: "transparent",
@@ -34,6 +37,8 @@ interface TournamentFormProps {
   setFile: React.Dispatch<React.SetStateAction<File | null>>;
   setSuccess: React.Dispatch<React.SetStateAction<string | null>>;
   isEditing?: boolean;
+  previewFile: File | null;
+  setPreviewFile: React.Dispatch<React.SetStateAction<File | null>>;
 }
 
 const TournamentForm: React.FC<TournamentFormProps> = ({
@@ -48,12 +53,30 @@ const TournamentForm: React.FC<TournamentFormProps> = ({
   setFile,
   setSuccess,
   isEditing = false,
+  previewFile,
+  setPreviewFile,
 }) => {
   const [loading, setLoading] = React.useState<boolean>(false);
   const [teamLimitError, setTeamLimitError] = React.useState<string | null>(
     null
   );
   const [priceError, setPriceError] = React.useState<string | null>(null);
+  const [editorState, setEditorState] = useState<EditorState>(
+    EditorState.createEmpty(tournament.description)
+  );
+  const [editorStateRules, setEditorStateRules] = useState<EditorState>(
+    EditorState.createEmpty(tournament.rules ?? "")
+  );
+
+  const handleEditorChange = (
+    newState: EditorState,
+    name: "rules" | "description"
+  ) => {
+    if (name === "description") setEditorState(newState);
+    else setEditorStateRules(newState);
+    const rawContent = convertToRaw(newState.getCurrentContent());
+    setTournament((prev) => ({ ...prev, [name]: rawContent }));
+  };
 
   const handleInputChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -99,7 +122,6 @@ const TournamentForm: React.FC<TournamentFormProps> = ({
     if (
       !tournament.name ||
       !tournament.inscriptionPrice ||
-      !tournament.participants ||
       !tournament.teamLimit
     ) {
       setError("Por favor, rellena todos los campos.");
@@ -184,18 +206,18 @@ const TournamentForm: React.FC<TournamentFormProps> = ({
           required
         />
 
-        <TextField
-          label="Descripción"
-          name="description"
-          placeholder="Descripción del torneo"
-          value={tournament.description}
-          onChange={handleInputChange}
-          fullWidth
-          multiline
-          rows={5}
-          margin="normal"
-          required
+        <Typography mt={2}>Descripción:</Typography>
+
+        <Editor
+          wrapperClassName="wrapper"
+          editorClassName="editor"
+          toolbarClassName="toolbar"
+          editorState={editorState}
+          onEditorStateChange={(val: EditorState) =>
+            handleEditorChange(val, "description")
+          }
         />
+
         <div style={{ width: "100%" }}>
           <Grid container spacing={2}>
             <Grid size={{ md: 6, sm: 6 }}>
@@ -288,7 +310,26 @@ const TournamentForm: React.FC<TournamentFormProps> = ({
             imgUrl={tournament.imagePath.url}
           />
         </div>
+        <div style={{ marginTop: 24 }}>
+          <Typography>Preview del torneo:</Typography>
+          <FileUpload
+            setFile={setPreviewFile}
+            file={previewFile}
+            imgUrl={tournament.previewImagePath.url}
+          />
+        </div>
         <AwardsForm tournament={tournament} setTournament={setTournament} />
+        <Typography mt={2}>Reglas:</Typography>
+
+        <Editor
+          wrapperClassName="wrapper"
+          editorClassName="editor"
+          toolbarClassName="toolbar"
+          editorState={editorStateRules}
+          onEditorStateChange={(val: EditorState) =>
+            handleEditorChange(val, "rules")
+          }
+        />
         <LoadingButton
           type="submit"
           fullWidth

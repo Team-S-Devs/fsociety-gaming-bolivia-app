@@ -13,7 +13,11 @@ export const getEmptyTournament = (): Tournament => {
     awards: [],
     inscriptionPrice: 0,
     imagePath: {
-      ref: `tournaments/${Date.now().toString()}`,
+      ref: `tournaments/banners/${Date.now().toString()}`,
+      url: "",
+    },
+    previewImagePath: {
+      ref: `tournaments/previews/${Date.now().toString()}`,
       url: "",
     },
     participants: 0,

@@ -34,12 +34,6 @@ const FileUpload: React.FC<FileUploadProps> = ({
 
   const borderColor = isDragActive ? "#72f7f7" : "#ccc";
 
-  console.log(file
-    ? URL.createObjectURL(file)
-    : imgUrl && imgUrl !== ""
-    ? imgUrl
-    : undefined)
-
   return (
     <Box
       {...getRootProps()}
