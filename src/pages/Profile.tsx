@@ -202,29 +202,31 @@ const Profile: React.FC = () => {
             margin="normal"
             slotProps={{
               input: {
-                readOnly: true,      
+                readOnly: true,
               },
             }}
             value={userData.email}
             className={styles.inputFieldDisabled}
           />
-          <div className="d-flex justify-content-between flex-wrap mt-3">
+          <div className="d-flex justify-content-between flex-wrap mt-4">
             <MainButton
-              title="Cerrar Sesión"
-              onClick={handleLogout}
-              color="#bb0c0c"
-              loading={loggingOut}
+              title="Cambiar Contraseña"
+              onClick={handleResetPassword}
+              color="#007bff"
             />
             <MainButton
               title="Guardar"
               onClick={handleUpdateProfile}
               loading={updating}
             />
-            <MainButton
-              title="Restablecer Contraseña"
-              onClick={handleResetPassword}
-              color="#007bff"
-            />
+            <div className="mt-2">
+              <MainButton
+                title="Cerrar Sesión"
+                onClick={handleLogout}
+                color="#bb0c0c"
+                loading={loggingOut}
+              />
+            </div>
           </div>
         </form>
       </div>
