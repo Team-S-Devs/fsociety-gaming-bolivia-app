@@ -67,19 +67,15 @@ const ViewTournaments: React.FC = () => {
 
   return (
     <div>
-      <BlurBoxContainer
-
-      >
-        <Typography variant="h5" mt={4}>
-          Torneos creados
-        </Typography>
+      <BlurBoxContainer>
+        <Typography variant="h5">Torneos creados</Typography>
         <Button
           variant="contained"
           color="primary"
           startIcon={<BiPlus />}
           onClick={handleAdd}
           fullWidth={isSmallScreen}
-          style={{ marginBottom: "16px" }}
+          style={{ marginBottom: "28px" }}
           className={styles.continueButton}
         >
           Añadir Torneo
