@@ -48,9 +48,11 @@ export interface Tournament {
   fakeId?: string;
   name: string;
   description: string;
+  rules: string;
   awards: string[];
   inscriptionPrice: number | "";
   imagePath: ImageRefPath;
+  previewImagePath: ImageRefPath;
   participants: number | "";
   teamLimit: number | "";
   modality: TournamentModality;

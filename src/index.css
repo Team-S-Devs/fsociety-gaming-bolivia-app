@@ -139,3 +139,18 @@ table.dark-table td {
   color: #fff;
   padding: 20px;
 }
+
+.toolbar {
+  background-color: transparent;
+}
+
+.wrapper{
+  border: 1px solid grey;
+}
+
+.editor{
+  background-color: transparent;
+  color: #fff;
+  min-height: 50px;
+}
+

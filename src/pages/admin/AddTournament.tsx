@@ -20,6 +20,7 @@ const AddTournament: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
   const [file, setFile] = useState<File | null>(null);
+  const [previewFile, setPreviewFile] = useState<File | null>(null);
 
   const handleUploadImage = async (ref: string): Promise<string> => {
     if (!file) return "";
@@ -44,25 +45,32 @@ const AddTournament: React.FC = () => {
     }
 
     try {
-      const ref = `${StoragePaths.Tournaments}/${Date.now().toString()}`;
-      const url = await handleUploadImage(ref);
-      if (url !== "") {
-        await addDoc(collection(db, CollectionNames.Tournaments), {
-          ...tournament,
-          fakeId: new Date().toISOString(),
-          imagePath: {
-            url,
-            ref,
-          },
-          createdAt: Timestamp.now(),
-        });
-        setSuccess("Torneo añadido exitosamente.");
-        setTournament(getEmptyTournament());
-        setFile(null);
-        navigate(PagesNames.Admin)
-      } else {
-        setError("Error subiendo la imagen. Inténtalo de nuevo.");
-      }
+      const refBanner = `${
+        StoragePaths.TournamentsPreviews
+      }/${Date.now().toString()}`;
+      const urlBanner = await handleUploadImage(refBanner);
+
+      const refPreview = `${
+        StoragePaths.TournamentsPreviews
+      }/${Date.now().toString()}`;
+      const urlPreview = await handleUploadImage(refPreview);
+      await addDoc(collection(db, CollectionNames.Tournaments), {
+        ...tournament,
+        fakeId: new Date().toTimeString(),
+        imagePath: {
+          url: urlBanner,
+          ref: refBanner,
+        },
+        previewImagePath: {
+          url: urlPreview,
+          ref: refPreview,
+        },
+        createdAt: Timestamp.now(),
+      });
+      setSuccess("Torneo añadido exitosamente.");
+      setTournament(getEmptyTournament());
+      setFile(null);
+      navigate(PagesNames.Admin);
     } catch (err) {
       setError("Error añadiendo el torneo. Inténtalo de nuevo.");
     }
@@ -88,6 +96,8 @@ const AddTournament: React.FC = () => {
             file={file}
             setFile={setFile}
             setSuccess={setSuccess}
+            previewFile={previewFile}
+            setPreviewFile={setPreviewFile}
           />
         </BlurBoxContainer>
       </Container>

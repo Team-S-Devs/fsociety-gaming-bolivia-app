@@ -5,5 +5,7 @@ export enum CollectionNames {
 
 export enum StoragePaths {
     ProfileImages = "profile-images",
-    Tournaments = "tournaments"
+    Tournaments = "tournaments",
+    TournamentsBanners = "tournaments/banners",
+    TournamentsPreviews = "tournaments/previews",
 }
