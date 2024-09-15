@@ -28,7 +28,7 @@ export const getTournamentByFakeId = async (fakeId: string): Promise<Tournament 
     const tournamentDoc = querySnapshot.docs[0];
     return { id: tournamentDoc.id, ...tournamentDoc.data() } as Tournament;
   } else {
-    console.log("No such tournament with that fakeId!");
+    toast.error("No such tournament with that fakeId!");
     return null;
   }
 };

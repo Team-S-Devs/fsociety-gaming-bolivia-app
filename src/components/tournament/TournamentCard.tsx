@@ -24,8 +24,8 @@ const TournamentCard: React.FC<TournamentCardProps> = ({ tournament }) => {
   return (
     <div className={styles.tournamentCard} onClick={handleCardClick}>
       <img
-        src={tournament.imagePath.url}
-        alt={tournament.imagePath.ref}
+        src={tournament.previewImagePath.url}
+        alt={tournament.previewImagePath.ref}
         className={styles.tournamentCoverImage}
       />
       <div className={styles.tournamentContent}>

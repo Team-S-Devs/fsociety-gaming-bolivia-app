@@ -16,10 +16,11 @@ export const fetchTournaments = async (): Promise<Tournament[]> => {
       
       const tournament: Tournament = {
         id: doc.id,
-        fakeId: data.fakeId || '',
         name: data.name || '',
+        fakeId: data.fakeId || '',
         description: data.description || '',
         imagePath: data.imagePath || imageTour,
+        previewImagePath: data.previewImagePath || "imageTour",
         active: data.active || false,
         awards: data.awards || [],
         inscriptionPrice: data.inscriptionPrice || 0,

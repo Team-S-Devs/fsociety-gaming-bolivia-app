@@ -64,7 +64,7 @@ const AppRouter: React.FC = () => {
               />
 
               <Route
-                path={`${PagesNames.TournamentDetails}/:id`}
+                path={`${PagesNames.TournamentDetails}/:fakeId`}
                 element={<TournamentDetails />}
               />
 

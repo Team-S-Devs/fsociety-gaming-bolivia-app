@@ -142,7 +142,7 @@ const TournamentsTable: React.FC<TournamentsTableProps> = ({
               <Tr key={tournament.id}>
                 <Td>
                   <img
-                    src={tournament.imagePath.url}
+                    src={tournament.previewImagePath.url}
                     alt={tournament.name}
                     width="100"
                     style={{ maxWidth: "100%" }}

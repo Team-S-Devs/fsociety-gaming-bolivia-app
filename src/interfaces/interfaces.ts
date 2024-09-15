@@ -45,7 +45,7 @@ export interface ImageRefPath {
 
 export interface Tournament {
   id?: string;
-  fakeId?: string;
+  fakeId: string;
   name: string;
   description: string;
   rules: string;

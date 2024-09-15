@@ -46,9 +46,9 @@ const TournamentDetails: React.FC = () => {
 
       <div className={styles.tournamentInfoDetails}>
         <h1 className={styles.titleTourDetails}>{tournament.name}</h1>
-        <p className={styles.descriptionTourDetails}>
+        {/* <p className={styles.descriptionTourDetails}>
           {tournament.description}
-        </p>
+        </p> */}
         <div className={styles.detailsTourDetails}>
           <InfoContainerStyled
             leftText="Participantes:"
