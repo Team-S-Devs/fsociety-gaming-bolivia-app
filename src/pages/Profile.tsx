@@ -20,6 +20,8 @@ import { validateNickname, validatePhone } from "../utils/validatorUtil";
 import { useNavigate } from "react-router-dom";
 import { useUserContext } from "../contexts/UserContext";
 import ProfileImage from "../components/profile/ProfileImage";
+import { AuthUtils } from "../utils/authUtils";
+import { toast } from "react-toastify";
 
 interface UserData {
   nickname: string;
@@ -132,6 +134,15 @@ const Profile: React.FC = () => {
     }
   };
 
+  const handleResetPassword = async () => {
+    if (!userData.email) return;
+    try {
+      await AuthUtils.resetPassword(userData.email);
+    } catch (error) {
+      toast.error("Error al intentar restablecer la contraseña.");
+    }
+  };
+
   const handleChange =
     (field: keyof UserData) => (event: React.ChangeEvent<HTMLInputElement>) => {
       setUserData({ ...userData, [field]: event.target.value });
@@ -208,6 +219,11 @@ const Profile: React.FC = () => {
               title="Guardar"
               onClick={handleUpdateProfile}
               loading={updating}
+            />
+            <MainButton
+              title="Restablecer Contraseña"
+              onClick={handleResetPassword}
+              color="#007bff"
             />
           </div>
         </form>

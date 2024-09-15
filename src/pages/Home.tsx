@@ -9,11 +9,14 @@ import { Tournament } from '../interfaces/interfaces';
 import Splash from './Splash';
 import { ToastContainer, toast } from 'react-toastify';
 import CustomModal from '../components/home/CustomModal';
+import { useUserContext } from '../contexts/UserContext';
 
 const Home: React.FC = () => {
   const [tournaments, setTournaments] = useState<Tournament[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
-  const [showModal, setShowModal] = useState<boolean>(true);
+  const [showModal, setShowModal] = useState<boolean>(false);
+
+  const { user, isAdmin } = useUserContext();
 
   useEffect(() => {
     const loadTournaments = async () => {
@@ -31,12 +34,18 @@ const Home: React.FC = () => {
   }, []);
 
   useEffect(() => {
-    const interval = setInterval(() => {
+    if (!user && !isAdmin) {
       setShowModal(true);
+    }
+
+    const interval = setInterval(() => {
+      if (!user && !isAdmin) {
+        setShowModal(true);
+      }
     }, 5 * 60 * 1000);
 
     return () => clearInterval(interval);
-  }, []);
+  }, [user, isAdmin]);
 
   if (loading) {
     return <Splash />;
