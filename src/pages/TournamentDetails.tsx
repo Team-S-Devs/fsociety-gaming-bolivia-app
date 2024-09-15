@@ -3,7 +3,7 @@ import { useParams } from "react-router-dom";
 import { Tournament } from "../interfaces/interfaces";
 import styles from "../assets/styles/tournamentDetails.module.css";
 import Splash from "./Splash";
-import { getTournamentById } from '../utils/authUtils';
+import { getTournamentByFakeId } from '../utils/authUtils';
 import InfoContainerStyled from "../components/tournament/details/InfoContainerStyled";
 import {
   FaCodeBranch,
@@ -13,22 +13,22 @@ import {
 } from "react-icons/fa";
 
 const TournamentDetails: React.FC = () => {
-  const { id } = useParams<{ id: string }>();
+  const { fakeId } = useParams<{ fakeId: string }>();
   const [tournament, setTournament] = useState<Tournament | null>(null);
 
   useEffect(() => {
-    if (!id) {
-      console.error("El ID del torneo no está definido");
+    if (!fakeId) {
+      console.error("El Fake ID del torneo no está definido");
       return;
     }
 
     const fetchTournament = async () => {
-      const fetchedTournament = await getTournamentById(id);
+      const fetchedTournament = await getTournamentByFakeId(fakeId);
       setTournament(fetchedTournament);
     };
 
     fetchTournament();
-  }, [id]);
+  }, [fakeId]);
 
   if (!tournament) {
     return <Splash />;

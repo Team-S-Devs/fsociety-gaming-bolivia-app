@@ -2,7 +2,7 @@ import { sendPasswordResetEmail } from "firebase/auth";
 import { auth } from "../utils/firebase-config";
 import { toast } from "react-toastify";
 import { db } from "../utils/firebase-config";
-import { doc, getDoc } from "firebase/firestore"; 
+import { collection, query, where, getDocs } from "firebase/firestore";
 import { Tournament } from "../interfaces/interfaces";
 
 export class AuthUtils {
@@ -17,14 +17,18 @@ export class AuthUtils {
   }
 }
 
-export const getTournamentById = async (id: string): Promise<Tournament | null> => {
-  const docRef = doc(db, "tournaments", id);
-  const docSnap = await getDoc(docRef);
+export const getTournamentByFakeId = async (fakeId: string): Promise<Tournament | null> => {
+  const q = query(
+    collection(db, "tournaments"),
+    where("fakeId", "==", fakeId)
+  );
+  const querySnapshot = await getDocs(q);
 
-  if (docSnap.exists()) {
-    return { id: docSnap.id, ...docSnap.data() } as Tournament;
+  if (!querySnapshot.empty) {
+    const tournamentDoc = querySnapshot.docs[0];
+    return { id: tournamentDoc.id, ...tournamentDoc.data() } as Tournament;
   } else {
-    console.log("No such tournament!");
+    console.log("No such tournament with that fakeId!");
     return null;
   }
 };
