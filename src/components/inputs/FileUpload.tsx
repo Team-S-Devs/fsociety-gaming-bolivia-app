@@ -7,9 +7,14 @@ import { IoImageOutline } from "react-icons/io5";
 interface FileUploadProps {
   file: File | null;
   setFile: React.Dispatch<React.SetStateAction<File | null>>;
+  imgUrl?: string | null;
 }
 
-const FileUpload: React.FC<FileUploadProps> = ({ file, setFile }) => {
+const FileUpload: React.FC<FileUploadProps> = ({
+  file,
+  setFile,
+  imgUrl = "",
+}) => {
   const onDrop = useCallback(
     (acceptedFiles: File[]) => {
       setFile(acceptedFiles[0]);
@@ -29,6 +34,12 @@ const FileUpload: React.FC<FileUploadProps> = ({ file, setFile }) => {
 
   const borderColor = isDragActive ? "#72f7f7" : "#ccc";
 
+  console.log(file
+    ? URL.createObjectURL(file)
+    : imgUrl && imgUrl !== ""
+    ? imgUrl
+    : undefined)
+
   return (
     <Box
       {...getRootProps()}
@@ -41,7 +52,7 @@ const FileUpload: React.FC<FileUploadProps> = ({ file, setFile }) => {
       }}
     >
       <input {...getInputProps()} />
-      {!file ? (
+      {!file && (imgUrl == "" || !imgUrl) ? (
         <>
           <IoImageOutline color="#fff" size={42} style={{ marginBottom: 12 }} />
           <Typography variant="body2">
@@ -62,10 +73,16 @@ const FileUpload: React.FC<FileUploadProps> = ({ file, setFile }) => {
             <IoMdClose size={24} color="#fff" />
           </IconButton>
           <Typography variant="body2" sx={{ marginBottom: 2 }}>
-            {file.name}
+            {file ? file.name : ""}
           </Typography>
           <img
-            src={URL.createObjectURL(file)}
+            src={
+              file
+                ? URL.createObjectURL(file)
+                : imgUrl && imgUrl !== ""
+                ? imgUrl
+                : undefined
+            }
             alt="Preview"
             style={{
               maxWidth: "100%",

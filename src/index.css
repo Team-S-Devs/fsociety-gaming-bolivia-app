@@ -123,17 +123,17 @@ a:hover {
   color: #39c1c1;
 }
 
-table {
+table.dark-table {
   border-color: #1a064f;
 }
 
-table th {
+table.dark-table th {
   background-color: #120438;
   color: #fff;
   padding: 20px;
 }
 
-table td {
+table.dark-table td {
   background-color: #1a064f;
   border-color: #1a064f;
   color: #fff;

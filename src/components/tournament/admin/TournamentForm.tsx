@@ -32,7 +32,8 @@ interface TournamentFormProps {
   title: string;
   file: File | null;
   setFile: React.Dispatch<React.SetStateAction<File | null>>;
-  setSuccess: React.Dispatch<React.SetStateAction<string | null>>
+  setSuccess: React.Dispatch<React.SetStateAction<string | null>>;
+  isEditing?: boolean;
 }
 
 const TournamentForm: React.FC<TournamentFormProps> = ({
@@ -45,7 +46,8 @@ const TournamentForm: React.FC<TournamentFormProps> = ({
   title,
   file,
   setFile,
-  setSuccess
+  setSuccess,
+  isEditing = false,
 }) => {
   const [loading, setLoading] = React.useState<boolean>(false);
   const [teamLimitError, setTeamLimitError] = React.useState<string | null>(
@@ -59,10 +61,12 @@ const TournamentForm: React.FC<TournamentFormProps> = ({
     const { name, value } = e.target;
 
     const parsedValue =
-      (name === "inscriptionPrice" ||
+      name === "inscriptionPrice" ||
       name === "participants" ||
-      name === "teamLimit")
-        ? Number(value) == 0 ? "" : Number(value)
+      name === "teamLimit"
+        ? Number(value) == 0
+          ? ""
+          : Number(value)
         : value;
 
     setTournament({
@@ -83,7 +87,7 @@ const TournamentForm: React.FC<TournamentFormProps> = ({
   const handleEndDateChange = (date: Dayjs | null) => {
     if (date) {
       const dateObj = date.toDate();
-      dateObj.setHours(23, 59, 59, 999)
+      dateObj.setHours(23, 59, 59, 999);
       setTournament((prevTournament) => ({
         ...prevTournament,
         endDate: Timestamp.fromDate(dateObj),
@@ -134,10 +138,10 @@ const TournamentForm: React.FC<TournamentFormProps> = ({
   };
 
   const clearSuccessMessageWhenChange = () => {
-    if(success){
-      setSuccess(null)
+    if (success) {
+      setSuccess(null);
     }
-  }
+  };
 
   return (
     <Box>
@@ -266,7 +270,11 @@ const TournamentForm: React.FC<TournamentFormProps> = ({
         />
         <div style={{ marginTop: 24 }}>
           <Typography>Banner del torneo:</Typography>
-          <FileUpload setFile={setFile} file={file} />
+          <FileUpload
+            setFile={setFile}
+            file={file}
+            imgUrl={tournament.imagePath.url}
+          />
         </div>
         <AwardsForm tournament={tournament} setTournament={setTournament} />
         <LoadingButton
@@ -279,7 +287,13 @@ const TournamentForm: React.FC<TournamentFormProps> = ({
           className={styles.continueButton}
           style={{ marginTop: 24 }}
         >
-          {loading ? "Creando..." : "Crear Torneo"}
+          {isEditing
+            ? loading
+              ? "Editando..."
+              : "Editar Torneo"
+            : loading
+            ? "Creando..."
+            : "Crear Torneo"}
         </LoadingButton>
       </form>
     </Box>

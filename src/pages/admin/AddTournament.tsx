@@ -49,6 +49,7 @@ const AddTournament: React.FC = () => {
       if (url !== "") {
         await addDoc(collection(db, CollectionNames.TOURNAMENTS), {
           ...tournament,
+          fakeId: new Date().toISOString(),
           imagePath: {
             url,
             ref,
