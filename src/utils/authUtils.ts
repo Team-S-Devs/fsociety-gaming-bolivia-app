@@ -8,7 +8,6 @@ export class AuthUtils {
       await sendPasswordResetEmail(auth, email);
       toast.success("Correo de restablecimiento de contraseña enviado con éxito.");
     } catch (error) {
-      console.error("Error al enviar el correo de restablecimiento de contraseña:", error);
       toast.error("Hubo un error al enviar el correo de restablecimiento de contraseña.");
       throw error;
     }
