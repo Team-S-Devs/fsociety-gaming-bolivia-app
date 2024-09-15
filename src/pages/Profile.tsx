@@ -19,6 +19,7 @@ import MainButton from "../components/buttons/MainButton";
 import { validateNickname, validatePhone } from "../utils/validatorUtil";
 import { useNavigate } from "react-router-dom";
 import { useUserContext } from "../contexts/UserContext";
+import ProfileImage from "../components/profile/ProfileImage";
 import { AuthUtils } from "../utils/authUtils";
 import { toast } from "react-toastify";
 
@@ -158,7 +159,8 @@ const Profile: React.FC = () => {
           className={styles.profileForm}
           onSubmit={(e) => e.preventDefault()}
         >
-          <Typography variant="h4" gutterBottom className={styles.title}>
+          <ProfileImage />
+          <Typography variant="h4" gutterBottom className={styles.title} mt={2}>
             {userData.nickname}
           </Typography>
           {successMessage && (
@@ -198,27 +200,33 @@ const Profile: React.FC = () => {
             label="Correo Electrónico"
             fullWidth
             margin="normal"
-            inputProps={{ readOnly: true }}
+            slotProps={{
+              input: {
+                readOnly: true,
+              },
+            }}
             value={userData.email}
             className={styles.inputFieldDisabled}
           />
-          <div className="d-flex justify-content-between flex-wrap mt-3">
+          <div className="d-flex justify-content-between flex-wrap mt-4">
             <MainButton
-              title="Cerrar Sesión"
-              onClick={handleLogout}
-              color="#bb0c0c"
-              loading={loggingOut}
+              title="Cambiar Contraseña"
+              onClick={handleResetPassword}
+              color="#007bff"
             />
             <MainButton
               title="Guardar"
               onClick={handleUpdateProfile}
               loading={updating}
             />
-            <MainButton
-              title="Restablecer Contraseña"
-              onClick={handleResetPassword}
-              color="#007bff"
-            />
+            <div className="mt-2">
+              <MainButton
+                title="Cerrar Sesión"
+                onClick={handleLogout}
+                color="#bb0c0c"
+                loading={loggingOut}
+              />
+            </div>
           </div>
         </form>
       </div>

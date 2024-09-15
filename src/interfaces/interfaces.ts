@@ -28,6 +28,7 @@ export interface UserInterface {
   range?: RangeUser;
   teamId?: string;
   type: UserType;
+  imagePath: ImageRefPath;
 }
 
 export interface TournamentUserInterface {

@@ -39,7 +39,7 @@ const EditTournament: React.FC = () => {
       setLoading(true);
       try {
         const q = query(
-          collection(db, CollectionNames.TOURNAMENTS),
+          collection(db, CollectionNames.Tournaments),
           where("fakeId", "==", fakeId)
         );
         const querySnapshot = await getDocs(q);
@@ -96,7 +96,7 @@ const EditTournament: React.FC = () => {
       }
 
       if (docId) {
-        await updateDoc(doc(db, CollectionNames.TOURNAMENTS, docId), {
+        await updateDoc(doc(db, CollectionNames.Tournaments, docId), {
           ...tournament,
           imagePath,
           updatedAt: Timestamp.now(),

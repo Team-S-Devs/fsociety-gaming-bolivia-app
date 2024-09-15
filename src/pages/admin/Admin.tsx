@@ -16,7 +16,7 @@ const Admin: React.FC = () => {
         <Error404 />
       ) : (
         <ContainerWithBackground urlImage="/src/assets/bannerFsociety.jpg">
-          <Container>
+          <Container style={{ paddingTop: 78, paddingBottom: 50 }}>
             <ViewTournaments />
           </Container>
         </ContainerWithBackground>

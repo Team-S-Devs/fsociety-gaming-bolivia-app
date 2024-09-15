@@ -1,59 +1,87 @@
 .profileContainer {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    padding: 32px;
-    min-height: 100vh;
-    background: rgba(15, 23, 61, 0.342);
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-    border-radius: 8px;
-  }
-  
-  .profileForm {
-    width: 100%;
-    max-width: 500px;
-    background:#080a27;
-    padding: 24px;
-    border-radius: 8px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-  }
-  
-  .title {
-    text-align: center;
-    margin-bottom: 16px;
-    font-weight: bold;
-    color: #333;
-  }
-  
-  .successMessage {
-    color: #4caf50 !important;
-    text-align: center;
-    margin-bottom: 16px;
-  }
-  
-  .errorMessage {
-    color: #f44336;
-    text-align: center;
-    margin-bottom: 16px;
-  }
-  
-  .inputField {
-    margin-bottom: 16px;
-  }
-  
-  .inputFieldDisabled {
-    color: white;
-    border: white;
-    background-color: rgba(185, 185, 185, 0.116);
-  }
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 32px;
+  min-height: 100vh;
+  border-radius: 8px;
+}
 
-  .updateButton {
-    margin-top: 16px;
-    background-color: #007bff;
-    transition: background-color 0.3s;
-  }
-  
-  .updateButton:hover {
-    background-color: #0056b3;
-  }
-  
+.profileForm {
+  width: 100%;
+  max-width: 500px;
+  background: #080a27;
+  padding: 24px;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.title {
+  text-align: center;
+  margin-bottom: 16px;
+  font-weight: bold;
+  color: #333;
+}
+
+.successMessage {
+  color: #4caf50 !important;
+  text-align: center;
+  margin-bottom: 16px;
+}
+
+.errorMessage {
+  color: #f44336;
+  text-align: center;
+  margin-bottom: 16px;
+}
+
+.inputField {
+  margin-bottom: 16px;
+}
+
+.inputFieldDisabled {
+  color: white;
+  border: white;
+  background-color: rgba(185, 185, 185, 0.116);
+}
+
+.updateButton {
+  margin-top: 16px;
+  background-color: #007bff;
+  transition: background-color 0.3s;
+}
+
+.updateButton:hover {
+  background-color: #0056b3;
+}
+
+.profileImgContainer {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.profileImg {
+  border-radius: 50%;
+  margin: 20px 0;
+  height: 124px;
+  width: 124px;
+}
+
+.editIconButton {
+  padding: 6px;
+  border-radius: 50%;
+  background: var(--primary-color);
+  margin-bottom: 16px;
+}
+
+.badgeProfile:hover .profileImg {
+  opacity: 0.85;
+  transition: 0.1s ease-in;
+}
+
+.badgeProfile:hover .editIconButton {
+  background: #4b4fc6;
+  transition: 0.1s ease-in;
+}
