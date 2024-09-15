@@ -48,9 +48,6 @@ const TournamentForm: React.FC<TournamentFormProps> = ({
   setSuccess
 }) => {
   const [loading, setLoading] = React.useState<boolean>(false);
-  const [participantsError, setParticipantsError] = React.useState<
-    string | null
-  >(null);
   const [teamLimitError, setTeamLimitError] = React.useState<string | null>(
     null
   );
@@ -110,13 +107,6 @@ const TournamentForm: React.FC<TournamentFormProps> = ({
       tournament.inscriptionPrice <= 0
     ) {
       setPriceError("El precio de inscripción debe ser un número positivo.");
-      return false;
-    }
-
-    if (isNaN(tournament.participants) || tournament.participants <= 0) {
-      setParticipantsError(
-        "El número de participantes debe ser un número positivo."
-      );
       return false;
     }
 
@@ -192,7 +182,7 @@ const TournamentForm: React.FC<TournamentFormProps> = ({
         />
         <div style={{ width: "100%" }}>
           <Grid container spacing={2}>
-            <Grid size={{ xs: 12, md: 4 }}>
+            <Grid size={{ md: 6, sm: 6 }}>
               <TextField
                 fullWidth
                 margin="normal"
@@ -207,22 +197,7 @@ const TournamentForm: React.FC<TournamentFormProps> = ({
                 helperText={priceError}
               />
             </Grid>
-            <Grid size={{ xs: 6, md: 4 }}>
-              <TextField
-                fullWidth
-                margin="normal"
-                name="participants"
-                value={tournament.participants}
-                onChange={handleInputChange}
-                placeholder="Número de participantes"
-                label="Nº Participantes"
-                type="number"
-                required
-                error={!!participantsError}
-                helperText={participantsError}
-              />
-            </Grid>
-            <Grid size={{ xs: 6, md: 4 }}>
+            <Grid size={{ md: 6, sm: 6 }}>
               <TextField
                 fullWidth
                 margin="normal"

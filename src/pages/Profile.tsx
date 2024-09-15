@@ -19,6 +19,7 @@ import MainButton from "../components/buttons/MainButton";
 import { validateNickname, validatePhone } from "../utils/validatorUtil";
 import { useNavigate } from "react-router-dom";
 import { useUserContext } from "../contexts/UserContext";
+import ProfileImage from "../components/profile/ProfileImage";
 
 interface UserData {
   nickname: string;
@@ -147,7 +148,8 @@ const Profile: React.FC = () => {
           className={styles.profileForm}
           onSubmit={(e) => e.preventDefault()}
         >
-          <Typography variant="h4" gutterBottom className={styles.title}>
+          <ProfileImage />
+          <Typography variant="h4" gutterBottom className={styles.title} mt={2}>
             {userData.nickname}
           </Typography>
           {successMessage && (
@@ -187,7 +189,11 @@ const Profile: React.FC = () => {
             label="Correo Electrónico"
             fullWidth
             margin="normal"
-            inputProps={{ readOnly: true }}
+            slotProps={{
+              input: {
+                readOnly: true,      
+              },
+            }}
             value={userData.email}
             className={styles.inputFieldDisabled}
           />

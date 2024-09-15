@@ -15,6 +15,7 @@ interface UserContextType {
   userInfo: UserInterface | null;
   isAdmin: boolean;
   loading: boolean;
+  setUser: React.Dispatch<React.SetStateAction<User | null>>
 }
 
 const UserContext = createContext<UserContextType>({
@@ -22,6 +23,7 @@ const UserContext = createContext<UserContextType>({
   userInfo: null,
   isAdmin: false,
   loading: false,
+  setUser: () => {}
 });
 
 export const useUserContext = () => {
@@ -62,7 +64,7 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
   }, []);
 
   return (
-    <UserContext.Provider value={{ user, userInfo, isAdmin, loading }}>
+    <UserContext.Provider value={{ user, userInfo, isAdmin, loading, setUser }}>
       {children}
     </UserContext.Provider>
   );
