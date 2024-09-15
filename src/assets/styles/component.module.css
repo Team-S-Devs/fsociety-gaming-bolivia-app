@@ -12,3 +12,25 @@
 .iconInfoItem {
     margin-right: 5px;
 }
+
+.itemDetailsContainer {
+    display: flex;
+    width: fit-content;
+    align-items: center;
+    background-color: rgba(255, 255, 255, 0.123);
+    padding: 8px;
+    color: aliceblue;
+    font-weight: 450;
+    border-radius: 7px;
+}
+
+.textContainerDetails {
+    display: flex;
+    text-align: left;
+    flex-direction: column;
+    padding-left: 1rem;
+}
+
+.textContainerDetails span:first-child {
+    color: aqua;
+}

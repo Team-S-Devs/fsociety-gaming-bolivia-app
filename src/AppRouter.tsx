@@ -15,6 +15,8 @@ import ResponsibleDisclosurePolicy from "./pages/docs/ResponsibleDisclosurePolic
 import TournamentRules from "./pages/docs/TournamentRules";
 import Profile from "./pages/Profile";
 import EditTournament from "./pages/admin/EditTournament";
+import TournamentDetails from "./pages/TournamentDetails";
+
 
 const AppRouter: React.FC = () => {
   const { isAdmin, loading } = useUserContext();
@@ -59,6 +61,11 @@ const AppRouter: React.FC = () => {
               <Route
                 path={`${PagesNames.AdminUpdateTournament}/:fakeId`}
                 element={<EditTournament />}
+              />
+
+              <Route
+                path={`${PagesNames.TournamentDetails}/:id`}
+                element={<TournamentDetails />}
               />
 
               <Route path="*" Component={Error404} />

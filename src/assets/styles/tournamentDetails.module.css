@@ -1,0 +1,85 @@
+.bannerTourDetails {
+    width: 100%;
+    height: auto;
+    max-height: 600px;
+    overflow: hidden;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #000;
+  }
+  
+  .bannerImageTourDetails {
+    width: 100%;
+    object-fit: cover;
+  }
+  
+  .tournamentInfoDetails {
+    padding: 20px;
+    background-color: #121212;
+    color: #fff;
+    text-align: center;
+  }
+  
+  .titleTourDetails {
+    font-size: 2.5rem;
+    margin-bottom: 10px;
+  }
+  
+  /* Descripción del torneo */
+  .descriptionTourDetails {
+    font-size: 1.2rem;
+    margin-bottom: 20px;
+  }
+  
+  .detailsTourDetails {
+    display: flex;
+    justify-content: space-around;
+    margin-bottom: 20px;
+  }
+  
+  .detailItemTourDetails {
+    font-size: 1rem;
+  }
+  
+  .awardsTourDetails {
+    margin: 20px 0;
+  }
+  
+  .awardsTourDetails h2 {
+    font-size: 1.5rem;
+  }
+  
+  .awardsTourDetails ul {
+    list-style-type: none;
+    padding: 0;
+  }
+  
+  .awardItemTourDetails {
+    margin: 5px 0;
+  }
+  
+  /* Acciones del torneo */
+  .actionsTourDetails {
+    display: flex;
+    justify-content: space-around;
+  }
+  
+  .joinButtonTourDetails {
+    padding: 10px 20px;
+    font-size: 1rem;
+    cursor: pointer;
+    background-color: #00aaff;
+    color: white;
+    border: none;
+  }
+  
+  .shareButtonTourDetails {
+    padding: 10px 20px;
+    font-size: 1rem;
+    cursor: pointer;
+    background-color: #333;
+    color: white;
+    border: none;
+  }
+  
