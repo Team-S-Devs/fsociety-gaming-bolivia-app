@@ -4,6 +4,7 @@ import { Tournament, TournamentModality } from "../interfaces/interfaces";
 export const getEmptyTournament = (): Tournament => {
   const dateObj = new Date();
   dateObj.setHours(23, 59, 59, 999);
+  dateObj.setDate(dateObj.getDate() + 1);
 
   return {
     fakeId: new Date().toISOString(),
@@ -13,7 +14,7 @@ export const getEmptyTournament = (): Tournament => {
     inscriptionPrice: 0,
     imagePath: {
       ref: `tournaments/${Date.now().toString()}`,
-      url: ""
+      url: "",
     },
     participants: 0,
     teamLimit: 0,
@@ -23,5 +24,6 @@ export const getEmptyTournament = (): Tournament => {
     teams: [],
     createdAt: Timestamp.now(),
     deleted: false,
+    active: true,
   };
 };
