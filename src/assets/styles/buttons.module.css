@@ -10,3 +10,14 @@
     background: #15acac !important;
     color: #fff !important;
 }
+
+
+.forgotPswd {
+  font-weight: 550;
+  color: #31d8e4;
+}
+
+.forgotPswd p:hover {
+  color: #18edfc;
+  cursor: pointer;
+}

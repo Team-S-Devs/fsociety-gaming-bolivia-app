@@ -9,6 +9,7 @@ import {
   getAuth,
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
+  sendPasswordResetEmail,
 } from "firebase/auth";
 import { collection, doc, getDocs, query, setDoc, where } from "firebase/firestore";
 import { db } from "../../utils/firebase-config";
@@ -41,8 +42,8 @@ const Registration: React.FC<RegistrationProps> = ({
   const [phoneError, setPhoneError] = useState<string | null>(null);
   const [passwordError, setPasswordError] = useState<string | null>(null);
   const [generalError, setGeneralError] = useState<string | null>(null);
-  const [registrationSuccess, setRegistrationSuccess] =
-    useState<boolean>(false);
+  const [generalSucces, setGeneralSucces] = useState<string | null>(null);
+  const [registrationSuccess, setRegistrationSuccess] = useState<boolean>(false);
 
   const validateFields = () => {
     let valid = true;
@@ -126,6 +127,15 @@ const Registration: React.FC<RegistrationProps> = ({
     setLoading(false);
   };
 
+  const handleForgotPassword = async () => {
+    try {
+      await sendPasswordResetEmail(auth, email);
+      setGeneralSucces("Correo de recuperación enviado.");
+    } catch (error: any) {
+      setGeneralError("Error al enviar el correo de recuperación.");
+    }
+  };
+
   return (
     <form onChange={() => setGeneralError(null)} onSubmit={handleRegister}>
       <Typography variant="h4" gutterBottom align="center">
@@ -140,6 +150,13 @@ const Registration: React.FC<RegistrationProps> = ({
         <Typography color="error" marginTop={1}>
           {generalError}
         </Typography>
+      )}
+      {generalSucces && (
+        <div className="d-flex justify-content-center text-center">
+          <Typography color="success" marginTop={1}>
+            {generalSucces}
+          </Typography>
+        </div>
       )}
       {isforSignUp && (
         <>
@@ -189,23 +206,21 @@ const Registration: React.FC<RegistrationProps> = ({
         }}
         error={!!passwordError}
         helperText={passwordError}
-        slotProps={{
-          htmlInput: {
-            endAdornment: (
-              <InputAdornment position="end">
-                <IconButton
-                  aria-label="toggle password visibility"
-                  onClick={() => setShowPassword(!showPassword)}
-                >
-                  {showPassword ? (
-                    <AiOutlineEye size={28} color="#fff" />
-                  ) : (
-                    <AiOutlineEyeInvisible size={28} color="#fff" />
-                  )}
-                </IconButton>
-              </InputAdornment>
-            ),
-          },
+        InputProps={{
+          endAdornment: (
+            <InputAdornment position="end">
+              <IconButton
+                aria-label="toggle password visibility"
+                onClick={() => setShowPassword(!showPassword)}
+              >
+                {showPassword ? (
+                  <AiOutlineEye size={28} color="#fff" />
+                ) : (
+                  <AiOutlineEyeInvisible size={28} color="#fff" />
+                )}
+              </IconButton>
+            </InputAdornment>
+          ),
         }}
       />
       <LoadingButton
@@ -224,6 +239,13 @@ const Registration: React.FC<RegistrationProps> = ({
           ? "Iniciando Sesión..."
           : "Iniciar Sesión"}
       </LoadingButton>
+      {!isforSignUp && (
+        <div className={`d-flex justify-content-center text-center mt-3 ${styles.forgotPswd}`}>
+            <p onClick={handleForgotPassword}>
+                ¿Olvidaste tu contraseña?
+            </p>
+        </div>
+      )}
       {registrationSuccess && (
         <Typography variant="body1" color="success">
           Registro completado con éxito.
