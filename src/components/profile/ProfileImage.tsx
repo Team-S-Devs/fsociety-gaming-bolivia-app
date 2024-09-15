@@ -9,6 +9,7 @@ import { updateProfile } from "firebase/auth";
 import { auth } from "../../utils/firebase-config";
 import { Typography } from "antd";
 import { uploadFileToStorage } from "../../utils/storageMethods";
+import { StoragePaths } from "../../utils/collectionNames";
 
 const ProfileImage: React.FC = () => {
   const { user, setUser } = useUserContext();
@@ -31,7 +32,7 @@ const ProfileImage: React.FC = () => {
       setError("");
 
       try {
-        const uploadPath = `profile-images/${user?.uid}`;
+        const uploadPath = `${StoragePaths.ProfileImages}/${user?.uid}`;
         const imageUrl = await uploadFileToStorage(file, uploadPath);
 
         if (auth.currentUser) {

@@ -1,4 +1,9 @@
 export enum CollectionNames {
     Users = "users",
-    TOURNAMENTS = "tournaments"
+    Tournaments = "tournaments"
+}
+
+export enum StoragePaths {
+    ProfileImages = "profile-images",
+    Tournaments = "tournaments"
 }

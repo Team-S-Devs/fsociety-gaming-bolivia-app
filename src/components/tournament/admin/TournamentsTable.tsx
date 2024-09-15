@@ -64,7 +64,7 @@ const TournamentsTable: React.FC<TournamentsTableProps> = ({
       if (!selectedTournamentId) return;
       const tournamentRef = doc(
         db,
-        CollectionNames.TOURNAMENTS,
+        CollectionNames.Tournaments,
         selectedTournamentId
       );
       setLoadingDelete(true);

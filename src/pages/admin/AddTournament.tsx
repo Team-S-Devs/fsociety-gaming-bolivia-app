@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { Timestamp, collection, addDoc } from "firebase/firestore";
 import { Container } from "@mui/material";
 import { db } from "../../utils/firebase-config";
-import { CollectionNames } from "../../utils/collectionNames";
+import { CollectionNames, StoragePaths } from "../../utils/collectionNames";
 import { Tournament } from "../../interfaces/interfaces";
 import ContainerWithBackground from "../../components/ContainerWithBackground";
 import BlurBoxContainer from "../../components/BlurBoxContainer";
@@ -44,10 +44,10 @@ const AddTournament: React.FC = () => {
     }
 
     try {
-      const ref = `tournaments/${Date.now().toString()}`;
+      const ref = `${StoragePaths.Tournaments}/${Date.now().toString()}`;
       const url = await handleUploadImage(ref);
       if (url !== "") {
-        await addDoc(collection(db, CollectionNames.TOURNAMENTS), {
+        await addDoc(collection(db, CollectionNames.Tournaments), {
           ...tournament,
           fakeId: new Date().toISOString(),
           imagePath: {
