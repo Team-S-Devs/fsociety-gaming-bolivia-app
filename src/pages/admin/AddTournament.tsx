@@ -22,7 +22,7 @@ const AddTournament: React.FC = () => {
   const [file, setFile] = useState<File | null>(null);
   const [previewFile, setPreviewFile] = useState<File | null>(null);
 
-  const handleUploadImage = async (ref: string): Promise<string> => {
+  const handleUploadImage = async (ref: string, file: File | null): Promise<string> => {
     if (!file) return "";
 
     try {
@@ -48,12 +48,12 @@ const AddTournament: React.FC = () => {
       const refBanner = `${
         StoragePaths.TournamentsPreviews
       }/${Date.now().toString()}`;
-      const urlBanner = await handleUploadImage(refBanner);
+      const urlBanner = await handleUploadImage(refBanner, file);
 
       const refPreview = `${
         StoragePaths.TournamentsPreviews
       }/${Date.now().toString()}`;
-      const urlPreview = await handleUploadImage(refPreview);
+      const urlPreview = await handleUploadImage(refPreview, previewFile);
       await addDoc(collection(db, CollectionNames.Tournaments), {
         ...tournament,
         fakeId: new Date().toTimeString(),
