@@ -1,5 +1,5 @@
 import React from "react";
-import { TextField, Typography, Box, MenuItem } from "@mui/material";
+import { TextField, Typography, Box, MenuItem, Switch } from "@mui/material";
 import { DatePicker } from "antd";
 import dayjs, { Dayjs } from "dayjs";
 import { IoCalendarOutline } from "react-icons/io5";
@@ -138,9 +138,7 @@ const TournamentForm: React.FC<TournamentFormProps> = ({
   };
 
   const clearSuccessMessageWhenChange = () => {
-    if (success) {
-      setSuccess(null);
-    }
+    if (success) setSuccess(null);
   };
 
   return (
@@ -161,6 +159,20 @@ const TournamentForm: React.FC<TournamentFormProps> = ({
       )}
 
       <form onSubmit={handleSubmit} onChange={clearSuccessMessageWhenChange}>
+        <div style={{ display: "flex", alignItems: "center", marginBottom: 8 }}>
+          <Typography>Activo:</Typography>
+          <Switch
+            checked={
+              tournament.active && new Date() < tournament.endDate.toDate()
+            }
+            onChange={() =>
+              setTournament((prev) => ({ ...prev, active: !prev.active }))
+            }
+            color="secondary"
+            disabled={new Date() > tournament.endDate.toDate()}
+          />
+        </div>
+
         <TextField
           fullWidth
           margin="normal"

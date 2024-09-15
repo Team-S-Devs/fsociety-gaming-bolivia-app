@@ -59,6 +59,7 @@ export interface Tournament {
   teams: string[];
   createdAt: Timestamp;
   deleted: boolean;
+  active: boolean;
 }
 
 export interface Team {

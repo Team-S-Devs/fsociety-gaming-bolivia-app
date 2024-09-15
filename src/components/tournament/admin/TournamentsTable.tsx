@@ -4,9 +4,9 @@ import {
   IconButton,
   Paper,
   TablePagination,
-  Typography,
   Box,
-  useMediaQuery,
+  Switch,
+  Typography,
 } from "@mui/material";
 import { BiEdit, BiTrash } from "react-icons/bi";
 import { doc, updateDoc } from "firebase/firestore";
@@ -14,7 +14,6 @@ import { db } from "../../../utils/firebase-config";
 import { CollectionNames } from "../../../utils/collectionNames";
 import { useNavigate } from "react-router-dom";
 import { PagesNames } from "../../../utils/constants";
-import { useTheme } from "@mui/material/styles";
 import { Table, Tbody, Td, Th, Thead, Tr } from "react-super-responsive-table";
 import "react-super-responsive-table/dist/SuperResponsiveTableStyle.css";
 import DeleteConfirmationDialog from "./DeleteConfirmationDialog";
@@ -26,7 +25,9 @@ interface TournamentsTableProps {
   rowsPerPage: number;
   setPage: React.Dispatch<React.SetStateAction<number>>;
   page: number;
-  setDirection: React.Dispatch<React.SetStateAction<"prev" | "next" | undefined>>;
+  setDirection: React.Dispatch<
+    React.SetStateAction<"prev" | "next" | undefined>
+  >;
   pages: number;
 }
 
@@ -38,16 +39,37 @@ const TournamentsTable: React.FC<TournamentsTableProps> = ({
   setPage,
   page,
   setDirection,
-  pages
+  pages,
 }) => {
   const navigate = useNavigate();
-  const theme = useTheme();
-  const isSmallScreen = useMediaQuery(theme.breakpoints.down("sm"));
   const [openDialog, setOpenDialog] = useState<boolean>(false);
   const [loadingDelete, setLoadingDelete] = useState<boolean>(false);
   const [selectedTournamentId, setSelectedTournamentId] = useState<
     string | null
   >(null);
+
+  const handleToggleActive = async (tournament: Tournament) => {
+    if (new Date() > tournament.endDate.toDate()) {
+      alert("No puedes activar un torneo cuyo fecha de fin ha pasado.");
+      return;
+    }
+
+    if (!tournament.id) return;
+
+    const tournamentRef = doc(db, CollectionNames.Tournaments, tournament.id);
+    const newActiveStatus = !tournament.active;
+
+    try {
+      await updateDoc(tournamentRef, { active: newActiveStatus });
+      setTournaments((prev) =>
+        prev.map((t) =>
+          t.id === tournament.id ? { ...t, active: newActiveStatus } : t
+        )
+      );
+    } catch (error) {
+      alert("Error al actualizar el estado del torneo.");
+    }
+  };
 
   const handleDelete = (id: string) => {
     setSelectedTournamentId(id);
@@ -85,8 +107,8 @@ const TournamentsTable: React.FC<TournamentsTableProps> = ({
   };
 
   const handleChangePage = (_event: any, newPage: number) => {
-    if(newPage > (page - 1)) handleNextClick()
-    else handlePreviousClick()
+    if (newPage > page - 1) handleNextClick();
+    else handlePreviousClick();
   };
 
   const handlePreviousClick = () => {
@@ -102,7 +124,7 @@ const TournamentsTable: React.FC<TournamentsTableProps> = ({
   };
 
   return (
-    <Box p={isSmallScreen ? 1 : 3} width="100%">
+    <Box width="100%">
       <Paper>
         <Table className="dark-table">
           <Thead>
@@ -111,7 +133,7 @@ const TournamentsTable: React.FC<TournamentsTableProps> = ({
               <Th>Nombre</Th>
               <Th>Fecha de inicio</Th>
               <Th>Fecha de fin</Th>
-              <Th>Estado</Th>
+              <Th>Activo</Th>
               <Th>Acciones</Th>
             </Tr>
           </Thead>
@@ -126,21 +148,28 @@ const TournamentsTable: React.FC<TournamentsTableProps> = ({
                     style={{ maxWidth: "100%" }}
                   />
                 </Td>
-                <Td>{tournament.name}</Td>
+                <Td>
+                  <Typography
+                    style={{
+                      wordWrap: "break-word",
+                      maxWidth: 220,
+                    }}
+                  >
+                    {tournament.name}
+                  </Typography>
+                </Td>
                 <Td>{tournament.startDate.toDate().toLocaleDateString()}</Td>
                 <Td>{tournament.endDate.toDate().toLocaleDateString()}</Td>
                 <Td>
-                  <Typography
-                    color={
+                  <Switch
+                    checked={
+                      tournament.active &&
                       new Date() < tournament.endDate.toDate()
-                        ? "success"
-                        : "error"
                     }
-                  >
-                    {new Date() <= tournament.endDate.toDate()
-                      ? "Activo"
-                      : "Desactivo"}
-                  </Typography>
+                    onChange={() => handleToggleActive(tournament)}
+                    color="secondary"
+                    disabled={new Date() > tournament.endDate.toDate()}
+                  />
                 </Td>
                 <Td>
                   <IconButton onClick={() => handleEdit(tournament.fakeId!)}>
