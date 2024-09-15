@@ -61,7 +61,7 @@ const EditTournament: React.FC = () => {
     fetchTournamentByFakeId();
   }, [fakeId]);
 
-  const handleUploadImage = async (ref: string): Promise<string> => {
+  const handleUploadImage = async (ref: string, file: File | null): Promise<string> => {
     if (!file) return "";
 
     try {
@@ -94,13 +94,13 @@ const EditTournament: React.FC = () => {
 
       if (file) {
         const ref = tournament.imagePath.ref;
-        const url = await handleUploadImage(ref);
+        const url = await handleUploadImage(ref, file);
         imagePath = { url, ref };
       }
 
       if (previewfile) {
         const ref = tournament.previewImagePath.ref;
-        const url = await handleUploadImage(ref);
+        const url = await handleUploadImage(ref, previewfile);
         previewImagePath = { url, ref };
       }
 
