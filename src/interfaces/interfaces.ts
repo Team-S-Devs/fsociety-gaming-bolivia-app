@@ -47,8 +47,8 @@ export interface Tournament {
   id?: string;
   fakeId?: string;
   name: string;
-  description: string;
-  rules: string;
+  description: {};
+  rules: {};
   awards: string[];
   inscriptionPrice: number | "";
   imagePath: ImageRefPath;

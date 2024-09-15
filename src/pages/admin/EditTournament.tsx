@@ -31,6 +31,7 @@ const EditTournament: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
   const [file, setFile] = useState<File | null>(null);
+  const [previewfile, setPreviewFile] = useState<File | null>(null);
   const [docId, setDocId] = useState<string | null>(null);
 
   useEffect(() => {
@@ -89,16 +90,25 @@ const EditTournament: React.FC = () => {
 
     try {
       let imagePath = tournament.imagePath;
+      let previewImagePath = tournament.previewImagePath;
+
       if (file) {
         const ref = tournament.imagePath.ref;
         const url = await handleUploadImage(ref);
         imagePath = { url, ref };
       }
 
+      if (previewfile) {
+        const ref = tournament.previewImagePath.ref;
+        const url = await handleUploadImage(ref);
+        previewImagePath = { url, ref };
+      }
+
       if (docId) {
         await updateDoc(doc(db, CollectionNames.Tournaments, docId), {
           ...tournament,
           imagePath,
+          previewImagePath,
           updatedAt: Timestamp.now(),
         });
 
@@ -140,6 +150,8 @@ const EditTournament: React.FC = () => {
               setFile={setFile}
               setSuccess={setSuccess}
               isEditing
+              previewFile={previewfile}
+              setPreviewFile={setPreviewFile}
             />
           )}
         </BlurBoxContainer>
