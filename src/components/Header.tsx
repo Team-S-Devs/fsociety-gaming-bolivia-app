@@ -44,7 +44,7 @@ const Header: React.FC = () => {
               >
                 {isAdmin && (
                   <>
-                    <div className={styles.headerLink}>
+                    <div className={styles.headerLink} onClick={onClickHeader}> 
                       <FaUsersCog className={styles.iconHeader} />
                       <Link to={PagesNames.Admin}>
                         <span className={`${styles.link} ml-1`}>Admin Panel</span>
@@ -52,17 +52,17 @@ const Header: React.FC = () => {
                     </div>
                   </>
                 )}
-                <div className={styles.headerLink}>
+                <div className={styles.headerLink} onClick={onClickHeader}>
                   <Link to={PagesNames.Tournaments}>
                     <span className={`${styles.link} ml-1`}>Torneos</span>
                   </Link>
                 </div>
-                <div className={styles.headerLink}>
+                <div className={styles.headerLink} onClick={onClickHeader}>
                   <Link to={PagesNames.Teams}>
                     <span className={`${styles.link} ml-1`}>Equipos</span>
                   </Link>
                 </div>
-                <div className={styles.headerLink}>
+                <div className={styles.headerLink} onClick={onClickHeader}>
                   <BiSolidUser className={styles.iconHeader} />
                   <Link to={user ? PagesNames.Profile : PagesNames.Auth}>
                     <span className={`${styles.link} ${styles.mainButton} ml-1`}>

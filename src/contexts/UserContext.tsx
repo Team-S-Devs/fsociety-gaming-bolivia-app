@@ -5,7 +5,7 @@ import {
   useEffect,
   ReactNode,
 } from "react";
-import { User, onAuthStateChanged } from "firebase/auth";
+import { User, onAuthStateChanged, sendPasswordResetEmail } from "firebase/auth"; // Importar sendPasswordResetEmail
 import { doc, onSnapshot } from "firebase/firestore";
 import { auth, db } from "../utils/firebase-config";
 import { UserInterface, UserType } from "../interfaces/interfaces";
@@ -15,6 +15,7 @@ interface UserContextType {
   userInfo: UserInterface | null;
   isAdmin: boolean;
   loading: boolean;
+  resetPassword: (email: string) => Promise<void>;
 }
 
 const UserContext = createContext<UserContextType>({
@@ -22,6 +23,7 @@ const UserContext = createContext<UserContextType>({
   userInfo: null,
   isAdmin: false,
   loading: false,
+  resetPassword: async () => {},
 });
 
 export const useUserContext = () => {
@@ -61,8 +63,17 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
     return () => unsubscribe();
   }, []);
 
+  const resetPassword = async (email: string) => {
+    try {
+      await sendPasswordResetEmail(auth, email);
+    } catch (error) {
+      console.error("Error al enviar el correo de restablecimiento de contraseña:", error);
+      throw error;
+    }
+  };
+
   return (
-    <UserContext.Provider value={{ user, userInfo, isAdmin, loading }}>
+    <UserContext.Provider value={{ user, userInfo, isAdmin, loading, resetPassword }}>
       {children}
     </UserContext.Provider>
   );
