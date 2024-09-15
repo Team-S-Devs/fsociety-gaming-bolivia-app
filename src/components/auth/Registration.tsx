@@ -118,10 +118,8 @@ const Registration: React.FC<RegistrationProps> = ({
         setGeneralError("El email no es válido.");
       } else if (error.code === "auth/weak-password") {
         setPasswordError("La contraseña es muy débil.");
-      } else if (error.code === "auth/wrong-password") {
-        setPasswordError("La contraseña es incorrecta.");
       } else {
-        setPasswordError("Error en la autenticación.");
+        setPasswordError("La contraseña es incorrecta.");
       }
     }
     setLoading(false);
