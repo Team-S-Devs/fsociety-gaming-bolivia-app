@@ -9,7 +9,14 @@ export const getEmptyTournament = (): Tournament => {
   return {
     fakeId: new Date().toISOString(),
     name: "",
-    description: "",
+    description: {
+      blocks: [],
+      entityMap: {},
+    },
+    rules: {
+      blocks: [],
+      entityMap: {},
+    },
     awards: [],
     inscriptionPrice: 0,
     imagePath: {

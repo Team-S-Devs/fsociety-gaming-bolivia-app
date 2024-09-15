@@ -13,7 +13,7 @@ import Grid from "@mui/material/Grid2";
 import FileUpload from "../../inputs/FileUpload";
 import styles from "../../../assets/styles/buttons.module.css";
 import { Editor } from "react-draft-wysiwyg";
-import { EditorState, convertToRaw } from "draft-js";
+import { EditorState, convertToRaw, convertFromRaw } from "draft-js";
 import "react-draft-wysiwyg/dist/react-draft-wysiwyg.css";
 
 const darkDatePickerStyle = {
@@ -62,10 +62,10 @@ const TournamentForm: React.FC<TournamentFormProps> = ({
   );
   const [priceError, setPriceError] = React.useState<string | null>(null);
   const [editorState, setEditorState] = useState<EditorState>(
-    EditorState.createEmpty(tournament.description)
+    EditorState.createWithContent(convertFromRaw(tournament.description))
   );
   const [editorStateRules, setEditorStateRules] = useState<EditorState>(
-    EditorState.createEmpty(tournament.rules ?? "")
+    EditorState.createWithContent(convertFromRaw(tournament.rules))
   );
 
   const handleEditorChange = (
