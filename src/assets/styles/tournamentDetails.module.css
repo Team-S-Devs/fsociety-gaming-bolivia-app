@@ -1,7 +1,8 @@
 .bannerTourDetails {
+    margin-top: 60px;
     width: 100%;
     height: auto;
-    max-height: 600px;
+    max-height: 500px;
     overflow: hidden;
     display: flex;
     justify-content: center;
@@ -16,6 +17,7 @@
   
   .tournamentInfoDetails {
     padding: 20px;
+    padding-top: 6px;
     background-color: #121212;
     color: #fff;
     text-align: center;
@@ -36,54 +38,60 @@
     display: flex;
     justify-content: space-around;
     margin-bottom: 20px;
+    flex-wrap: wrap;
+    gap: 10px;
   }
   
   .detailItemTourDetails {
     font-size: 1rem;
   }
   
-  .awardsTourDetails {
-    margin: 20px 0;
-  }
-  
-  .awardsTourDetails h2 {
-    font-size: 1.5rem;
-  }
-  
-  .awardsTourDetails ul {
-    list-style-type: none;
-    padding: 0;
-  }
-  
-  .awardItemTourDetails {
-    margin: 5px 0;
-  }
-  
   /* Acciones del torneo */
   .actionsTourDetails {
+    background-color: transparent;
     display: flex;
-    justify-content: space-around;
+    justify-content: flex-end;
+    flex: 1 1 100px;
+  }
+  
+  .actionsTourDetails {
+    position: relative;
+    padding: 10px 20px;
+    background-color: transparent;
+    color: white;
+    border: none;
+    cursor: pointer;
+    font-size: 16px;
+    margin-bottom: 2rem;
+  }
+  
+  .actionsTourDetails::before, 
+  .actionsTourDetails::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    right: 0;
+    height: 1px; 
+    background: linear-gradient(to right, #121212 20%, black 30%, rgba(0, 217, 255, 0.973) 90%, black 100%);
+  }
+  
+  .actionsTourDetails::before {
+    top: -4px;
+  }
+  
+  .actionsTourDetails::after {
+    bottom: -4px;
   }
   
   .joinButtonTourDetails {
     padding: 10px 20px;
     font-size: 1rem;
     cursor: pointer;
-    background-color: #00aaff;
-    color: white;
+    background-color: rgba(0, 217, 255, 0.973);
+    color: #000000;
+    font-weight: 600;
     border: none;
   }
-  
-  .shareButtonTourDetails {
-    padding: 10px 20px;
-    font-size: 1rem;
-    cursor: pointer;
-    background-color: #333;
-    color: white;
-    border: none;
-  }
-  
-
 
   
 
@@ -95,6 +103,8 @@
   overflow-x: auto;
   background-color: transparent;
   width: 95%;
+  margin-top: 3rem;
+  margin-bottom: 2rem;
 }
 
 .scrollableTable {
@@ -103,11 +113,25 @@
   margin: auto;
   width: auto;
   text-align: center;
+  color: rgba(0, 217, 255, 0.452);
+  font-size: 1.1rem;
+  width: 100%;
 }
 
 .tableWrapper td {
   padding: 7px;
   white-space: nowrap;
+}
+
+.scrollableTable div {
+  margin-right: .2rem;
+  border-bottom: 1px rgba(0, 217, 255, 0.452) solid;
+  padding: 10px;
+  padding-bottom: 12px;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none; 
+  user-select: none;   
 }
 
 .tableWrapper::-webkit-scrollbar {
@@ -129,5 +153,68 @@
 }
 
 .selectedCat {
-  font-weight: bold;
+  color: rgba(0, 217, 255, 0.973) !important;
+  border-bottom: 1px rgba(0, 217, 255, 0.938) solid !important;
+}
+
+
+.textInfoSection {
+  margin-top: 2rem;
+  text-align: left;
+}
+
+.textInfoSectionItem {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  margin-block: 1rem;
+  background-color: rgb(4, 4, 26);
+  border-radius: 15px;
+  min-height: 60px;
+  overflow: hidden;
+}
+
+.textInfoSectionImage {
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  border-radius: 15px;
+  object-fit: cover;
+  z-index: 1;
+}
+
+.textInfoSectionItem h2 {
+  position: relative;
+  text-align: center;
+  text-transform: uppercase;
+  font-weight: 600;
+  z-index: 2;
+  margin: 0;
+}
+
+.textInfoSectionItem::before {
+  content: '';
+  position: absolute;
+  border-radius: 15px;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background:   
+  linear-gradient(to bottom, rgb(4, 4, 26), rgba(255, 255, 255, 0)),
+  linear-gradient(to right, rgb(4, 4, 26), rgba(6, 6, 61, 0.288));
+  z-index: 2;
+  pointer-events: none;
+}
+
+@media (max-width: 350px) {
+  .descriptionTourDetails {
+    font-size: 1rem;
+  }
+
+  .titleTourDetails {
+    font-size: 1.5rem;
+  }
 }

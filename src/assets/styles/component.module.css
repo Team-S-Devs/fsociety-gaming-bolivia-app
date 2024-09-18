@@ -22,6 +22,7 @@
     color: aliceblue;
     font-weight: 450;
     border-radius: 7px;
+    flex: 1 1 80px;
 }
 
 .textContainerDetails {
@@ -32,5 +33,13 @@
 }
 
 .textContainerDetails span:first-child {
-    color: aqua;
+    color: rgba(0, 217, 255, 0.973);
+}
+
+@media (max-width: 450px) {
+
+    .textContainerDetails {
+        padding-left: .4rem;
+    }
+    
 }

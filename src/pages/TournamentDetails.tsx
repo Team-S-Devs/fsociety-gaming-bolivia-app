@@ -4,18 +4,19 @@ import { Category, Tournament } from "../interfaces/interfaces";
 import styles from "../assets/styles/tournamentDetails.module.css";
 import Splash from "./Splash";
 import { getTournamentByFakeId } from "../utils/authUtils";
-import InfoContainerStyled from "../components/tournament/details/InfoContainerStyled";
-import { FaCodeBranch, FaUsers, FaCalendarAlt, FaDollarSign, FaIcons } from "react-icons/fa";
 import CategoriesSlider from "../components/tournament/details/CategoriesSlider";
 import OverViewSection from "./tournamentView/OverViewSection";
 import { toast } from "react-toastify";
 import RulesViewSection from "./tournamentView/RulesViewSection";
+import Footer from "../components/Footer";
 
 const TournamentDetails: React.FC = () => {
   const { fakeId } = useParams<{ fakeId: string }>();
   const [tournament, setTournament] = useState<Tournament | null>(null);
   const [actualCategory, setActualCategory] = useState(1);
-  const [actualPrevView, setActualPrevView] = useState<React.ReactNode | null>(null);
+  const [actualPrevView, setActualPrevView] = useState<React.ReactNode | null>(
+    null
+  );
 
   useEffect(() => {
     if (!fakeId) {
@@ -31,18 +32,31 @@ const TournamentDetails: React.FC = () => {
     fetchTournament();
   }, [fakeId]);
 
-  const SliderCategories: Category[] = useMemo(() => [
-    {
-      id: 1,
-      value: "descripcion",
-      component: <OverViewSection tournament={tournament} />,
-    },
-    {
-      id: 2,
-      value: "reglas",
-      component: <RulesViewSection tournament={tournament} />,
-    },
-  ], [tournament]);
+  const SliderCategories: Category[] = useMemo(
+    () => [
+      {
+        id: 1,
+        value: "OVERVIEW",
+        component: <OverViewSection tournament={tournament} />,
+      },
+      {
+        id: 2,
+        value: "ENFRENTAMIENTOS",
+        component: <RulesViewSection tournament={tournament} />,
+      },
+      {
+        id: 3,
+        value: "PARTICIPANTES",
+        component: <RulesViewSection tournament={tournament} />,
+      },
+      {
+        id: 4,
+        value: "PREMIOS",
+        component: <RulesViewSection tournament={tournament} />,
+      },
+    ],
+    [tournament]
+  );
 
   useEffect(() => {
     const selectedCategory = SliderCategories.find(
@@ -68,6 +82,11 @@ const TournamentDetails: React.FC = () => {
       </div>
 
       <div className={styles.tournamentInfoDetails}>
+        <div className={`${styles.actionsTourDetails} container`}>
+          <button className={styles.joinButtonTourDetails}>
+            Unirme al Torneo
+          </button>
+        </div>
         <h1 className={styles.titleTourDetails}>{tournament.name}</h1>
         <CategoriesSlider
           categories={SliderCategories}
@@ -76,6 +95,7 @@ const TournamentDetails: React.FC = () => {
         />
         {actualPrevView}
       </div>
+      <Footer />
     </div>
   );
 };
