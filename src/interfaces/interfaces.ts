@@ -50,7 +50,7 @@ export interface RawContent {
 
 export interface Tournament {
   id?: string;
-  fakeId?: string;
+  fakeId: string;
   name: string;
   description: RawContent;
   rules: RawContent;
@@ -73,10 +73,10 @@ export interface Team {
   id?: string;
   name: string;
   captainId: string;
-  captainNickname: string;
-  captainEmail: string;
-  captainPhone: string;
+  banner: ImageRefPath;
   members: string[];
+  tournaments: string[];
+  mediaRange: RangeUser;
 }
 
 /* Slider */
@@ -88,4 +88,10 @@ export interface SliderItem {
   title: string;
   desc: string;
   cover: string;
+}
+
+export interface Category {
+  id: number;
+  value: string;
+  component: React.ReactNode;
 }
