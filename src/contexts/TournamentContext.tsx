@@ -2,6 +2,7 @@ import { collection, getDocs } from "firebase/firestore";
 import { db } from "../utils/firebase-config";
 import { Tournament, TournamentModality } from "../interfaces/interfaces";
 import imageTour from '../assets/bannerFsociety.jpg';
+import imageBlank from '../assets/blanckImg.png'
 import { Timestamp } from "firebase/firestore";
 
 export const fetchTournaments = async (): Promise<Tournament[]> => {
@@ -17,8 +18,11 @@ export const fetchTournaments = async (): Promise<Tournament[]> => {
       const tournament: Tournament = {
         id: doc.id,
         name: data.name || '',
+        fakeId: data.fakeId || '',
         description: data.description || '',
         imagePath: data.imagePath || imageTour,
+        previewImagePath: data.previewImagePath || imageBlank,
+        active: data.active || false,
         awards: data.awards || [],
         inscriptionPrice: data.inscriptionPrice || 0,
         participants: data.participants || 0,

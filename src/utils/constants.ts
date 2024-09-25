@@ -15,7 +15,9 @@ export enum PagesNames {
     Teams = "/equipos",
     Error = "/error",
     Tournaments = "/torneos",
+    TournamentDetails = "/tournament",
     PrivacyPolicy = "/politica_privacidad",
     DisclosurePolicy = "/politica_divulgacion_responsable",
     TournamentRules = "/reglas_torneo"
 }
+  

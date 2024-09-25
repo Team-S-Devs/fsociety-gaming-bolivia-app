@@ -19,6 +19,7 @@ import AdminTournaments from "./pages/admin/AdminTournaments";
 import AdminBanners from "./pages/admin/AdminBanners";
 import AddBanner from "./pages/admin/AddBanner";
 import EditBanner from "./pages/admin/EditBanner";
+import TournamentDetails from "./pages/TournamentDetails";
 
 const AppRouter: React.FC = () => {
   const { isAdmin, loading } = useUserContext();
@@ -79,6 +80,11 @@ const AppRouter: React.FC = () => {
               <Route
                 path={`${PagesNames.AdminUpdateTournament}/:fakeId`}
                 element={<EditTournament />}
+              />
+
+              <Route
+                path={`${PagesNames.TournamentDetails}/:fakeId`}
+                element={<TournamentDetails />}
               />
 
               <Route path="*" Component={Error404} />
