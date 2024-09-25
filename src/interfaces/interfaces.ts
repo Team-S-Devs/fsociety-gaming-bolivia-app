@@ -19,6 +19,14 @@ export enum TournamentModality {
   ELIMINATION = "Eliminación",
 }
 
+export interface Banner {
+  id?: string;
+  redirectUrl: string;
+  position: number;
+  image: ImageRefPath;
+  hidden: boolean;
+}
+
 export interface UserInterface {
   id?: string;
   nickname: string;

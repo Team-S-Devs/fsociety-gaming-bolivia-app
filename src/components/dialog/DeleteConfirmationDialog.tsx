@@ -13,21 +13,24 @@ interface DeleteConfirmationDialogProps {
   onClose: () => void;
   onConfirm: () => Promise<void>;
   loadingDelete: boolean;
+  title?: string;
+  description?: string;
 }
 
 const DeleteConfirmationDialog: React.FC<DeleteConfirmationDialogProps> = ({
   open,
   onClose,
   onConfirm,
-  loadingDelete
+  loadingDelete,
+  title="Eliminar Torneo",
+  description="¿Estás seguro que deseas eliminar este torneo?. \nEsta acción no se puede deshacer."
 }) => {
   return (
     <Dialog open={open} onClose={onClose}>
-      <DialogTitle>Eliminar Torneo</DialogTitle>
+      <DialogTitle>{title}</DialogTitle>
       <DialogContent>
         <DialogContentText>
-          ¿Estás seguro que deseas eliminar este torneo? 
-          Esta acción no se puede deshacer.
+          {description}
         </DialogContentText>
       </DialogContent>
       <DialogActions>

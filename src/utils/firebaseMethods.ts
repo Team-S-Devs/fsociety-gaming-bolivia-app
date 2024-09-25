@@ -12,7 +12,8 @@ import {
   getCountFromServer,
 } from "firebase/firestore";
 import { db } from "./firebase-config";
-import { Tournament } from "../interfaces/interfaces";
+import { Banner, Tournament } from "../interfaces/interfaces";
+import { CollectionNames } from "./collectionNames";
 
 export const getPaginatedTournaments = async (
   direction: "next" | "prev" | undefined,
@@ -20,7 +21,7 @@ export const getPaginatedTournaments = async (
   endBeforeDoc?: DocumentSnapshot,
   numPerPage: number = 10
 ) => {
-  const tournamentsCollection = collection(db, "tournaments");
+  const tournamentsCollection = collection(db, CollectionNames.Tournaments);
 
   let tournamentsQuery = query(
     tournamentsCollection,
@@ -46,6 +47,44 @@ export const getPaginatedTournaments = async (
     id: doc.id,
     ...doc.data(),
   })) as Tournament[];
+
+  return {
+    result: tournaments,
+    lastDoc: snapshot.docs[snapshot.docs.length - 1],
+    firstDoc: snapshot.docs[0],
+  };
+};
+
+export const getPaginatedBanners = async (
+  direction: "next" | "prev" | undefined,
+  startAfterDoc?: DocumentSnapshot,
+  endBeforeDoc?: DocumentSnapshot,
+  numPerPage: number = 10
+) => {
+  const tournamentsCollection = collection(db, CollectionNames.Banners);
+
+  let tournamentsQuery = query(
+    tournamentsCollection,
+    orderBy("position", "desc"),
+    limit(numPerPage)
+  );
+
+  if (direction === "next" && startAfterDoc) {
+    tournamentsQuery = query(tournamentsQuery, startAfter(startAfterDoc));
+  } else if (direction === "prev" && endBeforeDoc) {
+    tournamentsQuery = query(
+      tournamentsCollection,
+      orderBy("position", "desc"),
+      endBefore(endBeforeDoc),
+      limitToLast(numPerPage)
+    );
+  }
+
+  const snapshot = await getDocs(tournamentsQuery);
+  const tournaments = snapshot.docs.map((doc) => ({
+    id: doc.id,
+    ...doc.data(),
+  })) as Banner[];
 
   return {
     result: tournaments,

@@ -1,10 +1,9 @@
 import React, { useEffect, useState } from "react";
 import { DocumentSnapshot } from "firebase/firestore";
-import TournamentsTable from "./TournamentsTable";
-import { Tournament } from "../../../interfaces/interfaces";
+import { Banner } from "../../../interfaces/interfaces";
 import {
   getNumPages,
-  getPaginatedTournaments,
+  getPaginatedBanners,
 } from "../../../utils/firebaseMethods";
 import Loader from "../../Loader";
 import { Button, Typography, useMediaQuery, useTheme } from "@mui/material";
@@ -14,10 +13,11 @@ import { useNavigate } from "react-router-dom";
 import { PagesNames } from "../../../utils/constants";
 import styles from "../../../assets/styles/buttons.module.css";
 import { CollectionNames } from "../../../utils/collectionNames";
+import BannersTable from "./BannersTable";
 
-const ViewTournaments: React.FC = () => {
+const ViewBanners: React.FC = () => {
   const numPerPage = 10;
-  const [tournaments, setTournaments] = useState<Tournament[]>([]);
+  const [banners, setBanners] = useState<Banner[]>([]);
   const [firstDoc, setFirstDoc] = useState<DocumentSnapshot | undefined>(
     undefined
   );
@@ -38,7 +38,7 @@ const ViewTournaments: React.FC = () => {
   const isSmallScreen = useMediaQuery(theme.breakpoints.down("sm"));
 
   useEffect(() => {
-    getNumPages(CollectionNames.Tournaments, numPerPage).then((result) => {
+    getNumPages(CollectionNames.Banners, numPerPage).then((result) => {
       setPages(result.numPages);
       setTotalDocs(result.totalDocs);
     });
@@ -49,9 +49,9 @@ const ViewTournaments: React.FC = () => {
     const endBeforeDoc = direction === "prev" ? firstDoc : undefined;
 
     setLoading(true);
-    getPaginatedTournaments(direction, startAfterDoc, endBeforeDoc, numPerPage)
+    getPaginatedBanners(direction, startAfterDoc, endBeforeDoc, numPerPage)
       .then((data) => {
-        setTournaments(data.result);
+        setBanners(data.result);
         setFirstDoc(data.firstDoc);
         setLastDoc(data.lastDoc);
         setLoading(false);
@@ -63,13 +63,13 @@ const ViewTournaments: React.FC = () => {
   }, [page, direction]);
 
   const handleAdd = () => {
-    navigate(PagesNames.AdminAddTournament);
+    navigate(PagesNames.AdminAddBanner);
   };
 
   return (
     <div>
       <BlurBoxContainer>
-        <Typography variant="h5">Torneos creados</Typography>
+        <Typography variant="h5">Banners creados</Typography>
         <Button
           variant="contained"
           color="primary"
@@ -79,7 +79,7 @@ const ViewTournaments: React.FC = () => {
           style={{ marginBottom: "28px" }}
           className={styles.continueButton}
         >
-          Añadir Torneo
+          Añadir Banner
         </Button>
         {loading ? (
           <Loader />
@@ -91,22 +91,22 @@ const ViewTournaments: React.FC = () => {
             mt={4}
             mb={3}
           >
-            Error obteniendo los torneos. Por favor, recarga la página.
+            Error obteniendo los banners. Por favor, recarga la página.
           </Typography>
-        ) : tournaments.length > 0 ? (
-          <TournamentsTable
-            tournaments={tournaments}
+        ) : banners.length > 0 ? (
+          <BannersTable
+            banners={banners}
+            setBanners={setBanners}
             page={page}
-            totalDocs={totalDocs}
-            setTournaments={setTournaments}
-            rowsPerPage={numPerPage}
             setPage={setPage}
-            setDirection={setDirection}
             pages={pages ?? 0}
+            totalDocs={totalDocs}
+            rowsPerPage={numPerPage}
+            setDirection={setDirection}
           />
         ) : (
           <Typography variant="h6" textAlign={"center"} mt={4} mb={3}>
-            No hay torneos creados.
+            No hay banners creados.
           </Typography>
         )}
       </BlurBoxContainer>
@@ -114,4 +114,4 @@ const ViewTournaments: React.FC = () => {
   );
 };
 
-export default ViewTournaments;
+export default ViewBanners;
