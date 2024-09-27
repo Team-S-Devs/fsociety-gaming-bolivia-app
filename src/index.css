@@ -14,6 +14,7 @@
   --primary-color: #3b3e8f;
   --secondary-color: #3253bc;
   --third-color: #ffd700;
+  --back-dark: #121212;
   --gradient-color: linear-gradient(90deg, var(--secondary-color), #ffff);
   --bg: rgb(39, 7, 124);
   --header-color: rgb(6, 6, 31);

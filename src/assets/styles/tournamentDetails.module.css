@@ -18,7 +18,7 @@
   .tournamentInfoDetails {
     padding: 20px;
     padding-top: 6px;
-    background-color: #121212;
+    background-color: var(--back-dark);
     color: #fff;
     text-align: center;
   }
@@ -209,6 +209,150 @@
   pointer-events: none;
 }
 
+/* Modal from Join */
+
+.modalJoin {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.7);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.modalJoinContent {
+  background: linear-gradient(170deg, #191b27, rgb(5, 8, 17));
+  padding: 20px;
+  border-radius: 10px;
+  width: 500px;
+  max-width: 90%;
+  text-align: center;
+  color: white;
+  position: relative;
+}
+
+.modalOption div {
+  margin-bottom: 10px;
+  width: 100%;
+  background-color: #262b43;
+  color: #ffffff;
+  padding: 12px 20px;
+  border-radius: 8px;
+  font-size: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  border: solid rgba(0, 217, 255, 0.973) 1px;
+}
+
+.modalOption div:hover {
+  background-color: rgba(0, 217, 255, 0.973);
+  color: #000;
+}
+
+.modalOption div svg {
+  margin-right: 8px;
+}
+
+.modalOption {
+  background-color: #10121d;
+  padding: 10px;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  max-width: 400px;
+  margin: 0 auto;
+}
+
+.closeContainer {
+  display: flex;
+  justify-content: right;
+  text-align: right;
+}
+
+.closeButton {
+  text-align: right;
+  background: none;
+  border: none;
+  color: white;
+  font-size: 18px;
+  cursor: pointer;
+}
+
+
+/* Modal Form */
+
+.modalForm {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 20px;
+  background-color: #262b43;
+  border-radius: 8px;
+  width: 100%;
+  max-width: 400px;
+  margin: 0 auto;
+}
+
+.modalForm h3 {
+  color: #ffffff;
+  margin-bottom: 15px;
+  font-size: 1.2rem;
+}
+
+.modalInput {
+  width: 100%;
+  padding: 12px;
+  margin-bottom: 12px;
+  border: 1px solid rgba(0, 217, 255, 0.973);
+  border-radius: 8px;
+  background-color: #10121d;
+  color: #ffffff;
+  font-size: 16px;
+}
+
+.modalButton, .modalButtonClose {
+  width: 100%;
+  padding: 12px;
+  margin-bottom: 10px;
+  background-color: rgba(0, 217, 255, 0.973);
+  color: #000;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 16px;
+  transition: background-color 0.3s ease;
+}
+
+.modalButton:hover, .modalButtonClose:hover {
+  background-color: #ffffff;
+}
+
+.modalForm p {
+  color: #00d9ff;
+  margin-top: 10px;
+  font-size: 1rem;
+}
+
+.modalOption {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.modalTitle {
+  font-size: 1.5rem;
+  color: #fff;
+  margin-bottom: 10px;
+}
+
+
+
 @media (max-width: 350px) {
   .descriptionTourDetails {
     font-size: 1rem;
@@ -216,5 +360,35 @@
 
   .titleTourDetails {
     font-size: 1.5rem;
+  }
+
+  .modalJoinContent {
+  }
+
+  .modalOption {
+    margin-top: 20px;
+    padding: 0;
+  }
+}
+
+@media (max-width: 268px) {
+  .modalJoinContent {
+    width: auto;
+  }
+
+  .modalOption {
+    margin-top: 20px;
+    padding: 0;
+  }
+
+  .modalOption div {
+    flex-direction: column;
+  }
+
+  .modalOption div span {
+    margin-right: 0;
+    padding-left: 0;
+    font-size: .9rem;
+    margin-top: 6px;
   }
 }
