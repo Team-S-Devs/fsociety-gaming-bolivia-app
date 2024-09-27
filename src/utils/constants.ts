@@ -4,8 +4,12 @@ export const EMAIL = "fsocietyseagm@gmail.com"
 
 export enum PagesNames {
     Admin = "/admin",
-    AdminAddTournament = "/admin/nuevo_torneo",
-    AdminUpdateTournament = "/admin/editar_torneo",
+    AdminTournaments = "/admin/torneos",
+    AdminAddTournament = "/admin/torneos/nuevo",
+    AdminUpdateTournament = "/admin/torneos/editar",
+    AdminBanners = "/admin/banners",
+    AdminUpdateBanner = "/admin/banners/editar",
+    AdminAddBanner = "/admin/banners/nuevo",
     Auth = "/autenticar",
     Profile = "/perfil",
     Teams = "/equipos",

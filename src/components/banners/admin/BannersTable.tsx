@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Tournament } from "../../../interfaces/interfaces";
+import { Banner } from "../../../interfaces/interfaces";
 import {
   IconButton,
   Paper,
@@ -18,10 +18,10 @@ import { Table, Tbody, Td, Th, Thead, Tr } from "react-super-responsive-table";
 import "react-super-responsive-table/dist/SuperResponsiveTableStyle.css";
 import DeleteConfirmationDialog from "../../dialog/DeleteConfirmationDialog";
 
-interface TournamentsTableProps {
-  tournaments: Tournament[];
+interface BannersTableProps {
+  banners: Banner[];
   totalDocs: number;
-  setTournaments: React.Dispatch<React.SetStateAction<Tournament[]>>;
+  setBanners: React.Dispatch<React.SetStateAction<Banner[]>>;
   rowsPerPage: number;
   setPage: React.Dispatch<React.SetStateAction<number>>;
   page: number;
@@ -31,10 +31,10 @@ interface TournamentsTableProps {
   pages: number;
 }
 
-const TournamentsTable: React.FC<TournamentsTableProps> = ({
-  tournaments,
+const BannersTable: React.FC<BannersTableProps> = ({
+  banners: banners,
   totalDocs,
-  setTournaments,
+  setBanners,
   rowsPerPage,
   setPage,
   page,
@@ -44,58 +44,53 @@ const TournamentsTable: React.FC<TournamentsTableProps> = ({
   const navigate = useNavigate();
   const [openDialog, setOpenDialog] = useState<boolean>(false);
   const [loadingDelete, setLoadingDelete] = useState<boolean>(false);
-  const [selectedTournamentId, setSelectedTournamentId] = useState<
+  const [selectedBannerId, setSelectedBannerId] = useState<
     string | null
   >(null);
 
-  const handleToggleActive = async (tournament: Tournament) => {
-    if (new Date() > tournament.endDate.toDate()) {
-      alert("No puedes activar un torneo cuyo fecha de fin ha pasado.");
-      return;
-    }
+  const handleToggleHidden = async (banner: Banner) => {
+    if (!banner.id) return;
 
-    if (!tournament.id) return;
-
-    const tournamentRef = doc(db, CollectionNames.Tournaments, tournament.id);
-    const newActiveStatus = !tournament.active;
+    const bannerRef = doc(db, CollectionNames.Banners, banner.id);
+    const newHiddenStatus = !banner.hidden;
 
     try {
-      await updateDoc(tournamentRef, { active: newActiveStatus });
-      setTournaments((prev) =>
+      await updateDoc(bannerRef, { hidden: newHiddenStatus });
+      setBanners((prev) =>
         prev.map((t) =>
-          t.id === tournament.id ? { ...t, active: newActiveStatus } : t
+          t.id === banner.id ? { ...t, hidden: newHiddenStatus } : t
         )
       );
     } catch (error) {
-      alert("Error al actualizar el estado del torneo.");
+      alert("Error al actualizar la visibilidad del torneo.");
     }
   };
 
   const handleDelete = (id: string) => {
-    setSelectedTournamentId(id);
+    setSelectedBannerId(id);
     setOpenDialog(true);
   };
 
   const handleCloseDialog = () => {
     setOpenDialog(false);
-    setSelectedTournamentId(null);
+    setSelectedBannerId(null);
   };
 
   const confirmDelete = async () => {
     try {
-      if (!selectedTournamentId) return;
-      const tournamentRef = doc(
+      if (!selectedBannerId) return;
+      const BannerRef = doc(
         db,
-        CollectionNames.Tournaments,
-        selectedTournamentId
+        CollectionNames.Banners,
+        selectedBannerId
       );
       setLoadingDelete(true);
-      await updateDoc(tournamentRef, { deleted: true });
-      setTournaments((prev) =>
-        prev.filter((tournament) => tournament.id !== selectedTournamentId)
+      await updateDoc(BannerRef, { deleted: true });
+      setBanners((prev) =>
+        prev.filter((Banner) => Banner.id !== selectedBannerId)
       );
       setOpenDialog(false);
-      setSelectedTournamentId(null);
+      setSelectedBannerId(null);
       setLoadingDelete(false);
     } catch (error) {
       alert("No se pudo eliminar el torneo");
@@ -103,7 +98,7 @@ const TournamentsTable: React.FC<TournamentsTableProps> = ({
   };
 
   const handleEdit = (id: string) => {
-    navigate(`${PagesNames.AdminUpdateTournament}/${id}`);
+    navigate(`${PagesNames.AdminUpdateBanner}/${id}`);
   };
 
   const handleChangePage = (_event: any, newPage: number) => {
@@ -130,20 +125,19 @@ const TournamentsTable: React.FC<TournamentsTableProps> = ({
           <Thead>
             <Tr>
               <Th>Banner</Th>
-              <Th>Nombre</Th>
-              <Th>Fecha de inicio</Th>
-              <Th>Fecha de fin</Th>
-              <Th>Activo</Th>
+              <Th>Redirección</Th>
+              <Th>Posición</Th>
+              <Th>Mostrar</Th>
               <Th>Acciones</Th>
             </Tr>
           </Thead>
           <Tbody>
-            {tournaments.map((tournament) => (
-              <Tr key={tournament.id}>
+            {banners.map((banner) => (
+              <Tr key={banner.id}>
                 <Td>
                   <img
-                    src={tournament.previewImagePath.url}
-                    alt={tournament.name}
+                    src={banner.image.url}
+                    alt={banner.redirectUrl}
                     width="100"
                     style={{ maxWidth: "100%" }}
                   />
@@ -155,27 +149,22 @@ const TournamentsTable: React.FC<TournamentsTableProps> = ({
                       maxWidth: 220,
                     }}
                   >
-                    {tournament.name}
+                    {banner.redirectUrl}
                   </Typography>
                 </Td>
-                <Td>{tournament.startDate.toDate().toLocaleDateString()}</Td>
-                <Td>{tournament.endDate.toDate().toLocaleDateString()}</Td>
+                <Td>{banner.position}</Td>
                 <Td>
                   <Switch
-                    checked={
-                      tournament.active &&
-                      new Date() < tournament.endDate.toDate()
-                    }
-                    onChange={() => handleToggleActive(tournament)}
+                    checked={!banner.hidden}
+                    onChange={() => handleToggleHidden(banner)}
                     color="secondary"
-                    disabled={new Date() > tournament.endDate.toDate()}
                   />
                 </Td>
                 <Td>
-                  <IconButton onClick={() => handleEdit(tournament.fakeId!)}>
+                  <IconButton onClick={() => handleEdit(banner.id!)}>
                     <BiEdit color="#fff" />
                   </IconButton>
-                  <IconButton onClick={() => handleDelete(tournament.id!)}>
+                  <IconButton onClick={() => handleDelete(banner.id!)}>
                     <BiTrash color="#fff" />
                   </IconButton>
                 </Td>
@@ -252,4 +241,4 @@ const TournamentsTable: React.FC<TournamentsTableProps> = ({
   );
 };
 
-export default TournamentsTable;
+export default BannersTable;

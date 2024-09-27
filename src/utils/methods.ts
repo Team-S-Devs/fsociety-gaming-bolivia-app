@@ -1,13 +1,17 @@
 import { Timestamp } from "firebase/firestore";
-import { Tournament, TournamentModality } from "../interfaces/interfaces";
+import { Banner, Tournament, TournamentModality } from "../interfaces/interfaces";
+import { nanoid } from "nanoid";
+import { StoragePaths } from "./collectionNames";
 
 export const getEmptyTournament = (): Tournament => {
   const dateObj = new Date();
   dateObj.setHours(23, 59, 59, 999);
   dateObj.setDate(dateObj.getDate() + 1);
 
+  const fakeId = nanoid();
+
   return {
-    fakeId: new Date().toISOString(),
+    fakeId,
     name: "",
     description: {
       blocks: [],
@@ -20,11 +24,11 @@ export const getEmptyTournament = (): Tournament => {
     awards: [],
     inscriptionPrice: 0,
     imagePath: {
-      ref: `tournaments/banners/${Date.now().toString()}`,
+      ref: `${StoragePaths.TournamentsBanners}/${fakeId}`,
       url: "",
     },
     previewImagePath: {
-      ref: `tournaments/previews/${Date.now().toString()}`,
+      ref: `${StoragePaths.TournamentsBanners}/${fakeId}`,
       url: "",
     },
     participants: 0,
@@ -38,3 +42,19 @@ export const getEmptyTournament = (): Tournament => {
     active: true,
   };
 };
+
+export const getEmptyBanner = () : Banner => {
+  const fakeId = nanoid();
+
+  return(
+    {
+      image: {
+        url: "",
+        ref: `${StoragePaths.Banners}/${fakeId}`
+      },
+      redirectUrl: "",
+      position: 1,
+      hidden: false,
+    }
+  )
+}

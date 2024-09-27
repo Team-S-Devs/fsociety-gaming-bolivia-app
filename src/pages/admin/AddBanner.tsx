@@ -3,24 +3,23 @@ import { Timestamp, collection, addDoc } from "firebase/firestore";
 import { Container } from "@mui/material";
 import { db } from "../../utils/firebase-config";
 import { CollectionNames, StoragePaths } from "../../utils/collectionNames";
-import { Tournament } from "../../interfaces/interfaces";
+import { Banner } from "../../interfaces/interfaces";
 import ContainerWithBackground from "../../components/ContainerWithBackground";
 import BlurBoxContainer from "../../components/BlurBoxContainer";
-import TournamentForm from "../../components/tournament/admin/TournamentForm";
-import { getEmptyTournament } from "../../utils/methods";
+import { getEmptyBanner } from "../../utils/methods";
 import { uploadFileToStorage } from "../../utils/storageMethods";
 import { useNavigate } from "react-router-dom";
 import { PagesNames } from "../../utils/constants";
+import BannerForm from "../../components/banners/admin/BannerForm";
 
-const AddTournament: React.FC = () => {
+const AddBanner: React.FC = () => {
   const navigate = useNavigate();
-  const [tournament, setTournament] = useState<Tournament>(
-    getEmptyTournament()
+  const [banner, setBanner] = useState<Banner>(
+    getEmptyBanner()
   );
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
   const [file, setFile] = useState<File | null>(null);
-  const [previewFile, setPreviewFile] = useState<File | null>(null);
 
   const handleUploadImage = async (ref: string, file: File | null): Promise<string> => {
     if (!file) return "";
@@ -39,40 +38,31 @@ const AddTournament: React.FC = () => {
     setError(null);
     setSuccess(null);
 
-    if (!tournament.name || !tournament.startDate || !tournament.endDate) {
+    if (!banner.redirectUrl || !banner.position) {
       setError("Por favor, rellena todos los campos.");
       return;
     }
 
     try {
       const refBanner = `${
-        StoragePaths.TournamentsPreviews
+        StoragePaths.Banners
       }/${Date.now().toString()}`;
       const urlBanner = await handleUploadImage(refBanner, file);
 
-      const refPreview = `${
-        StoragePaths.TournamentsPreviews
-      }/${Date.now().toString()}`;
-      const urlPreview = await handleUploadImage(refPreview, previewFile);
-      await addDoc(collection(db, CollectionNames.Tournaments), {
-        ...tournament,
+      await addDoc(collection(db, CollectionNames.Banners), {
+        ...banner,
         fakeId: new Date().toTimeString(),
-        imagePath: {
+        image: {
           url: urlBanner,
           ref: refBanner,
-        },
-        previewImagePath: {
-          url: urlPreview,
-          ref: refPreview,
         },
         createdAt: Timestamp.now(),
       });
       setSuccess("Torneo añadido exitosamente.");
-      setTournament(getEmptyTournament());
+      setBanner(getEmptyBanner());
       setFile(null);
-      navigate(PagesNames.AdminTournaments);
+      navigate(PagesNames.AdminBanners);
     } catch (err) {
-      console.log(err)
       setError("Error añadiendo el torneo. Inténtalo de nuevo.");
     }
   };
@@ -86,9 +76,9 @@ const AddTournament: React.FC = () => {
         <br />
 
         <BlurBoxContainer>
-          <TournamentForm
-            tournament={tournament}
-            setTournament={setTournament}
+          <BannerForm
+            banner={banner}
+            setBanner={setBanner}
             submit={handleSubmit}
             success={success}
             error={error}
@@ -97,8 +87,6 @@ const AddTournament: React.FC = () => {
             file={file}
             setFile={setFile}
             setSuccess={setSuccess}
-            previewFile={previewFile}
-            setPreviewFile={setPreviewFile}
           />
         </BlurBoxContainer>
       </Container>
@@ -106,4 +94,4 @@ const AddTournament: React.FC = () => {
   );
 };
 
-export default AddTournament;
+export default AddBanner;

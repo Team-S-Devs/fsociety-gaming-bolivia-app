@@ -1,56 +1,48 @@
 import React, { useEffect, useState } from "react";
 import {
   Timestamp,
-  collection,
-  query,
-  where,
-  getDocs,
   updateDoc,
   doc,
+  getDoc,
 } from "firebase/firestore";
 import { Container } from "@mui/material";
 import { useNavigate, useParams } from "react-router-dom";
 import { db } from "../../utils/firebase-config";
 import { CollectionNames } from "../../utils/collectionNames";
-import { Tournament } from "../../interfaces/interfaces";
+import { Banner } from "../../interfaces/interfaces";
 import ContainerWithBackground from "../../components/ContainerWithBackground";
 import BlurBoxContainer from "../../components/BlurBoxContainer";
-import TournamentForm from "../../components/tournament/admin/TournamentForm";
-import { getEmptyTournament } from "../../utils/methods";
+import { getEmptyBanner } from "../../utils/methods";
 import { uploadFileToStorage } from "../../utils/storageMethods";
 import { PagesNames } from "../../utils/constants";
 import Loader from "../../components/Loader";
+import BannerForm from "../../components/banners/admin/BannerForm";
 
-const EditTournament: React.FC = () => {
-  const { fakeId } = useParams<{ fakeId: string }>();
+const EditBanner: React.FC = () => {
+  const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const [loading, setLoading] = useState<boolean>(false);
-  const [tournament, setTournament] = useState<Tournament>(
-    getEmptyTournament()
-  );
+  const [banner, setBanner] = useState<Banner>(getEmptyBanner());
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
   const [file, setFile] = useState<File | null>(null);
-  const [previewfile, setPreviewFile] = useState<File | null>(null);
   const [docId, setDocId] = useState<string | null>(null);
 
   useEffect(() => {
-    const fetchTournamentByFakeId = async () => {
+    const fetchBannerByFakeId = async () => {
       setError(null);
       setLoading(true);
       try {
-        const q = query(
-          collection(db, CollectionNames.Tournaments),
-          where("fakeId", "==", fakeId)
-        );
-        const querySnapshot = await getDocs(q);
+        if(!id) return;
+        const bannerRef = doc(db, CollectionNames.Banners, id);
 
-        if (!querySnapshot.empty) {
-          const tournamentDoc = querySnapshot.docs[0];
-          setTournament(tournamentDoc.data() as Tournament);
-          setDocId(tournamentDoc.id);
+        const docSnap = await getDoc(bannerRef);
+
+        if (docSnap.exists()) {
+          setBanner(docSnap.data() as Banner);
+          setDocId(docSnap.id);
         } else {
-          setError("Torneo no encontrado.");
+          setError("Banner no encontrado.");
         }
       } catch (error) {
         setError("Error obteniendo los datos del torneo.");
@@ -58,10 +50,13 @@ const EditTournament: React.FC = () => {
       setLoading(false);
     };
 
-    fetchTournamentByFakeId();
-  }, [fakeId]);
+    fetchBannerByFakeId();
+  }, [id]);
 
-  const handleUploadImage = async (ref: string, file: File | null): Promise<string> => {
+  const handleUploadImage = async (
+    ref: string,
+    file: File | null
+  ): Promise<string> => {
     if (!file) return "";
 
     try {
@@ -78,52 +73,39 @@ const EditTournament: React.FC = () => {
     setError(null);
     setSuccess(null);
 
-    if (
-      !tournament ||
-      !tournament.name ||
-      !tournament.startDate ||
-      !tournament.endDate
-    ) {
+    if (!banner || !banner.redirectUrl || !banner.position) {
       setError("Por favor, rellena todos los campos.");
       return;
     }
 
     try {
-      let imagePath = tournament.imagePath;
-      let previewImagePath = tournament.previewImagePath;
+      let imagePath = banner.image;
 
       if (file) {
-        const ref = tournament.imagePath.ref;
+        const ref = banner.image.ref;
         const url = await handleUploadImage(ref, file);
         imagePath = { url, ref };
       }
 
-      if (previewfile) {
-        const ref = tournament.previewImagePath.ref;
-        const url = await handleUploadImage(ref, previewfile);
-        previewImagePath = { url, ref };
-      }
-
       if (docId) {
-        await updateDoc(doc(db, CollectionNames.Tournaments, docId), {
-          ...tournament,
-          imagePath,
-          previewImagePath,
+        await updateDoc(doc(db, CollectionNames.Banners, docId), {
+          ...banner,
+          image: imagePath,
           updatedAt: Timestamp.now(),
         });
 
         setSuccess("Torneo actualizado exitosamente.");
         navigate(PagesNames.AdminBanners);
       } else {
-        setError("No se encontró el torneo para actualizar.");
+        setError("No se encontró el banner para actualizar.");
       }
     } catch (err) {
-      setError("Error actualizando el torneo. Inténtalo de nuevo.");
+      setError("Error actualizando el banner. Inténtalo de nuevo.");
     }
   };
 
-  if (!tournament) {
-    return <div>Cargando datos del torneo...</div>;
+  if (!banner) {
+    return <div>Cargando datos del banner...</div>;
   }
 
   return (
@@ -138,9 +120,9 @@ const EditTournament: React.FC = () => {
           {loading ? (
             <Loader />
           ) : (
-            <TournamentForm
-              tournament={tournament}
-              setTournament={setTournament}
+            <BannerForm
+              banner={banner}
+              setBanner={setBanner}
               submit={handleSubmit}
               success={success}
               error={error}
@@ -150,8 +132,6 @@ const EditTournament: React.FC = () => {
               setFile={setFile}
               setSuccess={setSuccess}
               isEditing
-              previewFile={previewfile}
-              setPreviewFile={setPreviewFile}
             />
           )}
         </BlurBoxContainer>
@@ -160,4 +140,4 @@ const EditTournament: React.FC = () => {
   );
 };
 
-export default EditTournament;
+export default EditBanner;

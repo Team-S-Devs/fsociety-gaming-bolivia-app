@@ -1,6 +1,7 @@
 export enum CollectionNames {
     Users = "users",
-    Tournaments = "tournaments"
+    Tournaments = "tournaments",
+    Banners = "banners"
 }
 
 export enum StoragePaths {
@@ -8,4 +9,5 @@ export enum StoragePaths {
     Tournaments = "tournaments",
     TournamentsBanners = "tournaments/banners",
     TournamentsPreviews = "tournaments/previews",
+    Banners = "banners"
 }

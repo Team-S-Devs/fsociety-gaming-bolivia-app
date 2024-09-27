@@ -15,8 +15,11 @@ import ResponsibleDisclosurePolicy from "./pages/docs/ResponsibleDisclosurePolic
 import TournamentRules from "./pages/docs/TournamentRules";
 import Profile from "./pages/Profile";
 import EditTournament from "./pages/admin/EditTournament";
+import AdminTournaments from "./pages/admin/AdminTournaments";
+import AdminBanners from "./pages/admin/AdminBanners";
+import AddBanner from "./pages/admin/AddBanner";
+import EditBanner from "./pages/admin/EditBanner";
 import TournamentDetails from "./pages/TournamentDetails";
-
 
 const AppRouter: React.FC = () => {
   const { isAdmin, loading } = useUserContext();
@@ -39,6 +42,22 @@ const AppRouter: React.FC = () => {
               <Route
                 path={PagesNames.Admin}
                 Component={getAdminComponent(Admin)}
+              />
+              <Route
+                path={PagesNames.AdminTournaments}
+                Component={getAdminComponent(AdminTournaments)}
+              />
+              <Route
+                path={PagesNames.AdminBanners}
+                Component={getAdminComponent(AdminBanners)}
+              />
+              <Route
+                path={PagesNames.AdminAddBanner}
+                Component={getAdminComponent(AddBanner)}
+              />
+               <Route
+                path={`${PagesNames.AdminUpdateBanner}/:id`}
+                Component={getAdminComponent(EditBanner)}
               />
               <Route
                 path={PagesNames.AdminAddTournament}
