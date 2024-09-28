@@ -9,7 +9,8 @@
     align-items: center;
     background-color: #000;
   }
-  
+
+
   .bannerImageTourDetails {
     width: 100%;
     object-fit: cover;
@@ -351,6 +352,21 @@
   margin-bottom: 10px;
 }
 
+.splashBannerContainer {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+  background-color: rgba(7, 9, 38, 0.713);
+  height: 300px;
+  object-fit: contain;
+}
+
+@media (max-width: 390px) {
+  .splashBannerContainer {
+    height: 130px; 
+  }
+}
+
 
 
 @media (max-width: 350px) {
@@ -368,7 +384,7 @@
   .modalOption {
     margin-top: 20px;
     padding: 0;
-  }
+  }  
 }
 
 @media (max-width: 268px) {

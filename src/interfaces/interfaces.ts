@@ -77,13 +77,19 @@ export interface Tournament {
   active: boolean;
 }
 
+export interface TeamMember {
+  memberId: string;
+  memberName: string;
+  payment: boolean;
+}
+
 export interface Team {
   id?: string;
   name: string;
   captainId: string;
   code: string;
   banner: ImageRefPath;
-  members: string[];
+  members: TeamMember[];
 }
 
 /* Slider */
