@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useMemo } from "react";
-import { useParams } from "react-router-dom";
-import { Category, Tournament } from "../interfaces/interfaces";
+import { useNavigate, useParams } from "react-router-dom";
+import { Category, Tournament, Team } from "../interfaces/interfaces";
 import styles from "../assets/styles/tournamentDetails.module.css";
 import Splash from "./Splash";
 import { getTournamentByFakeId } from "../utils/authUtils";
@@ -16,13 +16,12 @@ import ParticipantsViewSection from "./tournamentView/ParticipantsViewSection";
 
 const TournamentDetails: React.FC = () => {
   const { fakeId } = useParams<{ fakeId: string }>();
+  const navigate = useNavigate();
   const [tournament, setTournament] = useState<Tournament | null>(null);
   const [actualCategory, setActualCategory] = useState(1);
-  const [actualPrevView, setActualPrevView] = useState<React.ReactNode | null>(
-    null
-  );
+  const [actualPrevView, setActualPrevView] = useState<React.ReactNode | null>(null);
   const [isImageLoaded, setIsImageLoaded] = useState(false);
-  const [userHasTeam, setUserHasTeam] = useState(false);
+  const [userTeam, setUserTeam] = useState<Team | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   useEffect(() => {
@@ -30,23 +29,22 @@ const TournamentDetails: React.FC = () => {
       toast.error("El Fake ID del torneo no está definido");
       return;
     }
-  
+
     const fetchTournament = async () => {
       const fetchedTournament = await getTournamentByFakeId(fakeId);
       setTournament(fetchedTournament);
-  
+
       const user = auth.currentUser;
       if (user && fetchedTournament?.teams) {
-        const hasTeam = fetchedTournament.teams.some((team) =>
+        const team = fetchedTournament.teams.find((team) =>
           team.members.some((member: any) => member.memberId === user.uid)
         );
-        setUserHasTeam(hasTeam);
+        setUserTeam(team || null);
       }
     };
-  
+
     fetchTournament();
   }, [fakeId]);
-  
 
   const SliderCategories: Category[] = useMemo(
     () => [
@@ -63,7 +61,7 @@ const TournamentDetails: React.FC = () => {
       {
         id: 3,
         value: "PARTICIPANTES",
-        component: <ParticipantsViewSection tournament={tournament}/>,
+        component: <ParticipantsViewSection tournament={tournament} />,
       },
       {
         id: 4,
@@ -95,6 +93,12 @@ const TournamentDetails: React.FC = () => {
     setIsModalOpen(false);
   };
 
+  const openTournament = () => {
+    if (userTeam) {
+      navigate(`/torneos/${tournament?.fakeId}/equipos/${userTeam.captainId}`);
+    }
+  }
+
   if (!tournament) {
     return <Splash />;
   }
@@ -106,7 +110,6 @@ const TournamentDetails: React.FC = () => {
         <div className={styles.splashBannerContainer}>
           <Loader />
         </div>
-
         }
         <img
           src={tournament.imagePath.url}
@@ -119,8 +122,8 @@ const TournamentDetails: React.FC = () => {
 
       <div className={styles.tournamentInfoDetails}>
         <div className={`${styles.actionsTourDetails} container`}>
-          <button className={styles.joinButtonTourDetails} onClick={openModal}>
-            {!userHasTeam ? "Unirme al Torneo" : "Ver Equipo"}
+          <button className={styles.joinButtonTourDetails} onClick={!userTeam ? openModal : openTournament}>
+            {!userTeam ? "Unirme al Torneo" : "Ver Equipo"}
           </button>
         </div>
         <h1 className={styles.titleTourDetails}>{tournament.name}</h1>
@@ -131,12 +134,12 @@ const TournamentDetails: React.FC = () => {
         />
         {actualPrevView}
       </div>
-      {!userHasTeam &&
+      {!userTeam &&
           <JoinTeamModal
           tournament={tournament}
           isModalOpen={isModalOpen}
           closeModal={closeModal}
-          setUserHasTeam={setUserHasTeam}
+          setUserTeam={setUserTeam}
         />
       }
       <Footer />

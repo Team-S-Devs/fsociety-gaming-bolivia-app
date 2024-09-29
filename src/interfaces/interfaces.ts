@@ -89,6 +89,7 @@ export interface Team {
   captainId: string;
   code: string;
   banner: ImageRefPath;
+  payment: boolean;
   members: TeamMember[];
 }
 

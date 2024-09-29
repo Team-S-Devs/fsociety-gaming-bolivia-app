@@ -13,6 +13,8 @@ import Footer from "../../components/Footer";
 import Avatar from "@mui/material/Avatar";
 import "bootstrap/dist/css/bootstrap.min.css";
 import useWindowSize from "../../hooks/useWindowSize";
+import { auth } from "../../utils/firebase-config";
+import 'react-toastify/dist/ReactToastify.css';
 
 const TeamView: React.FC = () => {
   const { fakeId, captainId } = useParams<{
@@ -24,6 +26,7 @@ const TeamView: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [isImageLoaded, setIsImageLoaded] = useState(false);
   const { width } = useWindowSize();
+  const [isMember, setIsMember] = useState(false);
 
   useEffect(() => {
     const fetchTournamentAndTeam = async () => {
@@ -46,6 +49,14 @@ const TeamView: React.FC = () => {
         (t: Team) => t.captainId === captainId
       );
       setTeam(foundTeam || null);
+
+      // Check if the current user is a member of the team
+      const user = auth.currentUser;
+      if (user && foundTeam) {
+        const member = foundTeam.members.find((member: TeamMember) => member.memberId === user.uid);
+        setIsMember(!!member); // Set to true if the user is a member
+      }
+
       setLoading(false);
     };
 
@@ -56,13 +67,20 @@ const TeamView: React.FC = () => {
     setIsImageLoaded(true);
   };
 
-  // Función para copiar el código al portapapeles
   const handleCopyCode = () => {
     if (team?.code) {
       navigator.clipboard.writeText(team.code).then(() => {
-        toast.success("Código copiado al portapapeles");
+        toast.success("Código copiado", {
+          className: "custom-toast-success",
+          bodyClassName: "custom-toast-body",
+          icon: false,
+        });
       }).catch(() => {
-        toast.error("Error al copiar el código");
+        toast.error("Error al copiar el código", {
+          className: "custom-toast-error",
+          bodyClassName: "custom-toast-body",
+          icon: false,
+        });
       });
     }
   };
@@ -101,55 +119,45 @@ const TeamView: React.FC = () => {
               className={styles.profileImage}
             />
           </div>
-          {width >= 600 &&
+          {width >= 600 && isMember && (
             <div className={`${styles.codeAction} container ${styles.teamCodeContainer}`}>
-              <h4>
-                Code:
-              </h4>
+              <h4>Code:</h4>
               <div className={styles.teamCodeFigure} onClick={handleCopyCode} style={{ cursor: "pointer" }}>
                 {team.code}
               </div>
             </div>
-          }
-          <h1 className={stylesDetails.titleTourDetails} style={{marginTop: (width < 600 ? '70px':'')}}>{team.name}</h1>
+          )}
+          <h1 className={stylesDetails.titleTourDetails} style={{ marginTop: (width < 600 || !isMember ? '70px' : '') }}>{team.name}</h1>
           <div className={`container ${styles.teamViewInfoContainer}`}>
-            {width < 600 &&
-            <div className={`${styles.codeAction} container ${styles.teamCodeContainer}`}>
-              <h4>
-                Code:
-              </h4>
-              <div className={styles.teamCodeFigure} onClick={handleCopyCode} style={{ cursor: "pointer" }}>
-                {team.code}
+            {width < 600 && isMember && (
+              <div className={`${styles.codeAction} container ${styles.teamCodeContainer}`}>
+                <h4>Code:</h4>
+                <div className={styles.teamCodeFigure} onClick={handleCopyCode} style={{ cursor: "pointer" }}>
+                  {team.code}
+                </div>
               </div>
-            </div>
-          }
+            )}
             <h3>Miembros</h3>
-            <div
-              className={`table-responsive container ${styles.tableTeamView}`}
-            >
-              <table
-                className={`${styles.participantsTable} table table-striped`}
-              >
+            <div className={`table-responsive container ${styles.tableTeamView}`}>
+              <table className={`${styles.participantsTable} table table-striped`}>
                 <thead>
                   <tr>
-                    <th>Name</th>
+                    <th>Nickname</th>
                     <th>Role</th>
                   </tr>
                 </thead>
                 <tbody>
                   {team.members && team.members.length > 0 ? (
-                    team.members.map(
-                      (participant: TeamMember, index: number) => (
-                        <tr key={participant.memberId}>
-                          <td>{participant.memberName}</td>
-                          <td>
-                            {participant.memberId === captainId
-                              ? "Capitán"
-                              : "Miembro"}
-                          </td>
-                        </tr>
-                      )
-                    )
+                    team.members.map((participant: TeamMember, index: number) => (
+                      <tr key={participant.memberId}>
+                        <td>{participant.memberName}</td>
+                        <td>
+                          {participant.memberId === captainId
+                            ? "Capitán"
+                            : "Miembro"}
+                        </td>
+                      </tr>
+                    ))
                   ) : (
                     <tr>
                       <td colSpan={3}>No participants found</td>
@@ -162,16 +170,16 @@ const TeamView: React.FC = () => {
         </div>
         <Footer />
         <ToastContainer
-          style={{ paddingTop: "4.4rem" }}
           position="top-right"
-          autoClose={4000}
+          autoClose={1000}
           hideProgressBar
           newestOnTop
           closeOnClick
           rtl={false}
-          pauseOnFocusLoss
+          pauseOnFocusLoss={false}
           draggable
-          pauseOnHover
+          pauseOnHover={false}
+          className="custom-toast-container"
         />
       </div>
     </PrincipalContainer>
