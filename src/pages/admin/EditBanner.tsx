@@ -29,7 +29,7 @@ const EditBanner: React.FC = () => {
   const [docId, setDocId] = useState<string | null>(null);
 
   useEffect(() => {
-    const fetchBannerByFakeId = async () => {
+    const fetchBannerById = async () => {
       setError(null);
       setLoading(true);
       try {
@@ -50,7 +50,7 @@ const EditBanner: React.FC = () => {
       setLoading(false);
     };
 
-    fetchBannerByFakeId();
+    fetchBannerById();
   }, [id]);
 
   const handleUploadImage = async (

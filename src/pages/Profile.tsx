@@ -16,7 +16,7 @@ import ContainerWithBackground from "../components/ContainerWithBackground";
 import Splash from "./Splash";
 import styles from "../assets/styles/profile.module.css";
 import MainButton from "../components/buttons/MainButton";
-import { validateNickname, validatePhone } from "../utils/validatorUtil";
+import { validateNickname, validatePhone, validateUserId } from "../utils/validatorUtil";
 import { useNavigate } from "react-router-dom";
 import { useUserContext } from "../contexts/UserContext";
 import ProfileImage from "../components/profile/ProfileImage";
@@ -27,6 +27,8 @@ interface UserData {
   nickname: string;
   phone: string;
   email: string;
+  bio: string;
+  userId: string;
 }
 
 const Profile: React.FC = () => {
@@ -40,6 +42,8 @@ const Profile: React.FC = () => {
     nickname: "",
     phone: "",
     email: "",
+    bio: "",
+    userId: ""
   });
   const [loading, setLoading] = useState<boolean>(true);
   const [updating, setUpdating] = useState<boolean>(false);
@@ -48,6 +52,7 @@ const Profile: React.FC = () => {
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [nicknameError, setNicknameError] = useState<string | null>(null);
   const [phoneError, setPhoneError] = useState<string | null>(null);
+  const [userIdError, setUserIdError] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchUserData = async () => {
@@ -60,8 +65,10 @@ const Profile: React.FC = () => {
           const data = userDoc.data() as UserData;
           setUserData({
             nickname: data.nickname || "",
-            phone: data.phone || "",
+            phone: data.phone.toString() || "",
             email: data.email || "",
+            bio: data.bio || "",
+            userId: data.userId || ""
           });
         }
       } catch (error) {
@@ -84,21 +91,23 @@ const Profile: React.FC = () => {
     setSuccessMessage(null);
     const nameValidation = validateNickname(userData.nickname);
     const phoneValidation = validatePhone(userData.phone);
+    const userIdValidation = validateUserId(userData.userId);
 
     setNicknameError(nameValidation);
     setPhoneError(phoneValidation);
+    setUserIdError(userIdValidation)
 
-    if (nameValidation || phoneValidation) return;
+    if (nameValidation || phoneValidation || userIdValidation) return;
 
     if (!currentUser) return;
     setUpdating(true);
     try {
-      const nameLowerCase = userData.nickname.toLowerCase();
+      const nicknameLowerCase = userData.nickname.toLowerCase();
       if (userInfo?.nicknameLowerCase !== userData.nickname.toLowerCase()) {
         const usersCollectionRef = collection(db, CollectionNames.Users);
         const q = query(
           usersCollectionRef,
-          where("nameLowerCase", "==", nameLowerCase)
+          where("nicknameLowerCase", "==", nicknameLowerCase)
         );
         const querySnapshot = await getDocs(q);
 
@@ -112,9 +121,11 @@ const Profile: React.FC = () => {
       }
       const userDocRef = doc(db, CollectionNames.Users, currentUser.uid);
       await updateDoc(userDocRef, {
-        name: userData.nickname,
-        nameLowerCase,
+        nickname: userData.nickname,
+        nicknameLowerCase,
         phone: Number(userData.phone),
+        bio: userData.bio,
+        userId: userData.userId
       });
       setSuccessMessage("Perfil actualizado con éxito.");
     } catch (error) {
@@ -154,6 +165,10 @@ const Profile: React.FC = () => {
 
   return (
     <ContainerWithBackground urlImage="/src/assets/bannerFsociety.jpg">
+      <br/>
+      <br/>
+      <br/>
+
       <div className={styles.profileContainer}>
         <form
           className={styles.profileForm}
@@ -177,12 +192,35 @@ const Profile: React.FC = () => {
             label="Nombre de usuario (nickname)"
             fullWidth
             margin="normal"
+            placeholder="Nickname"
             value={userData.nickname}
             onChange={handleChange("nickname")}
             error={!!nicknameError}
             helperText={nicknameError}
             required
             className={styles.inputField}
+          />
+          <TextField
+            label="ID:"
+            fullWidth
+            placeholder="12345678"
+            margin="normal"
+            value={userData.userId}
+            onChange={handleChange("userId")}
+            error={!!userIdError}
+            helperText={userIdError}
+            required
+            className={styles.inputField}
+          />
+          <TextField
+            label="Descripción"
+            fullWidth
+            margin="normal"
+            value={userData.bio}
+            onChange={handleChange("bio")}
+            className={styles.inputField}
+            multiline
+            rows={3}
           />
           <TextField
             label="Teléfono"

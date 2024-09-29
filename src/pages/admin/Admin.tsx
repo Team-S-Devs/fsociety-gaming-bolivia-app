@@ -22,6 +22,17 @@ const Admin: React.FC = () => {
           <Container style={{ paddingTop: 78, paddingBottom: 50 }}>
             <BlurBoxContainer>
               <Grid container spacing={8}>
+              <Grid size={{ md: 12, sm: 12 }} justifyContent={"center"}>
+                  <Link to={PagesNames.AdminSettings}>
+                    <Button
+                      variant="contained"
+                      fullWidth
+                      style={{ padding: 20 }}
+                    >
+                      CONFIGURACIÓN
+                    </Button>
+                  </Link>
+                </Grid>
                 <Grid size={{ md: 12, sm: 12 }} justifyContent={"center"}>
                   <Link to={PagesNames.AdminTournaments}>
                     <Button

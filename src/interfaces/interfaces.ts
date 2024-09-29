@@ -27,8 +27,14 @@ export interface Banner {
   hidden: boolean;
 }
 
+export interface AdminSettingsInterface {
+  twitchChannel: string;
+  paymentQR: ImageRefPath;
+}
+
 export interface UserInterface {
   id?: string;
+  userId: string; // length 8, user id of mobile legends
   nickname: string;
   nicknameLowerCase: string; // This attribute will be used just for nickname unique validation
   email: string;
@@ -37,6 +43,7 @@ export interface UserInterface {
   teamId?: string;
   type: UserType;
   imagePath: ImageRefPath;
+  bio: string;
 }
 
 export interface TournamentUserInterface {

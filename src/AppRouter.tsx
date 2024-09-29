@@ -20,6 +20,7 @@ import AdminBanners from "./pages/admin/AdminBanners";
 import AddBanner from "./pages/admin/AddBanner";
 import EditBanner from "./pages/admin/EditBanner";
 import TournamentDetails from "./pages/TournamentDetails";
+import AdminSettings from "./pages/admin/AdminSettings";
 
 const AppRouter: React.FC = () => {
   const { isAdmin, loading } = useUserContext();
@@ -47,6 +48,10 @@ const AppRouter: React.FC = () => {
                 path={PagesNames.AdminTournaments}
                 Component={getAdminComponent(AdminTournaments)}
               />
+               <Route
+                path={PagesNames.AdminSettings}
+                Component={getAdminComponent(AdminSettings)}
+              />
               <Route
                 path={PagesNames.AdminBanners}
                 Component={getAdminComponent(AdminBanners)}
@@ -55,7 +60,7 @@ const AppRouter: React.FC = () => {
                 path={PagesNames.AdminAddBanner}
                 Component={getAdminComponent(AddBanner)}
               />
-               <Route
+              <Route
                 path={`${PagesNames.AdminUpdateBanner}/:id`}
                 Component={getAdminComponent(EditBanner)}
               />
