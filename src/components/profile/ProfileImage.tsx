@@ -79,6 +79,7 @@ const ProfileImage: React.FC = () => {
       </Badge>
 
       <input
+        title="input"
         type="file"
         accept="image/*"
         ref={fileInputRef}
