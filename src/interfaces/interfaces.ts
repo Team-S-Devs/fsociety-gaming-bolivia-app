@@ -78,7 +78,7 @@ export interface Tournament {
   modality: TournamentModality;
   startDate: Timestamp;
   endDate: Timestamp;
-  teams: string[];
+  teams: Team[];
   createdAt: Timestamp;
   deleted: boolean;
   active: boolean;
@@ -88,10 +88,9 @@ export interface Team {
   id?: string;
   name: string;
   captainId: string;
+  code: string;
   banner: ImageRefPath;
   members: string[];
-  tournaments: string[];
-  mediaRange: RangeUser;
 }
 
 /* Slider */
