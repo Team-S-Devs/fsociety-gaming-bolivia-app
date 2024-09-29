@@ -7,19 +7,21 @@ import { getTournamentByFakeId } from "../utils/authUtils";
 import CategoriesSlider from "../components/tournament/details/CategoriesSlider";
 import OverViewSection from "./tournamentView/OverViewSection";
 import { toast, ToastContainer } from "react-toastify";
-import RulesViewSection from "./tournamentView/RulesViewSection";
 import Footer from "../components/Footer";
 import JoinTeamModal from "../components/tournament/tourForm/JoinTeamModal";
 import { auth } from "../utils/firebase-config";
 import Loader from "../components/Loader";
 import ParticipantsViewSection from "./tournamentView/ParticipantsViewSection";
+import AwardsViewSection from "./tournamentView/AwardsViewSection";
 
 const TournamentDetails: React.FC = () => {
   const { fakeId } = useParams<{ fakeId: string }>();
   const navigate = useNavigate();
   const [tournament, setTournament] = useState<Tournament | null>(null);
   const [actualCategory, setActualCategory] = useState(1);
-  const [actualPrevView, setActualPrevView] = useState<React.ReactNode | null>(null);
+  const [actualPrevView, setActualPrevView] = useState<React.ReactNode | null>(
+    null
+  );
   const [isImageLoaded, setIsImageLoaded] = useState(false);
   const [userTeam, setUserTeam] = useState<Team | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -56,7 +58,7 @@ const TournamentDetails: React.FC = () => {
       {
         id: 2,
         value: "ENFRENTAMIENTOS",
-        component: <RulesViewSection tournament={tournament} />,
+        component: <AwardsViewSection tournament={tournament} />,
       },
       {
         id: 3,
@@ -66,7 +68,7 @@ const TournamentDetails: React.FC = () => {
       {
         id: 4,
         value: "PREMIOS",
-        component: <RulesViewSection tournament={tournament} />,
+        component: <AwardsViewSection tournament={tournament} />,
       },
     ],
     [tournament]
@@ -97,7 +99,7 @@ const TournamentDetails: React.FC = () => {
     if (userTeam) {
       navigate(`/torneos/${tournament?.fakeId}/equipos/${userTeam.captainId}`);
     }
-  }
+  };
 
   if (!tournament) {
     return <Splash />;
@@ -106,11 +108,11 @@ const TournamentDetails: React.FC = () => {
   return (
     <div>
       <div className={styles.bannerTourDetails}>
-        {!isImageLoaded && 
-        <div className={styles.splashBannerContainer}>
-          <Loader />
-        </div>
-        }
+        {!isImageLoaded && (
+          <div className={styles.splashBannerContainer}>
+            <Loader />
+          </div>
+        )}
         <img
           src={tournament.imagePath.url}
           alt={`${tournament.name} banner`}
@@ -122,7 +124,10 @@ const TournamentDetails: React.FC = () => {
 
       <div className={styles.tournamentInfoDetails}>
         <div className={`${styles.actionsTourDetails} container`}>
-          <button className={styles.joinButtonTourDetails} onClick={!userTeam ? openModal : openTournament}>
+          <button
+            className={styles.joinButtonTourDetails}
+            onClick={!userTeam ? openModal : openTournament}
+          >
             {!userTeam ? "Unirme al Torneo" : "Ver Equipo"}
           </button>
         </div>
@@ -134,14 +139,14 @@ const TournamentDetails: React.FC = () => {
         />
         {actualPrevView}
       </div>
-      {!userTeam &&
-          <JoinTeamModal
+      {!userTeam && (
+        <JoinTeamModal
           tournament={tournament}
           isModalOpen={isModalOpen}
           closeModal={closeModal}
           setUserTeam={setUserTeam}
         />
-      }
+      )}
       <Footer />
       <ToastContainer
         style={{ marginTop: "4rem" }}

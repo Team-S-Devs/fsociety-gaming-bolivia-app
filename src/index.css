@@ -163,17 +163,17 @@ table.dark-table td {
 }
 
 .custom-toast-success {
-  background-color: #171535 !important; /* Verde personalizado */
+  background-color: #171535 !important;
   color: white !important;
   font-size: 0.9rem; 
 }
 
 .custom-toast-error {
-  background-color: #dc3545 !important; /* Rojo personalizado */
+  background-color: #dc3545 !important;
   color: white !important;
-  font-size: 0.9rem; /* Tamaño de fuente más pequeño */
+  font-size: 0.9rem;
 }
 
 .custom-toast-body {
-  padding: 8px 16px; /* Reduce el padding para hacer el toast más pequeño */
+  padding: 8px 16px;
 }

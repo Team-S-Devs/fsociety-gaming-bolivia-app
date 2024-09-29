@@ -4,10 +4,10 @@
 }
 
 .participantsTable {
-    background-color: #1c1c1c; /* Dark background for the table */
+    background-color: #1c1c1c;
     border-radius: 8px;
     overflow: hidden;
-    border: 1px solid #1a283b; /* Blue light border for the table */
+    border: 1px solid #1a283b;
 }
 
 .participantsTable th,
@@ -15,8 +15,8 @@
     padding: 15px;
     text-align: left;
     cursor: pointer;
-    color: #ffffff; /* White text */
-    background-color: #1c1c1c; /* Ensure cells have a dark background */
+    color: #ffffff;
+    background-color: #1c1c1c;
 }
 
 .participantsTable tr:hover td {
@@ -53,21 +53,21 @@
     cursor: pointer;
     border-radius: 10px;
     transition: background-color 0.3s;
-    color: #ffffff; /* White text for pagination items */
-    background-color: #1c1c1c; /* Dark background for pagination items */
+    color: #ffffff; 
+    background-color: #1c1c1c; 
 }
 
 .paginationItem:hover {
-    background-color: #444444; /* Darker background on hover */
+    background-color: #444444; 
 }
 
 .activePageButton {
-    background-color: #2ea6d2; /* Active page button color */
-    color: #ffffff; /* White text for active page */
+    background-color: #2ea6d2;
+    color: #ffffff;
 }
 
 .disabledButton {
-    color: #aaaaaa; /* Disabled button text color */
+    color: #aaaaaa;
     pointer-events: none;
 }
 

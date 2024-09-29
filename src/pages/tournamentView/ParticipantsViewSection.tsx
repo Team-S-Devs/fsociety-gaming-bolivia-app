@@ -8,16 +8,20 @@ interface ParticipantsViewSectionProps {
   tournament: Tournament | null;
 }
 
-const ParticipantsViewSection: React.FC<ParticipantsViewSectionProps> = ({ tournament }) => {
+const ParticipantsViewSection: React.FC<ParticipantsViewSectionProps> = ({
+  tournament,
+}) => {
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 10;
   const navigate = useNavigate();
 
   const paginatedTeams = () => {
-    return tournament?.teams.slice(
-      (currentPage - 1) * itemsPerPage,
-      currentPage * itemsPerPage
-    ) || [];
+    return (
+      tournament?.teams.slice(
+        (currentPage - 1) * itemsPerPage,
+        currentPage * itemsPerPage
+      ) || []
+    );
   };
 
   const totalTeams = tournament?.teams.length || 0;
@@ -67,9 +71,15 @@ const ParticipantsViewSection: React.FC<ParticipantsViewSectionProps> = ({ tourn
           <tbody>
             {tournament ? (
               paginatedTeams().map((team: Team) => (
-                <tr key={team.id} onClick={() => handleTeamSelect(team)} style={{ cursor: "pointer" }}>
+                <tr
+                  key={team.id}
+                  onClick={() => handleTeamSelect(team)}
+                  style={{ cursor: "pointer" }}
+                >
                   <td>{team.name}</td>
-                  <td>{team.members.length}/{tournament.teamLimit}</td>
+                  <td>
+                    {team.members.length}/{tournament.teamLimit}
+                  </td>
                 </tr>
               ))
             ) : (
@@ -83,30 +93,38 @@ const ParticipantsViewSection: React.FC<ParticipantsViewSectionProps> = ({ tourn
 
       <div className={styles.paginationContainer}>
         <div
-          className={`${styles.paginationItem} ${currentPage === 1 ? styles.disabledButton : ""}`}
+          className={`${styles.paginationItem} ${
+            currentPage === 1 ? styles.disabledButton : ""
+          }`}
           onClick={handlePrevious}
-          style={{ cursor: currentPage === 1 ? 'not-allowed' : 'pointer' }}
+          style={{ cursor: currentPage === 1 ? "not-allowed" : "pointer" }}
         >
-          {'<'}
+          {"<"}
         </div>
 
         {getPaginationNumbers().map((page) => (
           <div
             key={page}
-            className={`${styles.paginationItem} ${currentPage === page ? styles.activePageButton : ""}`}
+            className={`${styles.paginationItem} ${
+              currentPage === page ? styles.activePageButton : ""
+            }`}
             onClick={() => setCurrentPage(page)}
-            style={{ cursor: 'pointer' }}
+            style={{ cursor: "pointer" }}
           >
             {page}
           </div>
         ))}
 
         <div
-          className={`${styles.paginationItem} ${currentPage === totalPages ? styles.disabledButton : ""}`}
+          className={`${styles.paginationItem} ${
+            currentPage === totalPages ? styles.disabledButton : ""
+          }`}
           onClick={handleNext}
-          style={{ cursor: currentPage === totalPages ? 'not-allowed' : 'pointer' }}
+          style={{
+            cursor: currentPage === totalPages ? "not-allowed" : "pointer",
+          }}
         >
-          {'>'}
+          {">"}
         </div>
       </div>
     </div>
