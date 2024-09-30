@@ -27,8 +27,14 @@ export interface Banner {
   hidden: boolean;
 }
 
+export interface AdminSettingsInterface {
+  twitchChannel: string;
+  paymentQR: ImageRefPath;
+}
+
 export interface UserInterface {
   id?: string;
+  userId: string; // length 8, user id of mobile legends
   nickname: string;
   nicknameLowerCase: string; // This attribute will be used just for nickname unique validation
   email: string;
@@ -37,13 +43,7 @@ export interface UserInterface {
   teamId?: string;
   type: UserType;
   imagePath: ImageRefPath;
-}
-
-export interface TournamentUserInterface {
-  id?: string;
-  user: UserInterface;
-  payment: boolean;
-  type: TournamentUserType;
+  bio: string;
 }
 
 export interface ImageRefPath {
@@ -54,6 +54,13 @@ export interface ImageRefPath {
 export interface RawContent {
   blocks: [],
   entityMap: {}
+}
+
+export interface Match {
+  id: string;
+  teamA: Team;
+  teamB: Team;
+  winner: Team | "no-winner";  
 }
 
 export interface Tournament {
@@ -72,15 +79,18 @@ export interface Tournament {
   startDate: Timestamp;
   endDate: Timestamp;
   teams: Team[];
+  matches: Match[][]; 
   createdAt: Timestamp;
   deleted: boolean;
   active: boolean;
+  teamWinnerId?: string;
 }
 
 export interface TeamMember {
   memberId: string;
-  memberName: string;
   payment: boolean;
+  user: UserInterface;
+  paidAt: Timestamp | "not-paid";
 }
 
 export interface Team {

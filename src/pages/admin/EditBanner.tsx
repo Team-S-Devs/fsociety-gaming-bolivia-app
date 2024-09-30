@@ -29,7 +29,7 @@ const EditBanner: React.FC = () => {
   const [docId, setDocId] = useState<string | null>(null);
 
   useEffect(() => {
-    const fetchBannerByFakeId = async () => {
+    const fetchBannerById = async () => {
       setError(null);
       setLoading(true);
       try {
@@ -45,12 +45,12 @@ const EditBanner: React.FC = () => {
           setError("Banner no encontrado.");
         }
       } catch (error) {
-        setError("Error obteniendo los datos del torneo.");
+        setError("Error obteniendo los datos del Banner.");
       }
       setLoading(false);
     };
 
-    fetchBannerByFakeId();
+    fetchBannerById();
   }, [id]);
 
   const handleUploadImage = async (
@@ -94,7 +94,7 @@ const EditBanner: React.FC = () => {
           updatedAt: Timestamp.now(),
         });
 
-        setSuccess("Torneo actualizado exitosamente.");
+        setSuccess("Banner actualizado exitosamente.");
         navigate(PagesNames.AdminBanners);
       } else {
         setError("No se encontró el banner para actualizar.");
@@ -127,7 +127,7 @@ const EditBanner: React.FC = () => {
               success={success}
               error={error}
               setError={setError}
-              title="Editar Torneo"
+              title="Editar Banner"
               file={file}
               setFile={setFile}
               setSuccess={setSuccess}

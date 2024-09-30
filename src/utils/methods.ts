@@ -1,5 +1,5 @@
 import { Timestamp } from "firebase/firestore";
-import { Banner, Tournament, TournamentModality } from "../interfaces/interfaces";
+import { AdminSettingsInterface, Banner, Tournament, TournamentModality } from "../interfaces/interfaces";
 import { nanoid } from "nanoid";
 import { StoragePaths } from "./collectionNames";
 
@@ -40,6 +40,7 @@ export const getEmptyTournament = (): Tournament => {
     createdAt: Timestamp.now(),
     deleted: false,
     active: true,
+    matches: []
   };
 };
 
@@ -55,6 +56,18 @@ export const getEmptyBanner = () : Banner => {
       redirectUrl: "",
       position: 1,
       hidden: false,
+    }
+  )
+}
+
+export const getEmptyAdminSettings = () : AdminSettingsInterface => {
+  return (
+    {
+      twitchChannel: "",
+      paymentQR: {
+        url: "",
+        ref: `${StoragePaths.Admin}/pay_qr_code`
+      }
     }
   )
 }

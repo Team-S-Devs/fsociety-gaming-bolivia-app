@@ -17,4 +17,13 @@ export const validatePhone = (phone: string): string | null => {
     }
     return null;
 };
+
+export const validateUserId = (userId: string) : string | null => {
+  if(!userId) {
+    return "El ID es requerido."
+  } else if(userId.length !== 8) {
+    return "El ID debe tener 8 caracteres"
+  }
+  return null;
+}
   

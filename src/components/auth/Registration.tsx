@@ -11,7 +11,14 @@ import {
   signInWithEmailAndPassword,
   sendPasswordResetEmail,
 } from "firebase/auth";
-import { collection, doc, getDocs, query, setDoc, where } from "firebase/firestore";
+import {
+  collection,
+  doc,
+  getDocs,
+  query,
+  setDoc,
+  where,
+} from "firebase/firestore";
 import { db } from "../../utils/firebase-config";
 import { useNavigate } from "react-router-dom";
 import { UserType } from "../../interfaces/interfaces";
@@ -19,7 +26,7 @@ import { LoadingButton } from "@mui/lab";
 import styles from "../../assets/styles/buttons.module.css";
 import { AiOutlineEye, AiOutlineEyeInvisible } from "react-icons/ai";
 import { CollectionNames } from "../../utils/collectionNames";
-import { validateNickname, validatePhone } from "../../utils/validatorUtil";
+import { validateNickname, validatePhone, validateUserId } from "../../utils/validatorUtil";
 
 interface RegistrationProps {
   isforSignUp: boolean;
@@ -34,6 +41,7 @@ const Registration: React.FC<RegistrationProps> = ({
   const auth = getAuth();
 
   const [nickname, setNickname] = useState<string>("");
+  const [userId, setUserId] = useState<string>("");
   const [phone, setPhone] = useState<string>("");
   const [password, setPassword] = useState<string>("");
   const [showPassword, setShowPassword] = useState<boolean>(false);
@@ -43,7 +51,9 @@ const Registration: React.FC<RegistrationProps> = ({
   const [passwordError, setPasswordError] = useState<string | null>(null);
   const [generalError, setGeneralError] = useState<string | null>(null);
   const [generalSucces, setGeneralSucces] = useState<string | null>(null);
-  const [registrationSuccess, setRegistrationSuccess] = useState<boolean>(false);
+  const [registrationSuccess, setRegistrationSuccess] =
+    useState<boolean>(false);
+  const [userIdError, setUserIdError] = useState<string | null>(null);
 
   const validateFields = () => {
     let valid = true;
@@ -55,7 +65,10 @@ const Registration: React.FC<RegistrationProps> = ({
       const phoneValidation = validatePhone(phone);
       setPhoneError(phoneValidation);
 
-      if(nameValidation || phoneValidation) return false;
+      const userIdValidation = validateUserId(userId);
+      setUserIdError(userIdValidation);
+
+      if (nameValidation || phoneValidation || userIdValidation) return false;
     }
 
     if (!password.trim()) {
@@ -74,38 +87,43 @@ const Registration: React.FC<RegistrationProps> = ({
   const handleRegister = async (e: any) => {
     e.preventDefault();
     if (!validateFields()) return;
-  
+
     setLoading(true);
-  
+
     try {
       if (isforSignUp) {
         const nicknameLowerCase = nickname.toLowerCase();
         const usersCollectionRef = collection(db, CollectionNames.Users);
-        const q = query(usersCollectionRef, where("nicknameLowerCase", "==", nicknameLowerCase));
+        const q = query(
+          usersCollectionRef,
+          where("nicknameLowerCase", "==", nicknameLowerCase)
+        );
         const querySnapshot = await getDocs(q);
-  
+
         if (!querySnapshot.empty) {
-          setNicknameError("El nombre de usuario ya está en uso. Por favor, elige otro.");
+          setNicknameError(
+            "El nombre de usuario ya está en uso. Por favor, elige otro."
+          );
           setLoading(false);
           return;
         }
-  
+
         const userCredential = await createUserWithEmailAndPassword(
           auth,
           email.toLowerCase(),
           password
         );
         const user = userCredential.user;
-  
+
         const userDocRef = doc(db, CollectionNames.Users, user.uid);
         await setDoc(userDocRef, {
           nickname,
-          nicknameLowerCase, 
+          nicknameLowerCase,
           email: email.toLowerCase(),
           phone: Number(phone),
           type: UserType.USER,
         });
-  
+
         setRegistrationSuccess(true);
       } else {
         await signInWithEmailAndPassword(auth, email, password);
@@ -158,6 +176,23 @@ const Registration: React.FC<RegistrationProps> = ({
       )}
       {isforSignUp && (
         <>
+          <TextField
+            label="ID: (Max: 8)"
+            fullWidth
+            margin="normal"
+            value={userId}
+            onChange={(e) => {
+              const value = e.target.value.trim();
+              if (value.length > 8) return;
+
+              setUserId(value);
+              setUserIdError(null);
+            }}
+            placeholder="12345678"
+            error={!!userIdError}
+            helperText={userIdError}
+            required
+          />
           <TextField
             label="Nombre de usuario (nickname)"
             name="nickname"
@@ -238,10 +273,10 @@ const Registration: React.FC<RegistrationProps> = ({
           : "Iniciar Sesión"}
       </LoadingButton>
       {!isforSignUp && (
-        <div className={`d-flex justify-content-center text-center mt-3 ${styles.forgotPswd}`}>
-            <p onClick={handleForgotPassword}>
-                ¿Olvidaste tu contraseña?
-            </p>
+        <div
+          className={`d-flex justify-content-center text-center mt-3 ${styles.forgotPswd}`}
+        >
+          <p onClick={handleForgotPassword}>¿Olvidaste tu contraseña?</p>
         </div>
       )}
       {registrationSuccess && (

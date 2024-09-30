@@ -8,6 +8,7 @@ import ItemInfoText from "../../tournament/ItemInfoText";
 import JoinModal from "../../tournament/tourForm/JoinModal";
 import Loader from "../../Loader";
 import { Tournament, Team } from "../../../interfaces/interfaces";
+import { useUserContext } from "../../../contexts/UserContext";
 
 interface JoinTeamModalProps {
   tournament: Tournament | null;
@@ -31,6 +32,7 @@ const JoinTeamModal: React.FC<JoinTeamModalProps> = ({
   const [isTeamSaved, setIsTeamSaved] = useState(false);
   const [isTeamSaving, setIsTeamSaving] = useState(false);
   const [error, setError] = useState("");
+  const { userInfo } = useUserContext();
 
   const handleSaveTeam = async () => {
     setIsTeamSaving(true);
@@ -49,47 +51,50 @@ const JoinTeamModal: React.FC<JoinTeamModalProps> = ({
     }
 
     try {
-      const userRef = doc(db, "users", user.uid);
-      const userSnap = await getDoc(userRef);
+      if (user == null) return;
 
-      if (userSnap.exists()) {
-        const nickname = userSnap.data().nickname || "";
+      const generatedCode = Math.random()
+        .toString(36)
+        .substring(2, 8)
+        .toUpperCase();
+      setTeamCode(generatedCode);
 
-        const generatedCode = Math.random()
-          .toString(36)
-          .substring(2, 8)
-          .toUpperCase();
-        setTeamCode(generatedCode);
-
-        const newTeam: Team = {
-          id: user.uid,
-          name: teamName,
-          captainId: user.uid,
-          code: generatedCode,
-          members: [
-            { memberId: user.uid, memberName: nickname, payment: false },
-          ],
-          banner: { ref: "Team Banner", url: "" },
-          payment: false,
-        };
-
-        if (tournament != null) {
-          const tournamentRef = doc(db, "tournaments", tournament.id!);
-          await updateDoc(tournamentRef, {
-            teams: arrayUnion(newTeam),
-          });
-
-          setError("");
-          setIsTeamSaving(false);
-          setIsTeamSaved(true);
-          setUserTeam(newTeam);
-          toast.success("Equipo guardado exitosamente");
-        } else {
-          setError("El torneo no existe");
-        }
-      } else {
+      if (userInfo === null) {
         setError("Usuario no encontrado en la base de datos.");
         setIsTeamSaving(false);
+        return;
+      }
+
+      const newTeam: Team = {
+        id: user.uid,
+        name: teamName,
+        captainId: user.uid,
+        code: generatedCode,
+        members: [
+          {
+            memberId: user.uid,
+            payment: false,
+            user: userInfo,
+            paidAt: "not-paid",
+          },
+        ],
+        banner: { ref: "Team Banner", url: "" },
+        payment: false,
+      };
+
+      if (tournament != null) {
+        const tournamentRef = doc(db, "tournaments", tournament.id!);
+        await updateDoc(tournamentRef, {
+          teams: arrayUnion(newTeam),
+        });
+
+        setError("");
+        setIsTeamSaving(false);
+        setIsTeamSaved(true);
+        setUserTeam(newTeam);
+        toast.success("Equipo guardado exitosamente");
+      } else {
+        setError("El torneo no existe");
       }
     } catch (error) {
       setError("Ocurrió un error al guardar el equipo. Inténtalo nuevamente.");

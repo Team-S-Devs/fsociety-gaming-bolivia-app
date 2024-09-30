@@ -5,6 +5,7 @@ export const EMAIL = "fsocietyseagm@gmail.com"
 export enum PagesNames {
     Admin = "/admin",
     AdminTournaments = "/admin/torneos",
+    AdminSettings = "/admin/configuracion",
     AdminAddTournament = "/admin/torneos/nuevo",
     AdminUpdateTournament = "/admin/torneos/editar",
     AdminBanners = "/admin/banners",
