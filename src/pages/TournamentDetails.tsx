@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useMemo } from "react";
 import { useParams } from "react-router-dom";
-import { Category, Tournament } from "../interfaces/interfaces";
+import { Category, Tournament, TournamentUserType } from "../interfaces/interfaces";
 import styles from "../assets/styles/tournamentDetails.module.css";
 import Splash from "./Splash";
 import { getTournamentByFakeId } from "../utils/authUtils";
@@ -15,6 +15,7 @@ import { FaCodeBranch } from "react-icons/fa";
 import { doc, updateDoc, arrayUnion } from "firebase/firestore";
 import { auth, db } from "../utils/firebase-config";
 import Loader from "../components/Loader";
+import { useUserContext } from "../contexts/UserContext";
 
 const TournamentDetails: React.FC = () => {
   const { fakeId } = useParams<{ fakeId: string }>();
@@ -35,6 +36,7 @@ const TournamentDetails: React.FC = () => {
   const [isTeamSaving, setIsTeamSaving] = useState(false);
   const [error, setError] = useState("");
   const [userHasTeam, setUserHasTeam] = useState(false);
+  const { userInfo } = useUserContext();
 
   useEffect(() => {
     if (!fakeId) {
@@ -50,7 +52,9 @@ const TournamentDetails: React.FC = () => {
       if (user && fetchedTournament?.teams) {
         const hasTeam = fetchedTournament.teams.some(
           (team) =>
-            team.captainId === user.uid || team.members.includes(user.uid)
+            team.captainId === user.uid ||
+            team.members.filter((member) => member.memberId === user.uid)
+              .length > 0
         );
         setUserHasTeam(hasTeam);
       }
@@ -135,7 +139,6 @@ const TournamentDetails: React.FC = () => {
       .substring(2, 8)
       .toUpperCase();
     setTeamCode(generatedCode);
-    console.log(`Equipo "${teamName}" creado con código: ${generatedCode}`);
   };
 
   const handleSaveTeam = async () => {
@@ -168,6 +171,9 @@ const TournamentDetails: React.FC = () => {
           {
             memberId: user.uid,
             payment: false,
+            user: userInfo,
+            paidAt: "not-paid",
+            type: TournamentUserType.CAPTAIN
           },
         ],
         banner: "",

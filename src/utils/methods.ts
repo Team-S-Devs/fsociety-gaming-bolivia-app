@@ -40,6 +40,7 @@ export const getEmptyTournament = (): Tournament => {
     createdAt: Timestamp.now(),
     deleted: false,
     active: true,
+    matches: []
   };
 };
 

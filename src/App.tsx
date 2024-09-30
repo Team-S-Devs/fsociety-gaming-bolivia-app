@@ -51,16 +51,6 @@ const theme = createTheme({
         },
       },
     },
-    MuiTab: {
-      styleOverrides: {
-        root: {
-          fontFamily: "Mulish, sans-serif",
-          textTransform: "capitalize",
-          letterSpacing: 1.2,
-          fontSize: 18,
-        },
-      },
-    },
     MuiTextField: {
       styleOverrides: {
         root: {
@@ -163,8 +153,8 @@ const theme = createTheme({
     MuiTable: {
       styleOverrides: {
         root: {
-          backgroundColor: "#1a064f", 
-          color: "#fff", 
+          backgroundColor: "#1a064f",
+          color: "#fff",
         },
       },
     },
@@ -175,49 +165,49 @@ const theme = createTheme({
         },
         head: {
           fontWeight: "bold",
-          backgroundColor: "#120438", 
-          color: "#fff"
+          backgroundColor: "#120438",
+          color: "#fff",
         },
         body: {
-          color: "#fff"
+          color: "#fff",
         },
       },
     },
     MuiTablePagination: {
       styleOverrides: {
         root: {
-          color: '#fff',
+          color: "#fff",
         },
         toolbar: {
-          color: '#fff', 
+          color: "#fff",
         },
         actions: {
-          color: '#fff', 
+          color: "#fff",
         },
         selectIcon: {
-          color: '#fff', 
+          color: "#fff",
         },
         select: {
-          color: '#fff', 
+          color: "#fff",
         },
         input: {
-          color: '#fff', 
+          color: "#fff",
         },
       },
     },
     MuiDialog: {
       styleOverrides: {
         root: {
-          color: "#fff"
-        }
-      }
+          color: "#fff",
+        },
+      },
     },
     MuiDialogTitle: {
       styleOverrides: {
         root: {
           backgroundColor: "#120438",
 
-          color: "#ffffff", 
+          color: "#ffffff",
         },
       },
     },
@@ -232,15 +222,66 @@ const theme = createTheme({
     MuiDialogContentText: {
       styleOverrides: {
         root: {
-          color: "#ffffff", 
+          color: "#ffffff",
         },
-      }
+      },
     },
     MuiDialogActions: {
       styleOverrides: {
         root: {
           backgroundColor: "#120438",
           color: "#ffffff",
+        },
+      },
+    },
+    MuiAccordion: {
+      styleOverrides: {
+        root: {
+          backgroundColor: "#3b3e8f",
+          color: "#ffffff", 
+          "&:before": {
+            display: "none",
+          },
+          "&.Mui-expanded": {
+            backgroundColor: "#2c2f6b",
+          },
+        },
+      },
+    },
+    MuiAccordionSummary: {
+      styleOverrides: {
+        root: {
+          backgroundColor: "#3b3e8f", 
+          color: "#ffffff", 
+        },
+      },
+    },
+    MuiAccordionDetails: {
+      styleOverrides: {
+        root: {
+          backgroundColor: "#2c2f6b",
+          color: "#ffffff", 
+        },
+      },
+    },
+    MuiTabs: {
+      styleOverrides: {
+        root: {
+          color: '#ffffff',
+        },
+      },
+    },
+    MuiTab: {
+      styleOverrides: {
+        root: {
+          color: '#ffffff', 
+          '&.Mui-selected': {
+            backgroundColor: '#15acac', 
+            color: '#ffffff', 
+          },
+          '&:hover': {
+            backgroundColor: '#15acac', 
+          },
         },
       },
     },
