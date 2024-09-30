@@ -46,14 +46,6 @@ export interface UserInterface {
   bio: string;
 }
 
-export interface TournamentUserInterface {
-  memberId?: string;
-  user: UserInterface;
-  payment: boolean;
-  type: TournamentUserType;
-  paidAt: Timestamp | "not-paid";
-}
-
 export interface ImageRefPath {
     ref: string;
     url: string;
@@ -94,13 +86,21 @@ export interface Tournament {
   teamWinnerId?: string;
 }
 
+export interface TeamMember {
+  memberId: string;
+  payment: boolean;
+  user: UserInterface;
+  paidAt: Timestamp | "not-paid";
+}
+
 export interface Team {
   id?: string;
   name: string;
   captainId: string;
   code: string;
   banner: ImageRefPath;
-  members: TournamentUserInterface[];
+  payment: boolean;
+  members: TeamMember[];
 }
 
 /* Slider */

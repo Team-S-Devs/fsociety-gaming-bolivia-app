@@ -1,5 +1,5 @@
 import React, { ReactNode } from "react";
-import urlImage from "../assets/background-image.jpg";
+import urlImage from "../assets/backgroundSplash.jpg";
 import styles from "../assets/styles/home.module.css";
 
 interface PrincipalContainerProps {
