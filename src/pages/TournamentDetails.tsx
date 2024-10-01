@@ -26,8 +26,14 @@ const TournamentDetails: React.FC = () => {
   const [isImageLoaded, setIsImageLoaded] = useState(false);
   const [userTeam, setUserTeam] = useState<Team | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isUserLogged, setIsUserLogged] = useState<boolean>(false);
 
   useEffect(() => {
+    const checkUserLoggedIn = () => {
+      const user = auth.currentUser;
+      setIsUserLogged(!!user);
+    };
+
     if (!fakeId) {
       toast.error("El Fake ID del torneo no está definido");
       return;
@@ -47,6 +53,7 @@ const TournamentDetails: React.FC = () => {
     };
 
     fetchTournament();
+    checkUserLoggedIn();
   }, [fakeId]);
 
   const SliderCategories: Category[] = useMemo(
@@ -102,6 +109,18 @@ const TournamentDetails: React.FC = () => {
     }
   };
 
+  const handleJoinButtonClick = () => {
+    if (!isUserLogged) {
+      navigate("/autenticar");
+    } else {
+      if (!userTeam) {
+        openModal();
+      } else {
+        openTournament();
+      }
+    }
+  };
+
   if (!tournament) {
     return <Splash />;
   }
@@ -127,7 +146,7 @@ const TournamentDetails: React.FC = () => {
         <div className={`${styles.actionsTourDetails} container`}>
           <button
             className={styles.joinButtonTourDetails}
-            onClick={!userTeam ? openModal : openTournament}
+            onClick={handleJoinButtonClick}
           >
             {!userTeam ? "Unirme al Torneo" : "Ver Equipo"}
           </button>

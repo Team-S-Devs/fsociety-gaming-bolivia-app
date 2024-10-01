@@ -7,7 +7,7 @@ import { doc, updateDoc, arrayUnion, getDoc } from "firebase/firestore";
 import ItemInfoText from "../../tournament/ItemInfoText";
 import JoinModal from "../../tournament/tourForm/JoinModal";
 import Loader from "../../Loader";
-import { Tournament, Team } from "../../../interfaces/interfaces";
+import { Tournament, Team, UserInterface, TeamMember } from "../../../interfaces/interfaces";
 import { useUserContext } from "../../../contexts/UserContext";
 
 interface JoinTeamModalProps {
@@ -23,9 +23,7 @@ const JoinTeamModal: React.FC<JoinTeamModalProps> = ({
   closeModal,
   setUserTeam,
 }) => {
-  const [modalView, setModalView] = useState<
-    "default" | "createTeam" | "joinTeam"
-  >("default");
+  const [modalView, setModalView] = useState<"default" | "createTeam" | "joinTeam">("default");
   const [teamName, setTeamName] = useState("");
   const [teamCode, setTeamCode] = useState("");
   const [inputTeamCode, setInputTeamCode] = useState("");
@@ -36,35 +34,34 @@ const JoinTeamModal: React.FC<JoinTeamModalProps> = ({
 
   const handleSaveTeam = async () => {
     setIsTeamSaving(true);
-
+  
     if (!teamName) {
       setError("El nombre del equipo es obligatorio");
       setIsTeamSaving(false);
       return;
     }
-
+  
     const user = auth.currentUser;
     if (!user) {
       setError("Usuario no autenticado");
       setIsTeamSaving(false);
       return;
     }
-
+  
     try {
-      if (user == null) return;
-
-      const generatedCode = Math.random()
-        .toString(36)
-        .substring(2, 8)
-        .toUpperCase();
-      setTeamCode(generatedCode);
-
-      if (userInfo === null) {
+      const userRef = doc(db, "users", user.uid);
+      const userSnap = await getDoc(userRef);
+  
+      if (!userSnap.exists()) {
         setError("Usuario no encontrado en la base de datos.");
         setIsTeamSaving(false);
         return;
       }
-
+  
+      const userData = userSnap.data() as UserInterface;
+      const generatedCode = Math.random().toString(36).substring(2, 8).toUpperCase();
+      setTeamCode(generatedCode);
+  
       const newTeam: Team = {
         id: user.uid,
         name: teamName,
@@ -74,20 +71,20 @@ const JoinTeamModal: React.FC<JoinTeamModalProps> = ({
           {
             memberId: user.uid,
             payment: false,
-            user: userInfo,
+            user: userData,
             paidAt: "not-paid",
           },
         ],
         banner: { ref: "Team Banner", url: "" },
         payment: false,
       };
-
-      if (tournament != null) {
+  
+      if (tournament) {
         const tournamentRef = doc(db, "tournaments", tournament.id!);
         await updateDoc(tournamentRef, {
           teams: arrayUnion(newTeam),
         });
-
+  
         setError("");
         setIsTeamSaving(false);
         setIsTeamSaved(true);
@@ -119,7 +116,7 @@ const JoinTeamModal: React.FC<JoinTeamModalProps> = ({
     }
 
     try {
-      if (tournament != null) {
+      if (tournament) {
         const tournamentRef = doc(db, "tournaments", tournament.id!);
         const tournamentSnap = await getDoc(tournamentRef);
 
@@ -129,7 +126,7 @@ const JoinTeamModal: React.FC<JoinTeamModalProps> = ({
 
           if (team) {
             const isAlreadyMember = team.members.some(
-              (member: any) => member.memberId === user.uid
+              (member: TeamMember) => member.memberId === user.uid
             );
 
             if (isAlreadyMember) {
@@ -142,11 +139,16 @@ const JoinTeamModal: React.FC<JoinTeamModalProps> = ({
             const userSnap = await getDoc(userRef);
 
             if (userSnap.exists()) {
-              const nickname = userSnap.data().nickname || "";
+              const userData = userSnap.data() as UserInterface;
 
-              const updatedMembers = [
+              const updatedMembers: TeamMember[] = [
                 ...team.members,
-                { memberId: user.uid, memberName: nickname, payment: false },
+                {
+                  memberId: user.uid,
+                  payment: false,
+                  paidAt: "",
+                  user: userData,
+                },
               ];
 
               const updatedTeam = {

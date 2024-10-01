@@ -195,7 +195,6 @@ const TeamView: React.FC = () => {
             </div>
           </div>
         </div>
-        <Footer />
         <ToastContainer
           position="top-right"
           autoClose={1000}
@@ -209,6 +208,7 @@ const TeamView: React.FC = () => {
           className="custom-toast-container"
         />
       </div>
+      <Footer />
     </PrincipalContainer>
   );
 };
