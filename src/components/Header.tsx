@@ -8,15 +8,64 @@ import { useUserContext } from "../contexts/UserContext";
 import { PagesNames } from "../utils/constants";
 import { Container } from "@mui/material";
 import profileImg from "../assets/nonProfile.png";
+import onliveGif from "../assets/onlive.gif";
+import twitchLogo from "../assets/twitch-removebg.png";
+import { getEmptyAdminSettings } from "../utils/methods";
+import { doc, getDoc } from "firebase/firestore";
+import { CollectionNames } from "../utils/collectionNames";
+import { db } from "../utils/firebase-config";
+import { AdminSettingsInterface } from "../interfaces/interfaces";
 
 const Header: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false);
   const { width } = useWindowSize();
   const { user, isAdmin, userInfo } = useUserContext();
+  const [twitchStatus, setTwitchStatus] = useState<
+    "loading" | "online" | "offline"
+  >("loading");
+  const [adminSettings, setAdminSettings] = useState<AdminSettingsInterface>(
+    getEmptyAdminSettings()
+  );
+
+  useEffect(() => {
+    const fetchBannerById = async () => {
+      const adminSettingsRef = doc(db, CollectionNames.Admin, "admin");
+
+      const docSnap = await getDoc(adminSettingsRef);
+
+      if (docSnap.exists()) {
+        setAdminSettings(docSnap.data() as AdminSettingsInterface);
+      }
+    };
+
+    fetchBannerById();
+  }, []);
 
   useEffect(() => {
     setIsOpen(false);
   }, [useWindowSize]);
+
+  useEffect(() => {
+    const getTwitchStatus = async () => {
+      const username = "rubius";
+      try {
+        const response = await fetch(
+          `https://api.twitch.tv/kraken/streams/${username}?callback=?`
+        );
+        const sourceCode = await response.text();
+
+        if (sourceCode.includes("isLiveBroadcast")) {
+          console.log(`${username} is live`);
+        } else {
+          console.log(`${username} is not live`);
+        }
+      } catch (error) {
+        setTwitchStatus("offline");
+      }
+    };
+
+    getTwitchStatus();
+  }, []);
 
   const onClickHeader = () => {
     setIsOpen(!isOpen);
@@ -29,17 +78,31 @@ const Header: React.FC = () => {
     <header>
       <Container>
         <div className={styles.headerContainer}>
-          <div className={styles.logo_img}>
-            <Link to="/">
-              <div className={styles.logoHeader}>
-                <img
-                  src={imageLogo}
-                  alt="fsociety logo"
-                  width={70}
-                  height={70}
-                />
-              </div>
-            </Link>
+          <div className={styles.logosHeader}>
+            <div className={styles.logo_img}>
+              <Link to="/">
+                <div className={styles.logoHeader}>
+                  <img
+                    src={imageLogo}
+                    alt="fsociety logo"
+                    width={88}
+                    height={88}
+                  />
+                </div>
+              </Link>
+            </div>
+            <div className={styles.logo_img}>
+              {adminSettings.twitchChannel !== "" && (
+                <Link to={adminSettings.twitchChannel} target="_blank">
+                  <div className={styles.logoHeader}>
+                    <img
+                      src={twitchStatus === "online" ? onliveGif : twitchLogo}
+                      alt="twitch channel"
+                    />
+                  </div>
+                </Link>
+              )}
+            </div>
           </div>
           <nav className={`${styles.navigation} ${conditional}`}>
             <div

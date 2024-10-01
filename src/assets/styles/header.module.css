@@ -47,6 +47,11 @@
   cursor: pointer;
 }
 
+.logosHeader {
+  display: flex;
+  align-items: center;
+}
+
 .logo_img {
   transition: 0.3s all ease-in-out;
 }
