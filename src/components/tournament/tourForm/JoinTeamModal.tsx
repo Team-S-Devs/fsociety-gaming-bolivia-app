@@ -3,12 +3,13 @@ import styles from "../../../assets/styles/tournamentDetails.module.css";
 import { toast } from "react-toastify";
 import { FaCodeBranch } from "react-icons/fa";
 import { auth, db } from "../../../utils/firebase-config";
-import { doc, updateDoc, arrayUnion, getDoc } from "firebase/firestore";
+import { doc, updateDoc, arrayUnion, getDoc, Timestamp } from "firebase/firestore";
 import ItemInfoText from "../../tournament/ItemInfoText";
 import JoinModal from "../../tournament/tourForm/JoinModal";
 import Loader from "../../Loader";
 import { Tournament, Team, UserInterface, TeamMember } from "../../../interfaces/interfaces";
 import { useUserContext } from "../../../contexts/UserContext";
+import { CollectionNames } from "../../../utils/collectionNames";
 
 interface JoinTeamModalProps {
   tournament: Tournament | null;
@@ -49,16 +50,12 @@ const JoinTeamModal: React.FC<JoinTeamModalProps> = ({
     }
   
     try {
-      const userRef = doc(db, "users", user.uid);
-      const userSnap = await getDoc(userRef);
-  
-      if (!userSnap.exists()) {
+      if (!userInfo) {
         setError("Usuario no encontrado en la base de datos.");
         setIsTeamSaving(false);
         return;
       }
   
-      const userData = userSnap.data() as UserInterface;
       const generatedCode = Math.random().toString(36).substring(2, 8).toUpperCase();
       setTeamCode(generatedCode);
   
@@ -71,16 +68,16 @@ const JoinTeamModal: React.FC<JoinTeamModalProps> = ({
           {
             memberId: user.uid,
             payment: false,
-            user: userData,
+            user: userInfo,
             paidAt: "not-paid",
+            joinedAt: Timestamp.now()
           },
         ],
-        banner: { ref: "Team Banner", url: "" },
-        payment: false,
+        banner: { ref: "Team Banner", url: "" }
       };
   
       if (tournament) {
-        const tournamentRef = doc(db, "tournaments", tournament.id!);
+        const tournamentRef = doc(db, CollectionNames.Tournaments, tournament.id!);
         await updateDoc(tournamentRef, {
           teams: arrayUnion(newTeam),
         });
@@ -117,7 +114,7 @@ const JoinTeamModal: React.FC<JoinTeamModalProps> = ({
 
     try {
       if (tournament) {
-        const tournamentRef = doc(db, "tournaments", tournament.id!);
+        const tournamentRef = doc(db, CollectionNames.Tournaments, tournament.id!);
         const tournamentSnap = await getDoc(tournamentRef);
 
         if (tournamentSnap.exists()) {
@@ -146,8 +143,9 @@ const JoinTeamModal: React.FC<JoinTeamModalProps> = ({
                 {
                   memberId: user.uid,
                   payment: false,
-                  paidAt: "",
+                  paidAt: "not-paid",
                   user: userData,
+                  joinedAt: Timestamp.now()
                 },
               ];
 

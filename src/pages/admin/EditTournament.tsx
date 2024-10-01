@@ -190,7 +190,7 @@ const EditTournament: React.FC = () => {
                   variant="scrollable"
                 >
                   <Tab label="Editar torneo" {...a11yProps(0)} />
-                  <Tab label="Pagos" {...a11yProps(1)} />
+                  <Tab label="Equipos y Pagos" {...a11yProps(1)} />
                   <Tab label="Enfrentamientos" {...a11yProps(2)} />
                 </Tabs>
               </Box>

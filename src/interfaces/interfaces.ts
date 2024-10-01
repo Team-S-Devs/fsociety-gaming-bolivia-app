@@ -93,6 +93,7 @@ export interface TeamMember {
   payment: boolean;
   user: UserInterface;
   paidAt: Timestamp | "not-paid";
+  joinedAt: Timestamp;
 }
 
 export interface Team {
