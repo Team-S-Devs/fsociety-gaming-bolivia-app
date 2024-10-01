@@ -76,7 +76,6 @@
 
 .teamViewContainer {
     justify-content: center;
-    height: 100vh;
     width: 100%;
     color: white;
   }
@@ -87,6 +86,7 @@
     background-color: var(--back-dark);
     color: #fff;
     text-align: center;
+    z-index: -1;
 }
 
 .teamCodeContainer {
