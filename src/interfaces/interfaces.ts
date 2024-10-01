@@ -79,8 +79,9 @@ export interface Tournament {
 
 export interface TeamMember {
   memberId: string;
-  memberName: string;
   payment: boolean;
+  paidAt: string;
+  user: UserInterface;
 }
 
 export interface Team {

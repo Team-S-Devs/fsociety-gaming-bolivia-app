@@ -10,6 +10,8 @@ import Splash from './Splash';
 import { ToastContainer, toast } from 'react-toastify';
 import CustomModal from '../components/home/CustomModal';
 import { useUserContext } from '../contexts/UserContext';
+import StartHomeSection from './homeSections/StartHomeSection';
+import InformationHomeSection from './homeSections/InformationHomeSection';
 
 const Home: React.FC = () => {
   const [tournaments, setTournaments] = useState<Tournament[]>([]);
@@ -55,11 +57,13 @@ const Home: React.FC = () => {
     <main className={styles.homeContainer}>
       <CustomModal show={showModal} onClose={() => setShowModal(false)} />
       <img src={bannerApp} alt="banner app" className={styles.backgroundImage} />
-      <div className={styles.homeContent}>
+      <div id="tournaments-section"  className={styles.homeContent}>
         <SliderHome />
         <h2 className={styles.subtitleHome}>TORNEOS ACTUALES</h2>
         <TournamentList tournaments={tournaments} />
       </div>
+      <StartHomeSection user={user} />
+      <InformationHomeSection />
       <Footer />
       <ToastContainer
         style={{marginTop: '4rem'}}
