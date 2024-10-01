@@ -78,16 +78,16 @@ const TeamsPayment: React.FC<TeamsPaymentProps> = ({
             key={player.id}
           >
             <Grid container spacing={2} alignItems="center">
-              <Grid size={{ xs: 6 }}>
+              <Grid size={{ md: 6, xs: 12 }}>
                 <Typography>{player.user.nickname}</Typography>
               </Grid>
-              <Grid size={{ xs: 6 }}>
+              <Grid size={{ md: 6, xs: 12 }}>
                 <Typography>{player.user.email}</Typography>
               </Grid>
-              <Grid size={{ xs: 6 }}>
+              <Grid size={{ md: 6, xs: 12 }}>
                 <Typography>{player.user.phone}</Typography>
               </Grid>
-              <Grid size={{ xs: 6 }}>
+              <Grid size={{ md: 6, xs: 12 }}>
                 <FormControlLabel
                   control={
                     <Checkbox
@@ -180,7 +180,7 @@ const TeamsPayment: React.FC<TeamsPaymentProps> = ({
               filterTeams(team)
           )
           .map((team, teamIndex) => (
-            <Accordion key={team.name} style={{ background: "#3b3e8f" }}>
+            <Accordion key={team.name + teamIndex} style={{ background: "#3b3e8f" }}>
               <AccordionSummary expandIcon={<BiExpand />}>
                 <Typography>{team.name}</Typography>
               </AccordionSummary>
@@ -203,7 +203,7 @@ const TeamsPayment: React.FC<TeamsPaymentProps> = ({
               filterTeams(team)
           )
           .map((team, teamIndex) => (
-            <Accordion key={team.name} style={{ background: "#3b3e8f" }}>
+            <Accordion key={team.name + teamIndex} style={{ background: "#3b3e8f" }}>
               <AccordionSummary expandIcon={<BiExpand />}>
                 <Typography>{team.name}</Typography>
               </AccordionSummary>

@@ -21,6 +21,8 @@ const theme = createTheme({
   typography: {
     allVariants: {
       color: "#FFF",
+      wordWrap: 'break-word',       
+      wordBreak: 'break-word',      
     },
     fontFamily: "Orbitron, sans-serif",
     fontSize: 18,

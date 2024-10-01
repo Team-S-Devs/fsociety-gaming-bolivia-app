@@ -176,7 +176,7 @@ const TeamView: React.FC = () => {
                     team.members.map(
                       (participant: TeamMember, index: number) => (
                         <tr key={participant.memberId}>
-                          <td>{participant.memberName}</td>
+                          <td>{participant.user.nickname}</td>
                           <td>
                             {participant.memberId === captainId
                               ? "Capitán"

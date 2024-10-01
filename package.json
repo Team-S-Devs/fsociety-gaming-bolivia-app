@@ -26,6 +26,7 @@
     "nanoid": "^5.0.7",
     "react": "^18.3.1",
     "react-bootstrap": "^2.10.4",
+    "react-brackets": "^0.4.7",
     "react-dom": "^18.3.1",
     "react-draft-wysiwyg": "^1.15.0",
     "react-draft-wysiwyg-a": "^1.14.5-1",
@@ -35,6 +36,7 @@
     "react-router-dom": "^6.26.1",
     "react-slick": "^0.30.2",
     "react-super-responsive-table": "^6.0.0",
+    "react-swipeable": "^7.0.1",
     "react-toastify": "^10.0.5",
     "slick-carousel": "^1.8.1",
     "uuid": "^10.0.0"
