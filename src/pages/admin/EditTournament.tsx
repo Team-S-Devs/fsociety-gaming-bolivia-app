@@ -171,7 +171,7 @@ const EditTournament: React.FC = () => {
 
   return (
     <ContainerWithBackground urlImage="/src/assets/bannerFsociety.jpg">
-      <Container maxWidth="md">
+      <Container>
         <br />
         <br />
         <br />
