@@ -16,6 +16,14 @@ const CustomModal: React.FC<CustomModalProps> = ({ show, onClose }) => {
     navigate('/autenticar');
   };
 
+  const scrollToTournaments = () => {
+    const tournamentSection = document.getElementById('tournaments-section');
+    if (tournamentSection) {
+      onClose();
+      tournamentSection.scrollIntoView({ behavior: 'smooth' });
+    }
+  };
+
   if (!show) return null;
 
   return (
@@ -37,7 +45,7 @@ const CustomModal: React.FC<CustomModalProps> = ({ show, onClose }) => {
           <img src={modalImage2} alt="Torneo modal" className={styles.promoImage} />
           <div className={styles.extraInfo}>
             <p>¡INSCRÍBETE CON TUS AMIGOS Y ADQUIERE EXPERIENCIA Y MUCHAS RECOMPENSAS!</p>
-            <button className={styles.infoButton}>MÁS INFORMACIÓN</button>
+            <button className={styles.infoButton} onClick={scrollToTournaments}>Ver Torneo</button>
           </div>
         </div>
       </div>

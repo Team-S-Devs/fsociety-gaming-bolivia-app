@@ -34,9 +34,9 @@ export interface AdminSettingsInterface {
 
 export interface UserInterface {
   id?: string;
-  userId: string; // length 8, user id of mobile legends
+  userId: string;
   nickname: string;
-  nicknameLowerCase: string; // This attribute will be used just for nickname unique validation
+  nicknameLowerCase: string;
   email: string;
   phone: number;
   range?: RangeUser;
