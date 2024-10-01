@@ -37,6 +37,18 @@ const TeamsPayment: React.FC<TeamsPaymentProps> = ({
   const [teamSearch, setTeamSearch] = useState<string>("");
   const [playerSearch, setPlayerSearch] = useState<string>("");
   const [loading, setLoading] = React.useState<boolean>(false);
+  const [expandedPaid, setExpandedPaid] = useState<string | false>(false);
+  const [expandedNotPaid, setExpandedNotPaid] = useState<string | false>(false);
+
+  const handleChangePaid =
+    (panel: string) => (_event: React.SyntheticEvent, isExpanded: boolean) => {
+      setExpandedPaid(isExpanded ? panel : false);
+    };
+
+  const handleChangeNotPaid =
+    (panel: string) => (_event: React.SyntheticEvent, isExpanded: boolean) => {
+      setExpandedNotPaid(isExpanded ? panel : false);
+    };
 
   const handlePaymentToggle = (teamIndex: number, playerIndex: number) => {
     const updatedTeams = [...tournament.teams];
@@ -53,6 +65,21 @@ const TeamsPayment: React.FC<TeamsPaymentProps> = ({
       player.paidAt = Timestamp.now();
     });
     setTournament({ ...tournament, teams: updatedTeams });
+  };
+
+  const timestampToDate = (firebaseTimestamp: Timestamp) => {
+    try {
+      const date = firebaseTimestamp.toDate();
+
+      const formattedDate = date.toLocaleDateString("es-ES", {
+        day: "2-digit",
+        month: "2-digit",
+        year: "numeric",
+      });
+      return formattedDate;
+    } catch (e) {
+      return "";
+    }
   };
 
   const rendermembers = (teamIndex: number, members: any[]) => (
@@ -78,16 +105,31 @@ const TeamsPayment: React.FC<TeamsPaymentProps> = ({
             key={player.id}
           >
             <Grid container spacing={2} alignItems="center">
-              <Grid size={{ xs: 6 }}>
+              <Grid size={{ md: 6, xs: 12 }}>
                 <Typography>{player.user.nickname}</Typography>
               </Grid>
-              <Grid size={{ xs: 6 }}>
+              <Grid size={{ md: 6, xs: 12 }}>
                 <Typography>{player.user.email}</Typography>
               </Grid>
-              <Grid size={{ xs: 6 }}>
+              <Grid size={{ md: 6, xs: 12 }}>
                 <Typography>{player.user.phone}</Typography>
               </Grid>
-              <Grid size={{ xs: 6 }}>
+              <Divider />
+              <Grid size={{ md: 6, xs: 12 }}>
+                <Typography>
+                  Se unió el {timestampToDate(player.joinedAt)}
+                </Typography>
+              </Grid>
+              {player.payment && (
+                <Grid size={{ md: 6, xs: 12 }}>
+                  <Typography>
+                    Pagó el {timestampToDate(player.paidAt)}
+                  </Typography>
+                </Grid>
+              )}
+              <Divider />
+
+              <Grid size={{ md: 6, xs: 12 }}>
                 <FormControlLabel
                   control={
                     <Checkbox
@@ -180,7 +222,12 @@ const TeamsPayment: React.FC<TeamsPaymentProps> = ({
               filterTeams(team)
           )
           .map((team, teamIndex) => (
-            <Accordion key={team.name} style={{ background: "#3b3e8f" }}>
+            <Accordion
+              key={team.name + teamIndex}
+              style={{ background: "#3b3e8f" }}
+              expanded={expandedPaid === `paid${teamIndex}`}
+              onChange={handleChangePaid(`paid${teamIndex}`)}
+            >
               <AccordionSummary expandIcon={<BiExpand />}>
                 <Typography>{team.name}</Typography>
               </AccordionSummary>
@@ -203,7 +250,12 @@ const TeamsPayment: React.FC<TeamsPaymentProps> = ({
               filterTeams(team)
           )
           .map((team, teamIndex) => (
-            <Accordion key={team.name} style={{ background: "#3b3e8f" }}>
+            <Accordion
+              key={team.name + teamIndex}
+              style={{ background: "#3b3e8f" }}
+              expanded={expandedNotPaid === `paid${teamIndex}`}
+              onChange={handleChangeNotPaid(`paid${teamIndex}`)}
+            >
               <AccordionSummary expandIcon={<BiExpand />}>
                 <Typography>{team.name}</Typography>
               </AccordionSummary>

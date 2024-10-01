@@ -150,7 +150,7 @@ const EditTournament: React.FC = () => {
         });
 
         setSuccess("Torneo actualizado exitosamente.");
-        navigate(PagesNames.AdminBanners);
+        navigate(PagesNames.AdminTournaments);
       } else {
         setError("No se encontró el torneo para actualizar.");
       }
@@ -171,7 +171,7 @@ const EditTournament: React.FC = () => {
 
   return (
     <ContainerWithBackground urlImage="/src/assets/bannerFsociety.jpg">
-      <Container maxWidth="md">
+      <Container>
         <br />
         <br />
         <br />
@@ -187,9 +187,10 @@ const EditTournament: React.FC = () => {
                   value={value}
                   onChange={handleChange}
                   aria-label="tournament tabs"
+                  variant="scrollable"
                 >
                   <Tab label="Editar torneo" {...a11yProps(0)} />
-                  <Tab label="Pagos" {...a11yProps(1)} />
+                  <Tab label="Equipos y Pagos" {...a11yProps(1)} />
                   <Tab label="Enfrentamientos" {...a11yProps(2)} />
                 </Tabs>
               </Box>

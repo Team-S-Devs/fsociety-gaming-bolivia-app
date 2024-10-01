@@ -60,7 +60,9 @@ export interface Match {
   id: string;
   teamA: Team;
   teamB: Team;
-  winner: Team | "no-winner";  
+  scoreA: string; 
+  scoreB: string; 
+  played: boolean; 
 }
 
 export interface Tournament {
@@ -79,7 +81,7 @@ export interface Tournament {
   startDate: Timestamp;
   endDate: Timestamp;
   teams: Team[];
-  matches: Match[][]; 
+  matches: Record<string, Match[]>; 
   createdAt: Timestamp;
   deleted: boolean;
   active: boolean;
@@ -91,6 +93,7 @@ export interface TeamMember {
   payment: boolean;
   user: UserInterface;
   paidAt: Timestamp | "not-paid";
+  joinedAt: Timestamp;
 }
 
 export interface Team {
@@ -99,7 +102,6 @@ export interface Team {
   captainId: string;
   code: string;
   banner: ImageRefPath;
-  payment: boolean;
   members: TeamMember[];
 }
 

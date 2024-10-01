@@ -13,6 +13,7 @@ import { auth } from "../utils/firebase-config";
 import Loader from "../components/Loader";
 import ParticipantsViewSection from "./tournamentView/ParticipantsViewSection";
 import AwardsViewSection from "./tournamentView/AwardsViewSection";
+import MatchesViewSection from "./tournamentView/MatchesViewSection";
 
 const TournamentDetails: React.FC = () => {
   const { fakeId } = useParams<{ fakeId: string }>();
@@ -65,7 +66,7 @@ const TournamentDetails: React.FC = () => {
       {
         id: 2,
         value: "ENFRENTAMIENTOS",
-        component: <AwardsViewSection tournament={tournament} />,
+        component: <MatchesViewSection tournament={tournament} />,
       },
       {
         id: 3,

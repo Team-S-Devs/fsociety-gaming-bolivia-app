@@ -40,7 +40,7 @@ export const getEmptyTournament = (): Tournament => {
     createdAt: Timestamp.now(),
     deleted: false,
     active: true,
-    matches: []
+    matches: {}
   };
 };
 
@@ -70,4 +70,11 @@ export const getEmptyAdminSettings = () : AdminSettingsInterface => {
       }
     }
   )
+}
+
+export const calculateRoundsNumber = (teamsLength: number): number => {
+  if ((teamsLength & (teamsLength - 1)) !== 0) {
+    return -1;
+  }
+  return Math.log2(teamsLength);
 }

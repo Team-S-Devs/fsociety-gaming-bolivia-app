@@ -24,6 +24,7 @@ const ContainerWithBackground: React.FC<ContainerWithBackgroundProps> = ({
         backgroundPosition: "center",
         overflowX: "hidden",
         position: "relative",
+        backgroundAttachment: "fixed",
         "&::before": {
           content: '""',
           position: "absolute",
