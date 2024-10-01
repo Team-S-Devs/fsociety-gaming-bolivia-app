@@ -72,7 +72,6 @@ const AddTournament: React.FC = () => {
       setFile(null);
       navigate(PagesNames.AdminTournaments);
     } catch (err) {
-      console.log(err)
       setError("Error añadiendo el torneo. Inténtalo de nuevo.");
     }
   };

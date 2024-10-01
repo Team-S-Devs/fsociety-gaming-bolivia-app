@@ -73,7 +73,6 @@ export const getEmptyAdminSettings = () : AdminSettingsInterface => {
 }
 
 export const calculateRoundsNumber = (teamsLength: number): number => {
-  console.log(teamsLength)
   if ((teamsLength & (teamsLength - 1)) !== 0) {
     return -1;
   }
