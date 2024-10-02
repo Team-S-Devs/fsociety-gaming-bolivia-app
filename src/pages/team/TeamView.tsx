@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import { Tournament, Team, TeamMember } from "../../interfaces/interfaces";
+import { Tournament, Team, TeamMember, UserType } from "../../interfaces/interfaces";
 import { getTournamentByFakeId } from "../../utils/authUtils";
 import styles from "../../assets/styles/teamsParticipants.module.css";
 import imageBanner from "../../assets/bannerTeam5.png";
@@ -10,59 +10,68 @@ import { toast, ToastContainer } from "react-toastify";
 import Splash from "../Splash";
 import PrincipalContainer from "../../components/PrincipalContainer";
 import Footer from "../../components/Footer";
-import Avatar from "@mui/material/Avatar";
 import "bootstrap/dist/css/bootstrap.min.css";
 import useWindowSize from "../../hooks/useWindowSize";
-import { auth } from "../../utils/firebase-config";
+import { FaTrash } from "react-icons/fa";
+import TeamImageUpload from "../../components/teams/TeamImageUploader";
 import "react-toastify/dist/ReactToastify.css";
+import { useUserContext } from "../../contexts/UserContext";
+import { doc, updateDoc } from "firebase/firestore";
+import { db } from "../../utils/firebase-config";
+import DeleteMemberModal from "../../components/teams/DeleteMemberModal";
 
 const TeamView: React.FC = () => {
-  const { fakeId, captainId } = useParams<{
-    fakeId: string;
-    captainId: string;
-  }>();
+  const { fakeId, captainId } = useParams<{ fakeId: string; captainId: string }>();
   const [tournament, setTournament] = useState<Tournament | null>(null);
   const [team, setTeam] = useState<Team | null>(null);
   const [loading, setLoading] = useState(true);
   const [isImageLoaded, setIsImageLoaded] = useState(false);
   const { width } = useWindowSize();
   const [isMember, setIsMember] = useState(false);
+  const { user, isAdmin, loading: userLoading } = useUserContext();
+  const [showModal, setShowModal] = useState(false);
+  const [memberToDelete, setMemberToDelete] = useState<string>("");
+  const [deleteLoading, setDeleteLoading] = useState(false);
 
   useEffect(() => {
     const fetchTournamentAndTeam = async () => {
-      if (!fakeId || !captainId) {
-        toast.error("No tournament or team ID provided");
-        setLoading(false);
-        return;
-      }
+      try {
+        if (!fakeId || !captainId) {
+          toast.error("No tournament or team ID provided");
+          setLoading(false);
+          return;
+        }
 
-      const fetchedTournament = await getTournamentByFakeId(fakeId);
-      if (!fetchedTournament) {
-        toast.error("Tournament not found");
-        setLoading(false);
-        return;
-      }
+        const fetchedTournament = await getTournamentByFakeId(fakeId);
+        if (!fetchedTournament) {
+          toast.error("Tournament not found");
+          setLoading(false);
+          return;
+        }
 
-      setTournament(fetchedTournament);
+        setTournament(fetchedTournament);
 
-      const foundTeam = fetchedTournament.teams.find(
-        (t: Team) => t.captainId === captainId
-      );
-      setTeam(foundTeam || null);
-
-      const user = auth.currentUser;
-      if (user && foundTeam) {
-        const member = foundTeam.members.find(
-          (member: TeamMember) => member.memberId === user.uid
+        const foundTeam = fetchedTournament.teams.find(
+          (t: Team) => t.captainId === captainId
         );
-        setIsMember(!!member);
-      }
+        setTeam(foundTeam || null);
 
-      setLoading(false);
+        if (user && foundTeam) {
+          const member = foundTeam.members.find(
+            (member: TeamMember) => member.memberId === user.uid
+          );
+          setIsMember(!!member);
+        }
+
+        setLoading(false);
+      } catch (error) {
+        toast.error("Error fetching tournament or team data");
+        setLoading(false);
+      }
     };
 
     fetchTournamentAndTeam();
-  }, [fakeId, captainId]);
+  }, [fakeId, captainId, user]);
 
   const handleImageLoad = () => {
     setIsImageLoaded(true);
@@ -89,13 +98,103 @@ const TeamView: React.FC = () => {
     }
   };
 
-  if (loading) {
+  const handleDeleteClick = (member: TeamMember) => {
+    setMemberToDelete(member.memberId);
+    setShowModal(true);
+  };
+
+  const confirmDeleteMember = async () => {
+    setDeleteLoading(true);
+
+    if (tournament && team && memberToDelete !== "") {
+      try {
+        if (!tournament.id) {
+          throw new Error("Tournament ID is undefined");
+        }
+
+        const tournamentDocRef = doc(db, "tournaments", tournament.id);
+
+        const updatedTeams = tournament.teams.map((t: Team) =>
+          t.captainId === team.captainId
+            ? {
+                ...t,
+                members: t.members.filter(
+                  (member: TeamMember) => member.memberId !== memberToDelete
+                ),
+              }
+            : t
+        );
+
+        await updateDoc(tournamentDocRef, {
+          teams: updatedTeams,
+        });
+
+        setTeam({
+          ...team,
+          members: team.members.filter(
+            (member: TeamMember) => member.memberId !== memberToDelete
+          ),
+        });
+
+        toast.success(`Jugador eliminado`);
+
+        setShowModal(false);
+      } catch (error) {
+        toast.error("Hubo un error al eliminar el miembro. Inténtalo de nuevo.");
+      } finally {
+        setDeleteLoading(false);
+      }
+    } else {
+      toast.error("No pudo salir")
+      setDeleteLoading(false);
+    }
+  };
+
+  const handleLeaveTeam = async () => {
+    if (!user) return;
+  
+    setDeleteLoading(true);
+    setMemberToDelete(user.uid);
+    
+    try {
+      await confirmDeleteMember();
+    } catch (error) {
+      toast.error("Hubo un error al salir del equipo. Inténtalo de nuevo.");
+    } finally {
+      setDeleteLoading(false);
+      setIsMember(false);
+    }
+  };
+  
+  
+
+
+  const handleModalClose = () => {
+    setShowModal(false);
+  };
+
+  if (loading || userLoading) {
     return <Splash />;
   }
 
   if (!team) {
     return <div style={{ marginTop: "200px" }}>Team not found.</div>;
   }
+
+  const getCodeView = (
+    <div
+      className={`${styles.codeAction} container ${styles.teamCodeContainer}`}
+    >
+      <h4>Code:</h4>
+      <div
+        className={styles.teamCodeFigure}
+        onClick={handleCopyCode}
+        style={{ cursor: "pointer" }}
+      >
+        {team.code}
+      </div>
+    </div>
+  );
 
   return (
     <PrincipalContainer>
@@ -116,52 +215,29 @@ const TeamView: React.FC = () => {
 
         <div className={styles.teamInfoDetails}>
           <div className={styles.profileContainer}>
-            <Avatar
-              alt="Team Captain"
-              src={team?.banner.url || "/defaultProfile.png"}
-              sx={{ width: 140, height: 140 }}
-              className={styles.profileImage}
+            <TeamImageUpload
+              tournamentId={tournament?.id || ""}
+              team={team}
+              isMember={isMember}
+              isAdmin={isAdmin}
+              onUpdate={(updatedTeam) => setTeam(updatedTeam)}
             />
           </div>
-          {width >= 600 && isMember && (
-            <div
-              className={`${styles.codeAction} container ${styles.teamCodeContainer}`}
-            >
-              <h4>Code:</h4>
-              <div
-                className={styles.teamCodeFigure}
-                onClick={handleCopyCode}
-                style={{ cursor: "pointer" }}
-              >
-                {team.code}
-              </div>
-            </div>
-          )}
+
+          {width >= 600 && isMember && getCodeView}
+
           <h1
             className={stylesDetails.titleTourDetails}
             style={{ marginTop: width < 600 || !isMember ? "70px" : "" }}
           >
             {team.name}
           </h1>
+
           <div className={`container ${styles.teamViewInfoContainer}`}>
-            {width < 600 && isMember && (
-              <div
-                className={`${styles.codeAction} container ${styles.teamCodeContainer}`}
-              >
-                <h4>Code:</h4>
-                <div
-                  className={styles.teamCodeFigure}
-                  onClick={handleCopyCode}
-                  style={{ cursor: "pointer" }}
-                >
-                  {team.code}
-                </div>
-              </div>
-            )}
+            {width < 600 && isMember && getCodeView}
+
             <h3>Miembros</h3>
-            <div
-              className={`table-responsive container ${styles.tableTeamView}`}
-            >
+            <div className={`table-responsive container ${styles.tableTeamView}`}>
               <table
                 className={`${styles.participantsTable} table table-striped`}
               >
@@ -169,12 +245,13 @@ const TeamView: React.FC = () => {
                   <tr>
                     <th>Nickname</th>
                     <th>Role</th>
+                    {(user?.uid === captainId || isAdmin) && <th>Edit</th>}
                   </tr>
                 </thead>
                 <tbody>
                   {team.members && team.members.length > 0 ? (
                     team.members.map(
-                      (participant: TeamMember, index: number) => (
+                      (participant: TeamMember) => (
                         <tr key={participant.memberId}>
                           <td>{participant.user.nickname}</td>
                           <td>
@@ -182,32 +259,53 @@ const TeamView: React.FC = () => {
                               ? "Capitán"
                               : "Miembro"}
                           </td>
+                          {(user?.uid === captainId || isAdmin) && (
+                            <td>
+                                <button
+                                  title="button erase"
+                                  className={`${styles.actionButton} ${styles.deleteButtonTeam}`}
+                                  onClick={() => handleDeleteClick(participant)}
+                                >
+                                  <FaTrash />
+                                </button>
+                            
+                            </td>
+                          )}
                         </tr>
                       )
                     )
                   ) : (
                     <tr>
-                      <td colSpan={3}>No participants found</td>
+                      <td colSpan={3}>No hay miembros en este equipo.</td>
                     </tr>
                   )}
                 </tbody>
               </table>
             </div>
           </div>
+          <div className={`container ${styles.outTeamContainer}`} onClick={handleLeaveTeam}>
+            {isMember && <span>Salir</span> }
+          </div>
         </div>
-        <ToastContainer
-          position="top-right"
-          autoClose={1000}
-          hideProgressBar
-          newestOnTop
-          closeOnClick
-          rtl={false}
-          pauseOnFocusLoss={false}
-          draggable
-          pauseOnHover={false}
-          className="custom-toast-container"
-        />
       </div>
+
+      <DeleteMemberModal
+        showModal={showModal}
+        handleModalClose={handleModalClose}
+        confirmDeleteMember={confirmDeleteMember}
+        loading={deleteLoading}
+      />
+      <ToastContainer style={{marginTop: '70px'}}
+         position="top-right"
+         autoClose={1500}
+         hideProgressBar
+         newestOnTop
+         closeOnClick
+         rtl={false}
+         pauseOnFocusLoss
+         draggable
+         pauseOnHover
+      />
       <Footer />
     </PrincipalContainer>
   );

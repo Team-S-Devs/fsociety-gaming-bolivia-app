@@ -6,6 +6,7 @@ export enum CollectionNames {
 }
 
 export enum StoragePaths {
+    TeamBanners = "team-images",
     ProfileImages = "profile-images",
     Tournaments = "tournaments",
     TournamentsBanners = "tournaments/banners",
