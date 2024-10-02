@@ -361,6 +361,22 @@
   object-fit: contain;
 }
 
+
+/* MOdal Delete user*/
+.modalFooterDeleteMember {
+  margin-top: 1rem;
+}
+
+.modalFooterDeleteMember button {
+  margin: .2rem;
+}
+
+.modalTitleDelete {
+  font-size: 1.4rem;
+  color: #00d9ff;
+}
+
+
 @media (max-width: 390px) {
   .splashBannerContainer {
     height: 130px; 
@@ -376,9 +392,6 @@
 
   .titleTourDetails {
     font-size: 1.5rem;
-  }
-
-  .modalJoinContent {
   }
 
   .modalOption {

@@ -6,23 +6,26 @@ import { updateDoc, arrayUnion, arrayRemove, doc } from "firebase/firestore";
 import { uploadFileToStorage } from "../../utils/storageMethods";
 import { StoragePaths } from "../../utils/collectionNames";
 import { db } from "../../utils/firebase-config";
-import styles from "../../assets/styles/teamsParticipants.module.css";
-
+import { toast } from "react-toastify";
+import styles from "../../assets/styles/profile.module.css";
 
 interface TeamImageUploadProps {
   tournamentId: string;
   team: any;
   onUpdate: (updatedTeam: any) => void;
+  isMember: boolean;
+  isAdmin: boolean;
 }
 
 const TeamImageUpload: React.FC<TeamImageUploadProps> = ({
   tournamentId,
   team,
   onUpdate,
+  isMember,
+  isAdmin,
 }) => {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [loading, setLoading] = useState<boolean>(false);
-  const [error, setError] = useState<string>("");
 
   const handleBadgeClick = () => {
     if (fileInputRef.current) {
@@ -34,9 +37,8 @@ const TeamImageUpload: React.FC<TeamImageUploadProps> = ({
     event: React.ChangeEvent<HTMLInputElement>
   ) => {
     const file = event.target.files?.[0];
-    if (file) {
+    if (file && (isMember || isAdmin)) {
       setLoading(true);
-      setError("");
 
       try {
         const uploadPath = `${StoragePaths.TeamBanners}/${team.captainId}`;
@@ -54,7 +56,7 @@ const TeamImageUpload: React.FC<TeamImageUploadProps> = ({
 
         onUpdate(updatedTeam);
       } catch (error) {
-        setError("Error uploading the image. Please try again.");
+        toast.error("Error uploading the image. Please try again.");
       } finally {
         setLoading(false);
       }
@@ -67,15 +69,17 @@ const TeamImageUpload: React.FC<TeamImageUploadProps> = ({
         overlap="circular"
         anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
         badgeContent={
-          <div className={styles.editIconButton}>
-            {!team?.banner?.url ? (
-              <TbCameraPlus color="#fff" size={28} />
-            ) : (
-              <MdEdit color="#fff" size={28} />
-            )}
-          </div>
+          (isMember || isAdmin) && (
+            <div className={styles.editIconButton}>
+              {!team?.banner?.url ? (
+                <TbCameraPlus color="#fff" size={28} />
+              ) : (
+                <MdEdit color="#fff" size={28} />
+              )}
+            </div>
+          )
         }
-        onClick={handleBadgeClick}
+        onClick={isMember || isAdmin ? handleBadgeClick : undefined}
         style={{ cursor: "pointer" }}
         className={styles.badgeTeamImage}
       >
@@ -99,8 +103,6 @@ const TeamImageUpload: React.FC<TeamImageUploadProps> = ({
         style={{ display: "none" }}
         onChange={handleFileChange}
       />
-
-      {error && <span className={styles.error}>{error}</span>}
     </div>
   );
 };

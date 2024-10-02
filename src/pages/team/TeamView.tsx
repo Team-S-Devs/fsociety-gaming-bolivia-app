@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import { Tournament, Team, TeamMember } from "../../interfaces/interfaces";
+import { Tournament, Team, TeamMember, UserType } from "../../interfaces/interfaces";
 import { getTournamentByFakeId } from "../../utils/authUtils";
 import styles from "../../assets/styles/teamsParticipants.module.css";
 import imageBanner from "../../assets/bannerTeam5.png";
@@ -12,23 +12,26 @@ import PrincipalContainer from "../../components/PrincipalContainer";
 import Footer from "../../components/Footer";
 import "bootstrap/dist/css/bootstrap.min.css";
 import useWindowSize from "../../hooks/useWindowSize";
-import { auth } from "../../utils/firebase-config";
+import { FaTrash } from "react-icons/fa";
+import TeamImageUpload from "../../components/teams/TeamImageUploader";
 import "react-toastify/dist/ReactToastify.css";
-import { FaEdit, FaTrash } from "react-icons/fa";
-// import TeamImageUpload from "../../components/teams/TeamImageUploader";
+import { useUserContext } from "../../contexts/UserContext";
+import { doc, updateDoc } from "firebase/firestore";
+import { db } from "../../utils/firebase-config";
+import DeleteMemberModal from "../../components/teams/DeleteMemberModal";
 
 const TeamView: React.FC = () => {
-  const { fakeId, captainId } = useParams<{
-    fakeId: string;
-    captainId: string;
-  }>();
+  const { fakeId, captainId } = useParams<{ fakeId: string; captainId: string }>();
   const [tournament, setTournament] = useState<Tournament | null>(null);
   const [team, setTeam] = useState<Team | null>(null);
   const [loading, setLoading] = useState(true);
   const [isImageLoaded, setIsImageLoaded] = useState(false);
   const { width } = useWindowSize();
   const [isMember, setIsMember] = useState(false);
-  const [isCaptain, setIsCaptain] = useState(false);
+  const { user, isAdmin, loading: userLoading } = useUserContext();
+  const [showModal, setShowModal] = useState(false);
+  const [memberToDelete, setMemberToDelete] = useState<string>("");
+  const [deleteLoading, setDeleteLoading] = useState(false);
 
   useEffect(() => {
     const fetchTournamentAndTeam = async () => {
@@ -53,13 +56,11 @@ const TeamView: React.FC = () => {
         );
         setTeam(foundTeam || null);
 
-        const user = auth.currentUser;
         if (user && foundTeam) {
           const member = foundTeam.members.find(
             (member: TeamMember) => member.memberId === user.uid
           );
           setIsMember(!!member);
-          setIsCaptain(user.uid === captainId);
         }
 
         setLoading(false);
@@ -70,7 +71,7 @@ const TeamView: React.FC = () => {
     };
 
     fetchTournamentAndTeam();
-  }, [fakeId, captainId]);
+  }, [fakeId, captainId, user]);
 
   const handleImageLoad = () => {
     setIsImageLoaded(true);
@@ -78,28 +79,108 @@ const TeamView: React.FC = () => {
 
   const handleCopyCode = () => {
     if (team?.code) {
-      if (navigator.clipboard) {
-        navigator.clipboard
-          .writeText(team.code)
-          .then(() => toast.success("Código copiado"))
-          .catch(() => toast.error("Error al copiar el código"));
-      } else {
-        toast.error("Clipboard API not supported");
-      }
+      navigator.clipboard
+        .writeText(team.code)
+        .then(() => {
+          toast.success("Código copiado", {
+            className: "custom-toast-success",
+            bodyClassName: "custom-toast-body",
+            icon: false,
+          });
+        })
+        .catch(() => {
+          toast.error("Error al copiar el código", {
+            className: "custom-toast-error",
+            bodyClassName: "custom-toast-body",
+            icon: false,
+          });
+        });
     }
   };
 
-  const functionHola = () => {
-    toast.error("watafak")
-  }
+  const handleDeleteClick = (member: TeamMember) => {
+    setMemberToDelete(member.memberId);
+    setShowModal(true);
+  };
+
+  const confirmDeleteMember = async () => {
+    setDeleteLoading(true);
+
+    if (tournament && team && memberToDelete !== "") {
+      try {
+        if (!tournament.id) {
+          throw new Error("Tournament ID is undefined");
+        }
+
+        const tournamentDocRef = doc(db, "tournaments", tournament.id);
+
+        const updatedTeams = tournament.teams.map((t: Team) =>
+          t.captainId === team.captainId
+            ? {
+                ...t,
+                members: t.members.filter(
+                  (member: TeamMember) => member.memberId !== memberToDelete
+                ),
+              }
+            : t
+        );
+
+        await updateDoc(tournamentDocRef, {
+          teams: updatedTeams,
+        });
+
+        setTeam({
+          ...team,
+          members: team.members.filter(
+            (member: TeamMember) => member.memberId !== memberToDelete
+          ),
+        });
+
+        toast.success(`Jugador eliminado`);
+
+        setShowModal(false);
+      } catch (error) {
+        toast.error("Hubo un error al eliminar el miembro. Inténtalo de nuevo.");
+      } finally {
+        setDeleteLoading(false);
+      }
+    } else {
+      toast.error("No pudo salir")
+      setDeleteLoading(false);
+    }
+  };
+
+  const handleLeaveTeam = async () => {
+    if (!user) return;
   
-  if (loading) {
+    setDeleteLoading(true);
+    setMemberToDelete(user.uid);
+    
+    try {
+      await confirmDeleteMember();
+    } catch (error) {
+      toast.error("Hubo un error al salir del equipo. Inténtalo de nuevo.");
+    } finally {
+      setDeleteLoading(false);
+      setIsMember(false);
+    }
+  };
+  
+  
+
+
+  const handleModalClose = () => {
+    setShowModal(false);
+  };
+
+  if (loading || userLoading) {
     return <Splash />;
   }
 
   if (!team) {
     return <div style={{ marginTop: "200px" }}>Team not found.</div>;
   }
+
   const getCodeView = (
     <div
       className={`${styles.codeAction} container ${styles.teamCodeContainer}`}
@@ -134,11 +215,13 @@ const TeamView: React.FC = () => {
 
         <div className={styles.teamInfoDetails}>
           <div className={styles.profileContainer}>
-            {/* <TeamImageUpload
-              tournamentId={fakeId || ""} 
+            <TeamImageUpload
+              tournamentId={tournament?.id || ""}
               team={team}
+              isMember={isMember}
+              isAdmin={isAdmin}
               onUpdate={(updatedTeam) => setTeam(updatedTeam)}
-            /> */}
+            />
           </div>
 
           {width >= 600 && isMember && getCodeView}
@@ -154,8 +237,6 @@ const TeamView: React.FC = () => {
             {width < 600 && isMember && getCodeView}
 
             <h3>Miembros</h3>
-          <div><button onClick={functionHola}>holaa</button></div>
-
             <div className={`table-responsive container ${styles.tableTeamView}`}>
               <table
                 className={`${styles.participantsTable} table table-striped`}
@@ -164,13 +245,13 @@ const TeamView: React.FC = () => {
                   <tr>
                     <th>Nickname</th>
                     <th>Role</th>
-                    {isCaptain && <th>Edit</th>}
+                    {(user?.uid === captainId || isAdmin) && <th>Edit</th>}
                   </tr>
                 </thead>
                 <tbody>
                   {team.members && team.members.length > 0 ? (
                     team.members.map(
-                      (participant: TeamMember, index: number) => (
+                      (participant: TeamMember) => (
                         <tr key={participant.memberId}>
                           <td>{participant.user.nickname}</td>
                           <td>
@@ -178,12 +259,16 @@ const TeamView: React.FC = () => {
                               ? "Capitán"
                               : "Miembro"}
                           </td>
-                          {isCaptain && (
+                          {(user?.uid === captainId || isAdmin) && (
                             <td>
-                              <FaEdit
-                                style={{ cursor: "pointer", marginRight: "10px" }}
-                              />
-                              <FaTrash style={{ cursor: "pointer" }} />
+                                <button
+                                  title="button erase"
+                                  className={`${styles.actionButton} ${styles.deleteButtonTeam}`}
+                                  onClick={() => handleDeleteClick(participant)}
+                                >
+                                  <FaTrash />
+                                </button>
+                            
                             </td>
                           )}
                         </tr>
@@ -191,28 +276,36 @@ const TeamView: React.FC = () => {
                     )
                   ) : (
                     <tr>
-                      <td colSpan={isCaptain ? 3 : 2}>No participants found</td>
+                      <td colSpan={3}>No hay miembros en este equipo.</td>
                     </tr>
                   )}
                 </tbody>
               </table>
             </div>
           </div>
+          <div className={`container ${styles.outTeamContainer}`} onClick={handleLeaveTeam}>
+            {isMember && <span>Salir</span> }
+          </div>
         </div>
-
-        <ToastContainer
-          position="top-right"
-          autoClose={1000}
-          hideProgressBar
-          newestOnTop
-          closeOnClick
-          rtl={false}
-          pauseOnFocusLoss={false}
-          draggable
-          pauseOnHover={false}
-          className="custom-toast-container"
-        />
       </div>
+
+      <DeleteMemberModal
+        showModal={showModal}
+        handleModalClose={handleModalClose}
+        confirmDeleteMember={confirmDeleteMember}
+        loading={deleteLoading}
+      />
+      <ToastContainer style={{marginTop: '70px'}}
+         position="top-right"
+         autoClose={1500}
+         hideProgressBar
+         newestOnTop
+         closeOnClick
+         rtl={false}
+         pauseOnFocusLoss
+         draggable
+         pauseOnHover
+      />
       <Footer />
     </PrincipalContainer>
   );

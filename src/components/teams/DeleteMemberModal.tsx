@@ -1,0 +1,50 @@
+import React from "react";
+import { Button, Spinner } from "react-bootstrap";
+import styles from "../../assets/styles/tournamentDetails.module.css";
+import { TeamMember } from "../../interfaces/interfaces";
+
+const DeleteMemberModal: React.FC<{
+  showModal: boolean;
+  handleModalClose: () => void;
+  confirmDeleteMember: () => Promise<void>;
+  loading: boolean;
+}> = ({ showModal, handleModalClose, confirmDeleteMember, loading }) => {
+  if (!showModal) return null;
+
+  return (
+    <div className={styles.modalJoin} onClick={handleModalClose}>
+      <div
+        className={styles.modalJoinContent}
+        onClick={(e) => e.stopPropagation()}
+      >
+        <div className={styles.closeContainer}>
+          <button className={styles.closeButton} onClick={handleModalClose}>
+            ×
+          </button>
+        </div>
+        <div className={styles.modalHeader}>
+          <h5 className={styles.modalTitleDelete}>Confirmar eliminación</h5>
+        </div>
+        <div className={styles.modalBody}>
+          ¿Estás seguro de que deseas eliminarlo?
+        </div>
+        <div className={styles.modalFooterDeleteMember}>
+          <Button variant="secondary" onClick={handleModalClose}>
+            Cancelar
+          </Button>
+          {loading ? (
+            <Button variant="danger" disabled>
+              <Spinner animation="border" size="sm" /> Eliminando...
+            </Button>
+          ) : (
+            <Button variant="danger" onClick={confirmDeleteMember}>
+              Eliminar
+            </Button>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default DeleteMemberModal;
