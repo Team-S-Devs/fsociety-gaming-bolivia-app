@@ -12,6 +12,7 @@ import CustomModal from '../components/home/CustomModal';
 import { useUserContext } from '../contexts/UserContext';
 import StartHomeSection from './homeSections/StartHomeSection';
 import InformationHomeSection from './homeSections/InformationHomeSection';
+import PastTournamentsSlider from '../components/home/PastTournamentsSlider';
 
 const Home: React.FC = () => {
   const [tournaments, setTournaments] = useState<Tournament[]>([]);
@@ -62,8 +63,14 @@ const Home: React.FC = () => {
         <h2 className={styles.subtitleHome}>TORNEOS ACTUALES</h2>
         <TournamentList tournaments={tournaments} />
       </div>
-      <StartHomeSection user={user} />
       <InformationHomeSection />
+
+      <div id="tournaments-section"  className={styles.homeContent}>
+        <SliderHome />
+        <h2 className={styles.subtitleHome}>TORNEOS PASADOS</h2>
+        <PastTournamentsSlider tournaments={tournaments}/>
+      </div>
+      <StartHomeSection user={user} />
       <Footer />
       <ToastContainer
         style={{marginTop: '4rem'}}
