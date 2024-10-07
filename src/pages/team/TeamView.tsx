@@ -17,7 +17,8 @@ import TeamImageUpload from "../../components/teams/TeamImageUploader";
 import "react-toastify/dist/ReactToastify.css";
 import { useUserContext } from "../../contexts/UserContext";
 import { doc, updateDoc } from "firebase/firestore";
-import { db } from "../../utils/firebase-config";
+import { auth, db } from "../../utils/firebase-config";
+import Error from "../Error404";
 import DeleteMemberModal from "../../components/teams/DeleteMemberModal";
 
 const TeamView: React.FC = () => {
@@ -28,9 +29,9 @@ const TeamView: React.FC = () => {
   const [isImageLoaded, setIsImageLoaded] = useState(false);
   const { width } = useWindowSize();
   const [isMember, setIsMember] = useState(false);
-  const { user, isAdmin, loading: userLoading } = useUserContext();
+  const { user, userInfo, isAdmin, loading: userLoading } = useUserContext();
   const [showModal, setShowModal] = useState(false);
-  const [memberToDelete, setMemberToDelete] = useState<string>("");
+  const [memberToDelete, setMemberToDelete] = useState<string | undefined>(undefined);
   const [deleteLoading, setDeleteLoading] = useState(false);
 
   useEffect(() => {
@@ -103,41 +104,42 @@ const TeamView: React.FC = () => {
     setShowModal(true);
   };
 
-  const confirmDeleteMember = async () => {
+  const confirmDeleteMember = async (memberId: string) => {
     setDeleteLoading(true);
-
-    if (tournament && team && memberToDelete !== "") {
+  
+    if (tournament && team && memberId) {
       try {
         if (!tournament.id) {
-          throw new Error("Tournament ID is undefined");
+          toast.error("Tournament ID is undefined");
+          return;
         }
-
+  
         const tournamentDocRef = doc(db, "tournaments", tournament.id);
-
+  
         const updatedTeams = tournament.teams.map((t: Team) =>
           t.captainId === team.captainId
             ? {
                 ...t,
                 members: t.members.filter(
-                  (member: TeamMember) => member.memberId !== memberToDelete
+                  (member: TeamMember) => member.memberId !== memberId
                 ),
               }
             : t
         );
-
+  
         await updateDoc(tournamentDocRef, {
           teams: updatedTeams,
         });
-
+  
         setTeam({
           ...team,
           members: team.members.filter(
-            (member: TeamMember) => member.memberId !== memberToDelete
+            (member: TeamMember) => member.memberId !== memberId
           ),
         });
-
+  
         toast.success(`Jugador eliminado`);
-
+  
         setShowModal(false);
       } catch (error) {
         toast.error("Hubo un error al eliminar el miembro. Inténtalo de nuevo.");
@@ -145,19 +147,24 @@ const TeamView: React.FC = () => {
         setDeleteLoading(false);
       }
     } else {
-      toast.error("No pudo salir")
+      toast.error("No pudo salir");
       setDeleteLoading(false);
     }
   };
 
-  const handleLeaveTeam = async () => {
-    if (!user) return;
+  const handleLeaveTeam = () => {
+    const user = auth.currentUser;
   
-    setDeleteLoading(true);
+    if (!user) {
+      toast.error("Usuario no autenticado");
+      return;
+    }
+
+    console.log(user.uid);
     setMemberToDelete(user.uid);
-    
+  
     try {
-      await confirmDeleteMember();
+      confirmDeleteMember(user.uid);
     } catch (error) {
       toast.error("Hubo un error al salir del equipo. Inténtalo de nuevo.");
     } finally {
@@ -165,6 +172,7 @@ const TeamView: React.FC = () => {
       setIsMember(false);
     }
   };
+  
   
   
 
@@ -178,7 +186,7 @@ const TeamView: React.FC = () => {
   }
 
   if (!team) {
-    return <div style={{ marginTop: "200px" }}>Team not found.</div>;
+    return <Error/>;
   }
 
   const getCodeView = (
@@ -283,8 +291,8 @@ const TeamView: React.FC = () => {
               </table>
             </div>
           </div>
-          <div className={`container ${styles.outTeamContainer}`} onClick={handleLeaveTeam}>
-            {isMember && <span>Salir</span> }
+          <div className={`container ${styles.outTeamContainer}`}>
+            {isMember && <span onClick={handleLeaveTeam}>Salir</span> }
           </div>
         </div>
       </div>
@@ -294,6 +302,7 @@ const TeamView: React.FC = () => {
         handleModalClose={handleModalClose}
         confirmDeleteMember={confirmDeleteMember}
         loading={deleteLoading}
+        memberId={memberToDelete}
       />
       <ToastContainer style={{marginTop: '70px'}}
          position="top-right"

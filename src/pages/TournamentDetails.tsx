@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useMemo } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { Category, Tournament, Team } from "../interfaces/interfaces";
+import { Category, Tournament, Team, TeamMember } from "../interfaces/interfaces";
 import styles from "../assets/styles/tournamentDetails.module.css";
 import Splash from "./Splash";
 import { getTournamentByFakeId } from "../utils/authUtils";
@@ -14,47 +14,58 @@ import Loader from "../components/Loader";
 import ParticipantsViewSection from "./tournamentView/ParticipantsViewSection";
 import AwardsViewSection from "./tournamentView/AwardsViewSection";
 import MatchesViewSection from "./tournamentView/MatchesViewSection";
+import { WPP_NUMBER } from "../utils/constants";
+import ConfirmationModal from "../components/tournament/tourForm/ConfirmationModal";
 
 const TournamentDetails: React.FC = () => {
   const { fakeId } = useParams<{ fakeId: string }>();
   const navigate = useNavigate();
   const [tournament, setTournament] = useState<Tournament | null>(null);
   const [actualCategory, setActualCategory] = useState(1);
-  const [actualPrevView, setActualPrevView] = useState<React.ReactNode | null>(
-    null
-  );
+  const [actualPrevView, setActualPrevView] = useState<React.ReactNode | null>(null);
   const [isImageLoaded, setIsImageLoaded] = useState(false);
   const [userTeam, setUserTeam] = useState<Team | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isUserLogged, setIsUserLogged] = useState<boolean>(false);
+  const [userInNoTeam, setUserInNoTeam] = useState(false);
+  const [showConfirmation, setShowConfirmation] = useState(false);
 
   useEffect(() => {
     const checkUserLoggedIn = () => {
-      const user = auth.currentUser;
-      setIsUserLogged(!!user);
+        const user = auth.currentUser;
+        setIsUserLogged(!!user);
     };
 
     if (!fakeId) {
-      toast.error("El Fake ID del torneo no está definido");
-      return;
+        toast.error("El Fake ID del torneo no está definido");
+        return;
     }
 
     const fetchTournament = async () => {
-      const fetchedTournament = await getTournamentByFakeId(fakeId);
-      setTournament(fetchedTournament);
+        const fetchedTournament = await getTournamentByFakeId(fakeId);
+        setTournament(fetchedTournament);
 
-      const user = auth.currentUser;
-      if (user && fetchedTournament?.teams) {
-        const team = fetchedTournament.teams.find((team) =>
-          team.members.some((member: any) => member.memberId === user.uid)
-        );
-        setUserTeam(team || null);
-      }
+        const user = auth.currentUser;
+        if (user && fetchedTournament?.teams) {
+            const team = fetchedTournament.teams.find((team) =>
+                team.members.some((member: TeamMember) => member.memberId === user.uid)
+            );
+            setUserTeam(team || null);
+
+            const isUserInNoTeam = Array.isArray(fetchedTournament.usersNoTeam)
+            ? fetchedTournament.usersNoTeam.some((member) => member.memberId === user.uid)
+            : false;
+
+
+            console.log(isUserInNoTeam);
+            setUserInNoTeam(isUserInNoTeam);
+        }
     };
 
     fetchTournament();
     checkUserLoggedIn();
   }, [fakeId]);
+
 
   const SliderCategories: Category[] = useMemo(
     () => [
@@ -114,10 +125,25 @@ const TournamentDetails: React.FC = () => {
       navigate("/autenticar");
     } else {
       if (!userTeam) {
-        openModal();
+          openModal();
       } else {
         openTournament();
       }
+    }
+  };
+
+  const handleShowContactBox = () => {
+    setShowConfirmation(true);
+    setIsModalOpen(true);
+  }
+
+  const handleConfirmation = () => {
+    setShowConfirmation(false);
+    setIsModalOpen(false);
+    const user = auth.currentUser;
+    if (user) {
+      const message = `Hola, soy ${user.email || "Usuario Nuevo"} y me uní a la lista de jugadores sin equipo en el torneo actual.`;
+      window.open(`https://wa.me/${WPP_NUMBER}?text=${encodeURIComponent(message)}`, '_blank');
     }
   };
 
@@ -146,9 +172,9 @@ const TournamentDetails: React.FC = () => {
         <div className={`${styles.actionsTourDetails} container`}>
           <button
             className={styles.joinButtonTourDetails}
-            onClick={handleJoinButtonClick}
+            onClick={userInNoTeam ? handleShowContactBox : handleJoinButtonClick}
           >
-            {!userTeam ? "Unirme al Torneo" : "Ver Equipo"}
+            {userInNoTeam ? "Unido" : !userTeam ? "Unirme al Torneo" : "Ver Equipo"}
           </button>
         </div>
         <h1 className={styles.titleTourDetails}>{tournament.name}</h1>
@@ -159,12 +185,23 @@ const TournamentDetails: React.FC = () => {
         />
         {actualPrevView}
       </div>
-      {!userTeam && (
+      {(!userTeam && !userInNoTeam) && (
         <JoinTeamModal
           tournament={tournament}
           isModalOpen={isModalOpen}
           closeModal={closeModal}
           setUserTeam={setUserTeam}
+          setUserNoTeam={setUserInNoTeam}
+        />
+      )}
+      {showConfirmation && (
+        <ConfirmationModal
+          isOpen={isModalOpen}
+          onClose={() => setIsModalOpen(false)}
+          onConfirm={handleConfirmation}
+          title="Confirmación"
+          message="Te uniste a la lista de usuarios sin equipo. El administrador te asignará a un equipo que se adecue a tu rango."
+          confirmText="Contactar"
         />
       )}
       <Footer />
