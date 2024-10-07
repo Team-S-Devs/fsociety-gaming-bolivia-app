@@ -140,6 +140,15 @@
         margin-top: 20px;
     }
 
+    .modalContent {
+      padding: 7px;
+    }
+
+    .modalContent h2 {
+      margin-top: 2rem;
+      font-size: 1.2rem;
+    }
+
     .infoButton {
         padding: 1rem;
         font-size: .9rem;
