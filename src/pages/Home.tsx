@@ -15,7 +15,8 @@ import InformationHomeSection from './homeSections/InformationHomeSection';
 import PastTournamentsSlider from '../components/home/PastTournamentsSlider';
 
 const Home: React.FC = () => {
-  const [tournaments, setTournaments] = useState<Tournament[]>([]);
+  const [currentTournaments, setCurrentTournaments] = useState<Tournament[]>([]);
+  const [pastTournaments, setPastTournaments] = useState<Tournament[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [showModal, setShowModal] = useState<boolean>(false);
 
@@ -24,8 +25,9 @@ const Home: React.FC = () => {
   useEffect(() => {
     const loadTournaments = async () => {
       try {
-        const data = await fetchTournaments();
-        setTournaments(data);
+        const { currentTournaments, pastTournaments } = await fetchTournaments();
+        setCurrentTournaments(currentTournaments);
+        setPastTournaments(pastTournaments);
       } catch (error) {
         toast.error("Error al cargar los torneos. Por favor, inténtelo de nuevo más tarde.");
       } finally {
@@ -58,22 +60,23 @@ const Home: React.FC = () => {
     <main className={styles.homeContainer}>
       <CustomModal show={showModal} onClose={() => setShowModal(false)} />
       <img src={bannerApp} alt="banner app" className={styles.backgroundImage} />
-      <div id="tournaments-section"  className={styles.homeContent}>
+      <div id="tournaments-section" className={styles.homeContent}>
         <SliderHome />
         <h2 className={styles.subtitleHome}>TORNEOS ACTUALES</h2>
-        <TournamentList tournaments={tournaments} />
+        <TournamentList tournaments={currentTournaments} />
       </div>
       <InformationHomeSection />
 
-      <div id="tournaments-section"  className={styles.homeContent}>
-        <SliderHome />
-        <h2 className={styles.subtitleHome}>TORNEOS PASADOS</h2>
-        <PastTournamentsSlider tournaments={tournaments}/>
-      </div>
+      {pastTournaments.length > 0 && 
+        <div id="past-tournaments-section" className={styles.homeContent}>
+          <h2 className={styles.subtitleHome}>TORNEOS PASADOS</h2>
+          <PastTournamentsSlider tournaments={pastTournaments} />
+        </div>
+      }
       <StartHomeSection user={user} />
       <Footer />
       <ToastContainer
-        style={{marginTop: '4rem'}}
+        style={{ marginTop: '4rem' }}
         position="top-right" 
         autoClose={5000}
         hideProgressBar 
