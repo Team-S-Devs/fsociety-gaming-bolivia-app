@@ -24,7 +24,6 @@ import { Box, Typography, useMediaQuery, useTheme } from "@mui/material";
 import { useUserContext } from "../contexts/UserContext";
 import { WPP_NUMBER } from "../utils/constants";
 import ConfirmationModal from "../components/tournament/tourForm/ConfirmationModal";
-import { Timestamp } from "firebase/firestore";
 
 const TournamentDetails: React.FC = () => {
   const { fakeId } = useParams<{ fakeId: string }>();
