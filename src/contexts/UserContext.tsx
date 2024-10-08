@@ -46,7 +46,7 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
           onSnapshot(doc(db, "users", fireBaseUser.uid), (snapshot) => {
             const userInfo = snapshot.data() as UserInterface;
             setIsAdmin(userInfo.type == UserType.ADMIN);
-            setUserInfo(userInfo);
+            setUserInfo({...userInfo, id: snapshot.id});
           });
         } else {
           setUser(null);

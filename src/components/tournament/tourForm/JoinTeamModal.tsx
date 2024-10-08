@@ -7,7 +7,7 @@ import { doc, updateDoc, arrayUnion, getDoc, Timestamp } from "firebase/firestor
 import ItemInfoText from "../../tournament/ItemInfoText";
 import JoinModal from "../../tournament/tourForm/JoinModal";
 import Loader from "../../Loader";
-import { Tournament, Team, UserInterface, TeamMember } from "../../../interfaces/interfaces";
+import { Tournament, Team, UserInterface, TeamMember, RangeUser } from "../../../interfaces/interfaces";
 import { useUserContext } from "../../../contexts/UserContext";
 import { CollectionNames } from "../../../utils/collectionNames";
 
@@ -15,6 +15,7 @@ interface JoinTeamModalProps {
   tournament: Tournament | null;
   isModalOpen: boolean;
   closeModal: () => void;
+  setUserNoTeam: Dispatch<SetStateAction<boolean>>;
   setUserTeam: Dispatch<SetStateAction<Team | null>>;
 }
 
@@ -23,8 +24,9 @@ const JoinTeamModal: React.FC<JoinTeamModalProps> = ({
   isModalOpen,
   closeModal,
   setUserTeam,
+  setUserNoTeam
 }) => {
-  const [modalView, setModalView] = useState<"default" | "createTeam" | "joinTeam">("default");
+  const [modalView, setModalView] = useState<"default" | "createTeam" | "joinTeam" | "enterWithoutTeam">("default");
   const [teamName, setTeamName] = useState("");
   const [teamCode, setTeamCode] = useState("");
   const [inputTeamCode, setInputTeamCode] = useState("");
@@ -32,6 +34,7 @@ const JoinTeamModal: React.FC<JoinTeamModalProps> = ({
   const [isTeamSaving, setIsTeamSaving] = useState(false);
   const [error, setError] = useState("");
   const { userInfo } = useUserContext();
+  const [selectedRange, setSelectedRange] = useState<RangeUser | null>(null);
 
   const handleSaveTeam = async () => {
     setIsTeamSaving(true);
@@ -182,6 +185,83 @@ const JoinTeamModal: React.FC<JoinTeamModalProps> = ({
     }
   };
 
+  const handleJoinWithoutTeam = async () => {
+    setIsTeamSaving(true);
+    const user = auth.currentUser;
+  
+    if (!user) {
+      setError("Usuario no autenticado");
+      setIsTeamSaving(false);
+      return;
+    }
+  
+    if (!selectedRange) {
+      setError("Debes escoger un rango");
+      setIsTeamSaving(false);
+      return;
+    }
+  
+    try {
+      if (tournament) {
+        const tournamentRef = doc(db, CollectionNames.Tournaments, tournament.id!);
+        const tournamentSnap = await getDoc(tournamentRef);
+  
+        if (tournamentSnap.exists()) {
+          const usersNoTeam = tournamentSnap.data().usersNoTeam || [];
+  
+          const isAlreadyJoined = usersNoTeam.some(
+            (member: any) => member.memberId === user.uid
+          );
+  
+          if (isAlreadyJoined) {
+            setError("Ya te has registrado sin equipo");
+            setIsTeamSaving(false);
+            return;
+          }
+  
+          const userRef = doc(db, "users", user.uid);
+          const userSnap = await getDoc(userRef);
+  
+          if (userSnap.exists()) {
+            const userData = userSnap.data() as UserInterface;
+  
+            const newUserWithoutTeam = {
+              memberId: user.uid,
+              payment: false,
+              paidAt: "not-paid",
+              user: {
+                ...userData,
+                range: selectedRange,
+              },
+              joinedAt: Timestamp.now(),
+            };
+  
+            await updateDoc(tournamentRef, {
+              usersNoTeam: arrayUnion(newUserWithoutTeam),
+            });
+  
+            setError("");
+            setIsTeamSaving(false);
+            setIsTeamSaved(true);
+            setUserNoTeam(true);
+            closeHandler();
+            toast.success("Te has registrado sin equipo");
+          } else {
+            setError("Usuario no encontrado en la base de datos.");
+            setIsTeamSaving(false);
+          }
+        } else {
+          setError("El torneo no existe");
+          setIsTeamSaving(false);
+        }
+      }
+    } catch (error) {
+      setError("Ocurrió un error al registrarte sin equipo. Inténtalo nuevamente.");
+      setIsTeamSaving(false);
+    }
+  };
+  
+
   const closeHandler = () => {
     closeModal();
     setModalView("default");
@@ -190,6 +270,7 @@ const JoinTeamModal: React.FC<JoinTeamModalProps> = ({
     setInputTeamCode("");
     setError("");
     setIsTeamSaved(false);
+    setSelectedRange(null);
   };
 
   return (
@@ -206,7 +287,11 @@ const JoinTeamModal: React.FC<JoinTeamModalProps> = ({
             icon={<FaCodeBranch />}
             onClick={() => setModalView("joinTeam")}
           />
-          <ItemInfoText text="Entrar sin equipo" icon={<FaCodeBranch />} />
+          <ItemInfoText 
+            text="Entrar sin equipo" 
+            icon={<FaCodeBranch />} 
+            onClick={() => setModalView("enterWithoutTeam")} 
+            />
         </div>
       )}
 
@@ -272,6 +357,33 @@ const JoinTeamModal: React.FC<JoinTeamModalProps> = ({
           </button>
         </div>
       )}
+
+      {modalView === "enterWithoutTeam" && (
+        <div className={styles.modalForm}>
+          <h3 className={styles.modalTitle}>Entrar sin equipo</h3>
+          <select
+            title="selector"
+            value={selectedRange || ""}
+            onChange={(e) => setSelectedRange(e.target.value as RangeUser)}
+            className={styles.modalInput}
+          >
+            <option value="">Escoge tu rango</option>
+            {Object.values(RangeUser).map((range) => (
+              <option key={range} value={range}>
+                {range}
+              </option>
+            ))}
+          </select>
+          {error && <p style={{ color: "red" }}>{error}</p>}
+          <button onClick={handleJoinWithoutTeam} className={styles.modalButton}>
+            Unirme sin equipo
+          </button>
+          <button onClick={closeHandler} className={styles.modalButtonClose}>
+            Cerrar
+          </button>
+        </div>
+      )}
+
     </JoinModal>
   );
 };

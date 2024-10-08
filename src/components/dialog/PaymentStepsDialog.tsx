@@ -18,6 +18,7 @@ import { getEmptyAdminSettings } from "../../utils/methods";
 import { doc, getDoc } from "firebase/firestore";
 import { db } from "../../utils/firebase-config";
 import { CollectionNames } from "../../utils/collectionNames";
+import { WPP_NUMBER } from "../../utils/constants";
 
 interface PaymentStepsDialogInterface {
   open: boolean;
@@ -104,6 +105,8 @@ const PaymentStepsDialog: React.FC<PaymentStepsDialogInterface> = ({
                   variant="contained"
                   color="success"
                   startIcon={<FaWhatsapp />}
+                  href={`https://wa.me/${WPP_NUMBER}`}
+                  target="_blank"
                 >
                   Enviar Comprobante
                 </Button>

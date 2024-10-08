@@ -6,17 +6,15 @@ import { TeamMember } from "../../interfaces/interfaces";
 const DeleteMemberModal: React.FC<{
   showModal: boolean;
   handleModalClose: () => void;
-  confirmDeleteMember: () => Promise<void>;
+  confirmDeleteMember: (memberId: string) => Promise<void>;
   loading: boolean;
-}> = ({ showModal, handleModalClose, confirmDeleteMember, loading }) => {
+  memberId: string | undefined;
+}> = ({ showModal, handleModalClose, confirmDeleteMember, loading, memberId }) => {
   if (!showModal) return null;
 
   return (
     <div className={styles.modalJoin} onClick={handleModalClose}>
-      <div
-        className={styles.modalJoinContent}
-        onClick={(e) => e.stopPropagation()}
-      >
+      <div className={styles.modalJoinContent} onClick={(e) => e.stopPropagation()}>
         <div className={styles.closeContainer}>
           <button className={styles.closeButton} onClick={handleModalClose}>
             ×
@@ -37,7 +35,7 @@ const DeleteMemberModal: React.FC<{
               <Spinner animation="border" size="sm" /> Eliminando...
             </Button>
           ) : (
-            <Button variant="danger" onClick={confirmDeleteMember}>
+            <Button variant="danger" onClick={() => confirmDeleteMember(memberId!)}>
               Eliminar
             </Button>
           )}

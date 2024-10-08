@@ -12,8 +12,15 @@ export enum TournamentUserType {
 }
 
 export enum RangeUser {
-  RANGE_1 = "RANGE 1",
+  WARRIOR = "Warrior",
+  ELITE = "Elite",
+  MASTER = "Master",
+  GRANDMASTER = "Grandmaster",
+  EPIC = "Epic",
+  LEGEND = "Legend",
+  MYTHIC = "Mythic"
 }
+
 
 export enum TournamentModality {
   ELIMINATION = "Eliminación",
@@ -82,6 +89,7 @@ export interface Tournament {
   endDate: Timestamp;
   teams: Team[];
   matches: Record<string, Match[]>;
+  usersNoTeam: TeamMember[]; 
   createdAt: Timestamp;
   deleted: boolean;
   active: boolean;
@@ -92,7 +100,6 @@ export interface Tournament {
     thirdTeamId: string | "none";
     fourthTeamId: string | "none";
   };
-  usersNoTeam: TeamMember[];
   paidUsersId: {
     paidAt: Timestamp;
     userId: string;
