@@ -387,9 +387,203 @@
 }
 
 
+/*  Awards  */
+
+.awardsContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 20px;
+  border-radius: 8px;
+  max-width: 450px;
+  margin: 0 auto;
+}
+
+.awardsContainerSec {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  background-color: #1a1a1a;
+  padding: 20px;
+  width: 400px;
+  border-radius: 8px;
+}
+
+.awardsTitle {
+  color: white;
+  font-size: 1.5rem;
+  margin-bottom: 15px;
+  text-align: center;
+}
+
+.awardItem {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 20px;
+  border-radius: 8px;
+  color: black;
+  font-weight: bold;
+  cursor:default;
+}
+
+
+.topThreeAwards {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.awardItem.gold {
+  background: linear-gradient(0deg,hsla(0,0%,100%,0) -22.86%,hsla(0,0%,100%,0) 63.07%,hsla(0,0%,100%,.2) 63.48%),linear-gradient(90deg,#cfb35d,rgba(207,179,93,0) 13.72%),hsla(45,78%,76%,.9);
+}
+
+.awardItem.silver {
+  background: linear-gradient(0deg,hsla(0,0%,100%,0) -22.86%,hsla(0,0%,100%,0) 63.07%,hsla(0,0%,100%,.2) 63.48%),linear-gradient(90deg,#9e9e9e,hsla(0,0%,62%,0) 44.41%),hsla(0,0%,80%,.9);
+}
+
+.awardItem.bronze {
+  background: linear-gradient(0deg,hsla(0,0%,100%,0) -22.86%,hsla(0,0%,100%,0) 63.07%,hsla(0,0%,100%,.2) 63.48%),linear-gradient(90deg,#ec8c50,rgba(236,139,80,0) 44.41%),hsla(23,81%,80%,.9);
+}
+
+.awardIcon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: rgb(7, 39, 54);
+  border-radius: 50%;
+  width: 50px;
+  height: 50px;
+  margin-right: 10px;
+}
+
+.awardItem:hover {
+  filter:brightness(110%);
+}
+
+.trophyIcon {
+  font-size: 24px;
+  color: #ffd700;
+}
+
+.awardDetails {
+  flex-grow: 1;
+  display: flex;
+  justify-content: space-between;
+}
+
+.position {
+  font-size: 1.2rem;
+}
+
+.amount {
+  font-size: 1.2rem;
+}
+
+
+
+
+/* Para premios a partir del cuarto lugar */
+.otherAwards {
+  margin-top: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.awardItemOther {
+  display: flex;
+  justify-content: space-between;
+  padding: 7px;
+  border-radius: 8px;
+  background: linear-gradient(90deg, #18292b, #2bc4c4d2);
+  color: white;
+  font-weight: bold;
+  cursor:default;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); 
+}
+
+.awardItemOther:hover {
+  filter:brightness(110%);
+
+}
+
+.awardItemOther .position {
+  font-size: 1.2rem;
+  color: #e0f7fa;
+}
+
+.awardItemOther .amount {
+  font-size: 1.2rem;
+  color: #0f0f0f;
+  background-color: #1e2c2c;
+  padding: .3rem;
+  border-radius: 10px;
+  font-weight: 450;
+  color: white;
+}
+
+.teamAndAwardCont {
+  display: flex;
+  flex-direction: column;
+  text-align: right;
+}
+
+.lineWinnerTeam{
+  font-size: .8rem;
+  margin-top: .2rem;
+}
+
+.teamAndAwardCont .teamName {
+  text-decoration: none;
+  color: white;
+  background-color: #140f46;
+  border-radius: 7px;
+  padding: .3rem;
+  white-space: nowrap
+  
+}
+
+.teamAndAwardCont .teamName:hover {
+  background-color: #120b5c;
+}
+
+
+
 @media (max-width: 390px) {
   .splashBannerContainer {
     height: 130px; 
+  }
+
+  .amount {
+    font-size: 1rem;
+  }
+
+  .awardDetails {
+    display: flex;
+    flex-direction: column;
+    text-align: left;
+  }
+
+  .trophyIcon {
+    font-size: 20px;
+  }
+
+  .awardIcon {
+    width: 40px;
+    height: 40px;
+  }
+
+  .awardItem {
+    padding: 10px 10px;
+  }
+
+  .awardItemOther .amount {
+    font-size: .9rem;
+  }
+  
+  .teamAndAwardCont {
+    text-align: left;
   }
 }
 
@@ -407,7 +601,7 @@
   .modalOption {
     margin-top: 20px;
     padding: 0;
-  }  
+  }
 }
 
 @media (max-width: 268px) {

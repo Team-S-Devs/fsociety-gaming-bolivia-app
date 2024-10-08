@@ -50,42 +50,45 @@ const TournamentDetails: React.FC = () => {
   const [userInNoTeam, setUserInNoTeam] = useState(false);
   const [showConfirmation, setShowConfirmation] = useState(false);
 
+  const [isTournamentEnded, setIsTournamentEnded] = useState<boolean>(false);
+
   useEffect(() => {
     const checkUserLoggedIn = () => {
-        const user = auth.currentUser;
-        setIsUserLogged(!!user);
+      const user = auth.currentUser;
+      setIsUserLogged(!!user);
     };
 
     if (!fakeId) {
-        toast.error("El Fake ID del torneo no está definido");
-        return;
+      toast.error("El Fake ID del torneo no está definido");
+      return;
     }
 
     const fetchTournament = async () => {
-        const fetchedTournament = await getTournamentByFakeId(fakeId);
-        setTournament(fetchedTournament);
+      const fetchedTournament = await getTournamentByFakeId(fakeId);
+      setTournament(fetchedTournament);
+      const isTournamentEnded = fetchedTournament?.endDate?.toDate() ? fetchedTournament.endDate.toDate() < new Date() : false;
 
-        const user = auth.currentUser;
-        if (user && fetchedTournament?.teams) {
-            const team = fetchedTournament.teams.find((team) =>
-                team.members.some((member: TeamMember) => member.memberId === user.uid)
-            );
-            setUserTeam(team || null);
-
-            const isUserInNoTeam = Array.isArray(fetchedTournament.usersNoTeam)
-            ? fetchedTournament.usersNoTeam.some((member) => member.memberId === user.uid)
-            : false;
+      setIsTournamentEnded(isTournamentEnded);
 
 
-            console.log(isUserInNoTeam);
-            setUserInNoTeam(isUserInNoTeam);
-        }
+      const user = auth.currentUser;
+      if (user && fetchedTournament?.teams) {
+        const team = fetchedTournament.teams.find((team) =>
+          team.members.some((member: TeamMember) => member.memberId === user.uid)
+        );
+        setUserTeam(team || null);
+
+        const isUserInNoTeam = Array.isArray(fetchedTournament.usersNoTeam)
+          ? fetchedTournament.usersNoTeam.some((member) => member.memberId === user.uid)
+          : false;
+
+        setUserInNoTeam(isUserInNoTeam);
+      }
     };
 
     fetchTournament();
     checkUserLoggedIn();
   }, [fakeId]);
-
 
   const SliderCategories: Category[] = useMemo(
     () => [
@@ -145,7 +148,7 @@ const TournamentDetails: React.FC = () => {
       navigate("/autenticar");
     } else {
       if (!userTeam) {
-          openModal();
+        openModal();
       } else {
         openTournament();
       }
@@ -155,7 +158,7 @@ const TournamentDetails: React.FC = () => {
   const handleShowContactBox = () => {
     setShowConfirmation(true);
     setIsModalOpen(true);
-  }
+  };
 
   const handleConfirmation = () => {
     setShowConfirmation(false);
@@ -163,7 +166,7 @@ const TournamentDetails: React.FC = () => {
     const user = auth.currentUser;
     if (user) {
       const message = `Hola, soy ${user.email || "Usuario Nuevo"} y me uní a la lista de jugadores sin equipo en el torneo actual.`;
-      window.open(`https://wa.me/${WPP_NUMBER}?text=${encodeURIComponent(message)}`, '_blank');
+      window.open(`https://wa.me/${WPP_NUMBER}?text=${encodeURIComponent(message)}`, "_blank");
     }
   };
 
@@ -219,8 +222,15 @@ const TournamentDetails: React.FC = () => {
           <button
             className={styles.joinButtonTourDetails}
             onClick={userInNoTeam ? handleShowContactBox : handleJoinButtonClick}
+            disabled={isTournamentEnded}
           >
-            {userInNoTeam ? "Unido" : !userTeam ? "Unirme al Torneo" : "Ver Equipo"}
+            {isTournamentEnded
+              ? "Torneo terminado"
+              : userInNoTeam
+              ? "Unido"
+              : !userTeam
+              ? "Unirme al Torneo"
+              : "Ver Equipo"}
           </button>
         </div>
         <h1 className={styles.titleTourDetails}>{tournament.name}</h1>
@@ -231,7 +241,7 @@ const TournamentDetails: React.FC = () => {
         />
         {actualPrevView}
       </div>
-      {(!userTeam && !userInNoTeam) && (
+      {!userTeam && !userInNoTeam && (
         <JoinTeamModal
           tournament={tournament}
           isModalOpen={isModalOpen}

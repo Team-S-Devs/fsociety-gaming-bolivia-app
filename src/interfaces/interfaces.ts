@@ -94,7 +94,7 @@ export interface Tournament {
   deleted: boolean;
   active: boolean;
   teamWinnerId?: string;
-  ranking: {
+  rankings: {
     firstTeamId: string | "none";
     secondTeamId: string | "none";
     thirdTeamId: string | "none";
