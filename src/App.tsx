@@ -17,6 +17,9 @@ const theme = createTheme({
     success: {
       main: "#42d546",
     },
+    warning: {
+      main: "#f6c23e"
+    }
   },
   typography: {
     allVariants: {

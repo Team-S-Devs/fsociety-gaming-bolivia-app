@@ -40,7 +40,15 @@ export const getEmptyTournament = (): Tournament => {
     createdAt: Timestamp.now(),
     deleted: false,
     active: true,
-    matches: {}
+    matches: {},
+    paidUsersId: [],
+    ranking: {
+      firstTeamId: "none",
+      secondTeamId: "none",
+      thirdTeamId: "none",
+      fourthTeamId: "none"
+    },
+    usersNoTeam: []
   };
 };
 

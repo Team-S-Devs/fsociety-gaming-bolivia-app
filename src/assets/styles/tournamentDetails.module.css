@@ -94,6 +94,16 @@
     border: none;
   }
 
+  .warningButton {
+    padding: 10px 20px;
+    font-size: 1rem;
+    cursor: pointer;
+    color: #000;
+    font-weight: 600;
+    border: none;
+    background-color: #f6c23e;
+  }
+
   
 
 /* slider details categories */
