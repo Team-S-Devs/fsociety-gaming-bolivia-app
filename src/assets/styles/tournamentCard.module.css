@@ -4,10 +4,15 @@
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
   margin: 20px;
   max-width: 350px;
+  width: 350px;
+  height: 430px;
   background-color: #102646;
   color: #E1E1E6;
   cursor: pointer;
   transition: transform 0.3s, box-shadow 0.3s;
+
+  display: flex;
+  flex-direction: column;
 }
 
 .tournamentCard:hover {
@@ -22,6 +27,7 @@
 }
 
 .tournamentContent {
+  flex-grow: 1; 
   padding: 20px;
 }
 
@@ -57,5 +63,25 @@
   display: flex;
   padding: 8px 20px;
   background-color: #263d5f;
+  margin-top: auto;
+}
 
+
+.pastTournamentsSlider {
+  padding: 20px 0;
+}
+
+
+
+.tournamentCardContainer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  margin: 0 auto;
+  margin-bottom: 1.9rem;
+}
+
+.sliderGenContainer {
+  max-width: 600px;
 }
