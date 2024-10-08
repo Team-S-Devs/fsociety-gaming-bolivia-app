@@ -30,7 +30,7 @@ const TournamentDetails: React.FC = () => {
   const [userTeam, setUserTeam] = useState<Team | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isUserLogged, setIsUserLogged] = useState<boolean>(false);
-  const [openModalPayment, setOpenModalPayment] = useState<boolean>(true);
+  const [openModalPayment, setOpenModalPayment] = useState<boolean>(false);
   const { user } = useUserContext();
 
   function hasUserPaid(userId: string): boolean {
