@@ -35,6 +35,12 @@ export const fetchTournaments = async (): Promise<{ currentTournaments: Tourname
       deleted: data.deleted || false,
       active: data.active || false,
       teamWinnerId: data.teamWinnerId || undefined,
+      rankings: data.rankings || {
+        firstTeamId: "none",
+        secondTeamId: "none",
+        thirdTeamId: "none",
+        fourthTeamId: "none",
+      },
     };
 
     return tournament;

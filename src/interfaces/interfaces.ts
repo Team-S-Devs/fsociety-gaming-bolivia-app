@@ -94,6 +94,12 @@ export interface Tournament {
   deleted: boolean;
   active: boolean;
   teamWinnerId?: string;
+  rankings: {
+    firstTeamId: string | "none";
+    secondTeamId: string | "none";
+    thirdTeamId: string | "none";
+    fourthTeamId: string | "none";
+  };
 }
 
 export interface TeamMember {

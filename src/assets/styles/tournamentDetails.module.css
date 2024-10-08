@@ -414,7 +414,6 @@
   border-radius: 8px;
   color: black;
   font-weight: bold;
-  transition: transform 0.2s ease-in-out;
   cursor:default;
 }
 
@@ -449,7 +448,7 @@
 }
 
 .awardItem:hover {
-  transform: scale(1.02);
+  filter:brightness(110%);
 }
 
 .trophyIcon {
@@ -492,11 +491,11 @@
   font-weight: bold;
   cursor:default;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); 
-  transition: transform 0.2s ease-in-out;
 }
 
 .awardItemOther:hover {
-  transform: scale(1.02); 
+  filter:brightness(110%);
+
 }
 
 .awardItemOther .position {
@@ -512,6 +511,31 @@
   border-radius: 10px;
   font-weight: 450;
   color: white;
+}
+
+.teamAndAwardCont {
+  display: flex;
+  flex-direction: column;
+  text-align: right;
+}
+
+.lineWinnerTeam{
+  font-size: .8rem;
+  margin-top: .2rem;
+}
+
+.teamAndAwardCont .teamName {
+  text-decoration: none;
+  color: white;
+  background-color: #140f46;
+  border-radius: 7px;
+  padding: .3rem;
+  white-space: nowrap
+  
+}
+
+.teamAndAwardCont .teamName:hover {
+  background-color: #120b5c;
 }
 
 
@@ -547,6 +571,10 @@
   .awardItemOther .amount {
     font-size: .9rem;
   }
+  
+  .teamAndAwardCont {
+    text-align: left;
+  }
 }
 
 
@@ -563,7 +591,7 @@
   .modalOption {
     margin-top: 20px;
     padding: 0;
-  }  
+  }
 }
 
 @media (max-width: 268px) {
