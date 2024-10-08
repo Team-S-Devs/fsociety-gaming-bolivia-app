@@ -14,6 +14,9 @@ import Loader from "../components/Loader";
 import ParticipantsViewSection from "./tournamentView/ParticipantsViewSection";
 import AwardsViewSection from "./tournamentView/AwardsViewSection";
 import MatchesViewSection from "./tournamentView/MatchesViewSection";
+import PaymentStepsDialog from "../components/dialog/PaymentStepsDialog";
+import { Box, Typography } from "@mui/material";
+import { useUserContext } from "../contexts/UserContext";
 import { WPP_NUMBER } from "../utils/constants";
 import ConfirmationModal from "../components/tournament/tourForm/ConfirmationModal";
 
@@ -27,6 +30,23 @@ const TournamentDetails: React.FC = () => {
   const [userTeam, setUserTeam] = useState<Team | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isUserLogged, setIsUserLogged] = useState<boolean>(false);
+  const [openModalPayment, setOpenModalPayment] = useState<boolean>(true);
+  const { user } = useUserContext();
+
+  function hasUserPaid(userId: string): boolean {
+    return tournament != null && tournament.paidUsersId.some(paidUser => paidUser.userId === userId);
+  }  
+
+  useEffect(() => {
+    setOpenModalPayment(
+      (userTeam &&
+        user?.uid &&
+        tournament &&
+        tournament.paidUsersId &&
+        !hasUserPaid(user.uid) ||
+        false)
+    );
+  }, [userTeam, tournament]);
   const [userInNoTeam, setUserInNoTeam] = useState(false);
   const [showConfirmation, setShowConfirmation] = useState(false);
 
@@ -173,6 +193,32 @@ const TournamentDetails: React.FC = () => {
 
       <div className={styles.tournamentInfoDetails}>
         <div className={`${styles.actionsTourDetails} container`}>
+          {userTeam &&
+            user?.uid &&
+            tournament.paidUsersId &&
+            !hasUserPaid(user.uid) && (
+              <Box
+                sx={{
+                  textAlign: "center",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  paddingRight: 4,
+                }}
+              >
+                <Box sx={{ marginRight: 4 }}>
+                  <Typography variant="subtitle1" color="warning" gutterBottom>
+                    No has completado el pago para unirte al torneo.
+                  </Typography>
+                </Box>
+                <button
+                  className={styles.warningButton}
+                  onClick={() => setOpenModalPayment(true)}
+                >
+                  Verificar Pago
+                </button>
+              </Box>
+            )}
           <button
             className={styles.joinButtonTourDetails}
             onClick={userInNoTeam ? handleShowContactBox : handleJoinButtonClick}
@@ -226,6 +272,10 @@ const TournamentDetails: React.FC = () => {
         pauseOnFocusLoss
         draggable
         pauseOnHover
+      />
+      <PaymentStepsDialog
+        open={openModalPayment}
+        setOpen={setOpenModalPayment}
       />
     </div>
   );

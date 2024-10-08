@@ -30,6 +30,18 @@ interface TournamentBracketsProps {
   submit: (e: React.FormEvent<HTMLFormElement>) => Promise<void>;
 }
 
+const noTeam: Team = {
+  id: "no-team",
+  name: "SIn equipo",
+  captainId: "",
+  code: "",
+  banner: {
+    url: "",
+    ref: "",
+  },
+  members: [],
+};
+
 const TournamentBrackets: React.FC<TournamentBracketsProps> = ({
   tournament,
   setTournament,
@@ -43,7 +55,11 @@ const TournamentBrackets: React.FC<TournamentBracketsProps> = ({
     .map((key) => tournament.matches[key]);
   const [rounds, setRounds] = useState<Match[][]>(matches);
   const initialTeams = tournament.teams.filter((team) =>
-    team.members.every((member) => member.payment)
+    team.members.every((player) =>
+      tournament.paidUsersId.some(
+        (paidUser) => paidUser.userId === player.memberId
+      )
+    )
   );
   const [remainingTeams, setRemainingTeams] = useState<Team[]>([]);
   const [selectedTeamA, setSelectedTeamA] = useState<string>("");
@@ -62,8 +78,14 @@ const TournamentBrackets: React.FC<TournamentBracketsProps> = ({
 
   const addManualMatch = () => {
     if (selectedTeamA && selectedTeamB && selectedTeamA !== selectedTeamB) {
-      const teamA = remainingTeams.find((team) => team.id === selectedTeamA);
-      const teamB = remainingTeams.find((team) => team.id === selectedTeamB);
+      const teamA =
+        selectedTeamA === "no-team"
+          ? noTeam
+          : remainingTeams.find((team) => team.id === selectedTeamA);
+      const teamB =
+        selectedTeamA === "no-team"
+          ? noTeam
+          : remainingTeams.find((team) => team.id === selectedTeamB);
 
       if (teamA && teamB) {
         const newMatch: Match = {
@@ -434,6 +456,9 @@ const TournamentBrackets: React.FC<TournamentBracketsProps> = ({
                       {team.name}
                     </MenuItem>
                   ))}
+                  <MenuItem key={"no-team"} value={"no-team"}>
+                    Sin equipo
+                  </MenuItem>
                 </Select>
               </Grid>
 
@@ -450,6 +475,9 @@ const TournamentBrackets: React.FC<TournamentBracketsProps> = ({
                       {team.name}
                     </MenuItem>
                   ))}
+                  <MenuItem key={"no-team"} value={"no-team"}>
+                    Sin equipo
+                  </MenuItem>
                 </Select>
               </Grid>
 

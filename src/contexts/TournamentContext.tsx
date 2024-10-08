@@ -41,6 +41,7 @@ export const fetchTournaments = async (): Promise<{ currentTournaments: Tourname
         thirdTeamId: "none",
         fourthTeamId: "none",
       },
+      paidUsersId: data.paidUsersId || undefined
     };
 
     return tournament;
