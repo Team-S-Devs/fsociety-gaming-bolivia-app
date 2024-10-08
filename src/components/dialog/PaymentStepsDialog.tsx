@@ -72,7 +72,7 @@ const PaymentStepsDialog: React.FC<PaymentStepsDialogInterface> = ({
           <Stepper activeStep={-1} orientation="vertical">
             <Step>
               <StepLabel>
-                <Typography variant="body1">1. Paga el siguiente QR</Typography>
+                <Typography variant="body1">Paga el siguiente QR</Typography>
               </StepLabel>
               {loading ? (
                 <div style={{ display: "flex", justifyContent: "center" }}>
@@ -97,7 +97,7 @@ const PaymentStepsDialog: React.FC<PaymentStepsDialogInterface> = ({
             <Step>
               <StepLabel>
                 <Typography variant="body1">
-                  2. Envía tu comprobante al Whatsapp
+                  Envía tu comprobante al Whatsapp
                 </Typography>
               </StepLabel>
               <Box sx={{ textAlign: "center", my: 2 }}>
@@ -116,7 +116,7 @@ const PaymentStepsDialog: React.FC<PaymentStepsDialogInterface> = ({
             <Step>
               <StepLabel>
                 <Typography variant="body1">
-                  3. Espera a que se valide tu transacción
+                  Espera a que se valide tu transacción
                 </Typography>
               </StepLabel>
             </Step>

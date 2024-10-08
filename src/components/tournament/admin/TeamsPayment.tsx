@@ -271,7 +271,7 @@ const TeamsPayment: React.FC<TeamsPaymentProps> = ({
     setLoading(false);
   };
 
-  const rendermembers = (teamId: string, members: any[]) => (
+  const rendermembers = (teamId: string, members: any[], captainId: string) => (
     <>
       {members
         .filter(
@@ -294,6 +294,11 @@ const TeamsPayment: React.FC<TeamsPaymentProps> = ({
             key={player.id}
           >
             <Grid container spacing={2} alignItems="center">
+              {captainId === player.memberId && (
+                <Grid size={{ md: 12, xs: 12 }}>
+                  <Typography color="success">CAPITÁN</Typography>
+                </Grid>
+              )}
               <Grid size={{ md: 6, xs: 12 }}>
                 <Typography>{player.user.nickname}</Typography>
               </Grid>
@@ -395,7 +400,7 @@ const TeamsPayment: React.FC<TeamsPaymentProps> = ({
               <Typography>{team.name}</Typography>
             </AccordionSummary>
             <AccordionDetails>
-              {rendermembers(team.id ?? "", team.members)}
+              {rendermembers(team.id ?? "", team.members, team.captainId)}
             </AccordionDetails>
           </Accordion>
         ))}
@@ -419,7 +424,7 @@ const TeamsPayment: React.FC<TeamsPaymentProps> = ({
               <Typography>{team.name}</Typography>
             </AccordionSummary>
             <AccordionDetails>
-              {rendermembers(team.id ?? "", team.members)}
+              {rendermembers(team.id ?? "", team.members, team.captainId)}
               <Button
                 variant="contained"
                 color="secondary"
