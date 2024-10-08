@@ -42,7 +42,7 @@ export const getEmptyTournament = (): Tournament => {
     active: true,
     matches: {},
     paidUsersId: [],
-    ranking: {
+    rankings: {
       firstTeamId: "none",
       secondTeamId: "none",
       thirdTeamId: "none",
