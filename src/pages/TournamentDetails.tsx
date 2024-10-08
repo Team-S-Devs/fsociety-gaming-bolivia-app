@@ -24,7 +24,7 @@ import { Box, Typography, useMediaQuery, useTheme } from "@mui/material";
 import { useUserContext } from "../contexts/UserContext";
 import { WPP_NUMBER } from "../utils/constants";
 import ConfirmationModal from "../components/tournament/tourForm/ConfirmationModal";
-import Grid from "@mui/material/Grid2";
+import { Timestamp } from "firebase/firestore";
 
 const TournamentDetails: React.FC = () => {
   const { fakeId } = useParams<{ fakeId: string }>();
@@ -52,14 +52,17 @@ const TournamentDetails: React.FC = () => {
   }
 
   useEffect(() => {
-    setOpenModalPayment(
-      (userTeam &&
-        user?.uid &&
-        tournament &&
-        tournament.paidUsersId &&
-        !hasUserPaid(user.uid)) ||
-        false
-    );
+    if (!(tournament?.active && new Date() < tournament?.endDate.toDate()))
+      setOpenModalPayment(false);
+    else
+      setOpenModalPayment(
+        (userTeam &&
+          user?.uid &&
+          tournament &&
+          tournament.paidUsersId &&
+          !hasUserPaid(user.uid)) ||
+          false
+      );
   }, [userTeam, tournament]);
   const [userInNoTeam, setUserInNoTeam] = useState(false);
   const [showConfirmation, setShowConfirmation] = useState(false);
@@ -228,7 +231,7 @@ const TournamentDetails: React.FC = () => {
                   flexDirection: "row",
                   alignItems: "center",
                   paddingRight: isSmallScreen ? 0 : 4,
-                  marginBottom: isSmallScreen ? 2 : 0
+                  marginBottom: isSmallScreen ? 2 : 0,
                 }}
               >
                 <Box
@@ -238,7 +241,7 @@ const TournamentDetails: React.FC = () => {
                 >
                   <Typography
                     variant={isSmallScreen ? "subtitle1" : "body2"}
-                    style={{ fontSize: isSmallScreen ? "1.1em" : "1.3em"}}
+                    style={{ fontSize: isSmallScreen ? "1.1em" : "1.3em" }}
                     color="warning"
                     textAlign={"left"}
                     gutterBottom
