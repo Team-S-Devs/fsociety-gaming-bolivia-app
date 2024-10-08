@@ -67,7 +67,6 @@ const JoinTeamModal: React.FC<JoinTeamModalProps> = ({
         members: [
           {
             memberId: user.uid,
-            payment: false,
             user: userInfo,
             paidAt: "not-paid",
             joinedAt: Timestamp.now()
@@ -142,7 +141,6 @@ const JoinTeamModal: React.FC<JoinTeamModalProps> = ({
                 ...team.members,
                 {
                   memberId: user.uid,
-                  payment: false,
                   paidAt: "not-paid",
                   user: userData,
                   joinedAt: Timestamp.now()

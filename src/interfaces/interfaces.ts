@@ -47,22 +47,22 @@ export interface UserInterface {
 }
 
 export interface ImageRefPath {
-    ref: string;
-    url: string;
+  ref: string;
+  url: string;
 }
 
 export interface RawContent {
-  blocks: [],
-  entityMap: {}
+  blocks: [];
+  entityMap: {};
 }
 
 export interface Match {
   id: string;
   teamA: Team;
   teamB: Team;
-  scoreA: string; 
-  scoreB: string; 
-  played: boolean; 
+  scoreA: string;
+  scoreB: string;
+  played: boolean;
 }
 
 export interface Tournament {
@@ -81,16 +81,26 @@ export interface Tournament {
   startDate: Timestamp;
   endDate: Timestamp;
   teams: Team[];
-  matches: Record<string, Match[]>; 
+  matches: Record<string, Match[]>;
   createdAt: Timestamp;
   deleted: boolean;
   active: boolean;
   teamWinnerId?: string;
+  ranking: {
+    firstTeamId: string | "none";
+    secondTeamId: string | "none";
+    thirdTeamId: string | "none";
+    fourthTeamId: string | "none";
+  };
+  usersNoTeam: TeamMember[];
+  paidUsersId: {
+    paidAt: Timestamp;
+    userId: string;
+  }[];
 }
 
 export interface TeamMember {
   memberId: string;
-  payment: boolean;
   user: UserInterface;
   paidAt: Timestamp | "not-paid";
   joinedAt: Timestamp;
