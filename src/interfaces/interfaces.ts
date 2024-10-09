@@ -104,6 +104,8 @@ export interface Tournament {
     paidAt: Timestamp;
     userId: string;
   }[];
+  paidUsersJustId: string[];
+  registeredUsers: string[];
 }
 
 export interface TeamMember {

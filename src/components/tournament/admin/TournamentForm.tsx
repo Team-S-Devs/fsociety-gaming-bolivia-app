@@ -218,17 +218,6 @@ const TournamentForm: React.FC<TournamentFormProps> = ({
           }
         />
 
-        <TextField
-          fullWidth
-          margin="normal"
-          name="name"
-          value={tournament.name}
-          onChange={handleInputChange}
-          placeholder="https://www.twitch.tv/..."
-          label="Enlace de Twitch:"
-          required
-        />
-
         <div style={{ width: "100%" }}>
           <Grid container spacing={2}>
             <Grid size={{ md: 6, sm: 6 }}>
