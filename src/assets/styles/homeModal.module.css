@@ -135,17 +135,12 @@
 }
 
 
-@media (max-width: 340px) {
+@media (max-width: 650px) {
   .modalOverlay {
-      margin-top: 20px;
-  }
-
-  .modalContent {
-    padding: 7px;
+      margin-top: 2rem;
   }
 
   .modalContent h2 {
-    margin-top: 2rem;
     font-size: 1.2rem;
   }
 
@@ -153,24 +148,14 @@
       padding: 1rem;
       font-size: .9rem;
   }
-}
 
-@media (max-height: 670px) {
-.modalOverlay {
-  margin-top: 2rem;
-}
-
-.modalContent {
-  padding: .6rem;
-}
-
-.modalContent h2 {
-  font-size: 1.1rem;
-  padding-top: .8rem;
-}
-
-.closeButton {
-  top: 0px;
-  right: 3px;
-}
+  
+  .modalContent h2 {
+    font-size: 1.1rem;
+  }
+  
+  .closeButton {
+    top: 0px;
+    right: 3px;
+  }
 }
