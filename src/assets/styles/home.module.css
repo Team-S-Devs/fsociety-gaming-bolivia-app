@@ -292,6 +292,11 @@
   text-decoration: underline;
 }
 
+.pastToursContent {
+  background-color: rgb(3, 2, 14);
+  padding-top: .4rem;
+}
+
 
 @media (max-width: 700px) {
   .containerTextSection {

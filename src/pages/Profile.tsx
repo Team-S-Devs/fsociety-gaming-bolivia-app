@@ -21,6 +21,7 @@ import { auth } from "../utils/firebase-config";
 import { LoadingButton } from "@mui/lab";
 import styles from "../assets/styles/profile.module.css";
 import PrincipalContainer from "../components/PrincipalContainer";
+import { ToastContainer } from "react-toastify";
 
 const ProfilePage: React.FC = () => {
   const theme = useTheme();
@@ -127,6 +128,18 @@ const ProfilePage: React.FC = () => {
           )}
         </Box>
       </Container>
+      <ToastContainer
+        style={{ marginTop: "5rem" }}
+        position="top-right"
+        autoClose={5000}
+        hideProgressBar
+        newestOnTop
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+      />
     </PrincipalContainer>
   );
 };

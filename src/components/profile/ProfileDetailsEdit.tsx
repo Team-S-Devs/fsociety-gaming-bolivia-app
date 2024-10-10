@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { TextField, Typography, useTheme } from "@mui/material";
-import { getAuth, User } from "firebase/auth";
+import { getAuth, sendPasswordResetEmail, User } from "firebase/auth";
 import {
   collection,
   doc,
@@ -21,7 +21,6 @@ import {
 } from "../../utils/validatorUtil";
 import { useUserContext } from "../../contexts/UserContext";
 import ProfileImage from "../../components/profile/ProfileImage";
-import { AuthUtils } from "../../utils/authUtils";
 import { toast } from "react-toastify";
 import Loader from "../Loader";
 import BlurBoxContainer from "../BlurBoxContainer";
@@ -139,7 +138,8 @@ const ProfileDetailsEdit: React.FC = () => {
   const handleResetPassword = async () => {
     if (!userData.email) return;
     try {
-      await AuthUtils.resetPassword(userData.email);
+      await sendPasswordResetEmail(auth, userData.email);
+      toast.success("Correo enviado exitosamente (Verifique su bandeja de entrada para restablecer la contraseña)");
     } catch (error) {
       toast.error("Error al intentar restablecer la contraseña.");
     }
