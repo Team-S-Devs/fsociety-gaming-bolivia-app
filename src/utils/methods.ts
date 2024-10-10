@@ -48,7 +48,9 @@ export const getEmptyTournament = (): Tournament => {
       thirdTeamId: "none",
       fourthTeamId: "none"
     },
-    usersNoTeam: []
+    usersNoTeam: [],
+    registeredUsers: [],
+    paidUsersJustId: []
   };
 };
 
@@ -86,3 +88,17 @@ export const calculateRoundsNumber = (teamsLength: number): number => {
   }
   return Math.log2(teamsLength);
 }
+
+
+export const timestampToDate = (firebaseTimestamp: Timestamp) => {
+  try {
+    const date = firebaseTimestamp.toDate();
+    return date.toLocaleDateString("es-ES", {
+      day: "2-digit",
+      month: "2-digit",
+      year: "numeric",
+    });
+  } catch (e) {
+    return "";
+  }
+};
