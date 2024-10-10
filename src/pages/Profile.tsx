@@ -1,15 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { TextField, Typography } from "@mui/material";
-import { getAuth, User, signOut } from "firebase/auth";
-import {
-  collection,
-  doc,
-  getDoc,
-  getDocs,
-  query,
-  updateDoc,
-  where,
-} from "firebase/firestore";
+import { getAuth, User, sendPasswordResetEmail, signOut } from "firebase/auth";
+import { collection, doc, getDoc, getDocs, query, updateDoc, where } from "firebase/firestore";
 import { db } from "../utils/firebase-config";
 import { CollectionNames } from "../utils/collectionNames";
 import ContainerWithBackground from "../components/ContainerWithBackground";
@@ -20,8 +12,7 @@ import { validateNickname, validatePhone, validateUserId } from "../utils/valida
 import { useNavigate } from "react-router-dom";
 import { useUserContext } from "../contexts/UserContext";
 import ProfileImage from "../components/profile/ProfileImage";
-import { AuthUtils } from "../utils/authUtils";
-import { toast } from "react-toastify";
+import { toast, ToastContainer } from "react-toastify";
 
 interface UserData {
   nickname: string;
@@ -43,7 +34,7 @@ const Profile: React.FC = () => {
     phone: "",
     email: "",
     bio: "",
-    userId: ""
+    userId: "",
   });
   const [loading, setLoading] = useState<boolean>(true);
   const [updating, setUpdating] = useState<boolean>(false);
@@ -58,9 +49,7 @@ const Profile: React.FC = () => {
     const fetchUserData = async () => {
       if (!currentUser) return;
       try {
-        const userDoc = await getDoc(
-          doc(db, CollectionNames.Users, currentUser.uid)
-        );
+        const userDoc = await getDoc(doc(db, CollectionNames.Users, currentUser.uid));
         if (userDoc.exists()) {
           const data = userDoc.data() as UserData;
           setUserData({
@@ -68,7 +57,7 @@ const Profile: React.FC = () => {
             phone: data.phone.toString() || "",
             email: data.email || "",
             bio: data.bio || "",
-            userId: data.userId || ""
+            userId: data.userId || "",
           });
         }
       } catch (error) {
@@ -95,7 +84,7 @@ const Profile: React.FC = () => {
 
     setNicknameError(nameValidation);
     setPhoneError(phoneValidation);
-    setUserIdError(userIdValidation)
+    setUserIdError(userIdValidation);
 
     if (nameValidation || phoneValidation || userIdValidation) return;
 
@@ -105,16 +94,11 @@ const Profile: React.FC = () => {
       const nicknameLowerCase = userData.nickname.toLowerCase();
       if (userInfo?.nicknameLowerCase !== userData.nickname.toLowerCase()) {
         const usersCollectionRef = collection(db, CollectionNames.Users);
-        const q = query(
-          usersCollectionRef,
-          where("nicknameLowerCase", "==", nicknameLowerCase)
-        );
+        const q = query(usersCollectionRef, where("nicknameLowerCase", "==", nicknameLowerCase));
         const querySnapshot = await getDocs(q);
 
         if (!querySnapshot.empty) {
-          setNicknameError(
-            "El nombre de usuario ya está en uso. Por favor, elige otro."
-          );
+          setNicknameError("El nombre de usuario ya está en uso. Por favor, elige otro.");
           setLoading(false);
           return;
         }
@@ -125,7 +109,7 @@ const Profile: React.FC = () => {
         nicknameLowerCase,
         phone: Number(userData.phone),
         bio: userData.bio,
-        userId: userData.userId
+        userId: userData.userId,
       });
       setSuccessMessage("Perfil actualizado con éxito.");
     } catch (error) {
@@ -148,7 +132,8 @@ const Profile: React.FC = () => {
   const handleResetPassword = async () => {
     if (!userData.email) return;
     try {
-      await AuthUtils.resetPassword(userData.email);
+      await sendPasswordResetEmail(auth, userData.email);
+      toast.success("Correo de recuperación enviado.");
     } catch (error) {
       toast.error("Error al intentar restablecer la contraseña.");
     }
@@ -165,28 +150,21 @@ const Profile: React.FC = () => {
 
   return (
     <ContainerWithBackground urlImage="/src/assets/bannerFsociety.jpg">
-      <br/>
-      <br/>
-      <br/>
+      <br />
+      <br />
+      <br />
 
       <div className={styles.profileContainer}>
-        <form
-          className={styles.profileForm}
-          onSubmit={(e) => e.preventDefault()}
-        >
+        <form className={styles.profileForm} onSubmit={(e) => e.preventDefault()}>
           <ProfileImage />
           <Typography variant="h4" gutterBottom className={styles.title} mt={2}>
             {userData.nickname}
           </Typography>
           {successMessage && (
-            <Typography className={styles.successMessage}>
-              {successMessage}
-            </Typography>
+            <Typography className={styles.successMessage}>{successMessage}</Typography>
           )}
           {errorMessage && (
-            <Typography className={styles.errorMessage}>
-              {errorMessage}
-            </Typography>
+            <Typography className={styles.errorMessage}>{errorMessage}</Typography>
           )}
           <TextField
             label="Nombre de usuario (nickname)"
@@ -247,27 +225,26 @@ const Profile: React.FC = () => {
             className={styles.inputFieldDisabled}
           />
           <div className="d-flex justify-content-between flex-wrap mt-4">
-            <MainButton
-              title="Cambiar Contraseña"
-              onClick={handleResetPassword}
-              color="#007bff"
-            />
-            <MainButton
-              title="Guardar"
-              onClick={handleUpdateProfile}
-              loading={updating}
-            />
+            <MainButton title="Cambiar Contraseña" onClick={handleResetPassword} color="#007bff" />
+            <MainButton title="Guardar" onClick={handleUpdateProfile} loading={updating} />
             <div className="mt-2">
-              <MainButton
-                title="Cerrar Sesión"
-                onClick={handleLogout}
-                color="#bb0c0c"
-                loading={loggingOut}
-              />
+              <MainButton title="Cerrar Sesión" onClick={handleLogout} color="#bb0c0c" loading={loggingOut} />
             </div>
           </div>
         </form>
       </div>
+      <ToastContainer
+        style={{ marginTop: '4rem' }}
+        position="top-right" 
+        autoClose={5000}
+        hideProgressBar 
+        newestOnTop 
+        closeOnClick 
+        rtl={false} 
+        pauseOnFocusLoss 
+        draggable 
+        pauseOnHover 
+      />
     </ContainerWithBackground>
   );
 };
