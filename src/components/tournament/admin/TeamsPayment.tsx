@@ -18,6 +18,7 @@ import { Team, Tournament } from "../../../interfaces/interfaces";
 import Grid from "@mui/material/Grid2";
 import { LoadingButton } from "@mui/lab";
 import styles from "../../../assets/styles/buttons.module.css";
+import { timestampToDate } from "../../../utils/methods";
 
 interface TeamsPaymentProps {
   tournament: Tournament;
@@ -74,7 +75,11 @@ const TeamsPayment: React.FC<TeamsPaymentProps> = ({
       updatedTournament.paidUsersId = updatedTournament.paidUsersId.filter(
         (paidUser) => paidUser.userId !== userId
       );
+      updatedTournament.paidUsersJustId.filter(
+        (paidUserId) => paidUserId !== userId
+      );
     } else {
+      updatedTournament.paidUsersJustId.push(userId);
       updatedTournament.paidUsersId.push({
         paidAt: Timestamp.now(),
         userId: userId,
@@ -91,6 +96,7 @@ const TeamsPayment: React.FC<TeamsPaymentProps> = ({
           paidAt: Timestamp.now(),
           userId: player.memberId || "not-paid",
         });
+        updatedTournament.paidUsersJustId.push(player.memberId)
       }
     });
     setTournament(updatedTournament);
@@ -113,19 +119,6 @@ const TeamsPayment: React.FC<TeamsPaymentProps> = ({
       }
     } else {
       setError("El equipo ha alcanzado el límite de jugadores.");
-    }
-  };
-
-  const timestampToDate = (firebaseTimestamp: Timestamp) => {
-    try {
-      const date = firebaseTimestamp.toDate();
-      return date.toLocaleDateString("es-ES", {
-        day: "2-digit",
-        month: "2-digit",
-        year: "numeric",
-      });
-    } catch (e) {
-      return "";
     }
   };
 

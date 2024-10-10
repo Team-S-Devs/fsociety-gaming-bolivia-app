@@ -18,7 +18,7 @@ const TournamentCard: React.FC<TournamentCardProps> = ({ tournament }) => {
   const startDate = tournament.startDate.toDate();
   const navigate = useNavigate();
   const handleCardClick = () => {
-    navigate(`/tournament/${tournament.fakeId}`);
+    navigate(`/torneo/${tournament.fakeId}`);
   };
 
   return (

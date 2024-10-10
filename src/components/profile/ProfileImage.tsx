@@ -11,8 +11,13 @@ import { Typography } from "antd";
 import { uploadFileToStorage } from "../../utils/storageMethods";
 import { StoragePaths } from "../../utils/collectionNames";
 
-const ProfileImage: React.FC = () => {
+interface ProfileImageProps {
+  edit?: boolean;
+}
+
+const ProfileImage: React.FC<ProfileImageProps> = ({ edit = true }) => {
   const { user, setUser } = useUserContext();
+
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string>("");
@@ -54,15 +59,19 @@ const ProfileImage: React.FC = () => {
         overlap="circular"
         anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
         badgeContent={
-          <div className={styles.editIconButton}>
-            {!user?.photoURL ? (
-              <TbCameraPlus color="#fff" size={28} />
-            ) : (
-              <MdEdit color="#fff" size={28} />
-            )}
-          </div>
+          edit ? (
+            <div className={styles.editIconButton}>
+              {!user?.photoURL ? (
+                <TbCameraPlus color="#fff" size={28} />
+              ) : (
+                <MdEdit color="#fff" size={28} />
+              )}
+            </div>
+          ) : (
+            <></>
+          )
         }
-        onClick={handleBadgeClick}
+        onClick={edit ? handleBadgeClick : () => {}}
         style={{ cursor: "pointer" }}
         className={styles.badgeProfile}
       >
@@ -78,14 +87,16 @@ const ProfileImage: React.FC = () => {
         )}
       </Badge>
 
-      <input
-        title="input"
-        type="file"
-        accept="image/*"
-        ref={fileInputRef}
-        style={{ display: "none" }}
-        onChange={handleFileChange}
-      />
+      {edit && (
+        <input
+          title="input"
+          type="file"
+          accept="image/*"
+          ref={fileInputRef}
+          style={{ display: "none" }}
+          onChange={handleFileChange}
+        />
+      )}
 
       {error && <Typography color="error">{error}</Typography>}
     </div>
