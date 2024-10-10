@@ -14,8 +14,6 @@ const AwardsViewSection: React.FC<AwardsViewSectionProps> = ({ tournament }) => 
   const [teamNames, setTeamNames] = useState<{ first?: string; second?: string; third?: string; fourth?: string }>({});
 
   const getTeamName = (teamId: string | "none"): string | null => {
-    console.log(tournament)
-    console.log(teamId);
     if (teamId === "none") return null;
     const team = tournament?.teams.find((team) => team.id === teamId);
     return team ? team.name : "Equipo desconocido";
@@ -42,7 +40,6 @@ const AwardsViewSection: React.FC<AwardsViewSectionProps> = ({ tournament }) => 
         <>
           <h3 className={styles.awardsTitle}>Premios</h3>
 
-          {/* Primeros 3 puestos */}
           <div className={styles.topThreeAwards}>
             {tournament.awards.slice(0, 3).map((award, index) => {
               const teamName =
@@ -99,7 +96,6 @@ const AwardsViewSection: React.FC<AwardsViewSectionProps> = ({ tournament }) => 
             })}
           </div>
 
-          {/* Otros puestos */}
           {tournament.awards.length > 3 && (
             <div className={styles.otherAwards}>
               {tournament.awards.slice(3).map((award, index) => {

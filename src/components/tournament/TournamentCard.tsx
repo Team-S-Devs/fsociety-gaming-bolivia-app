@@ -8,6 +8,7 @@ import {
   FaUsers,
   FaUserPlus,
   FaDollarSign,
+  FaTrophy,
 } from "react-icons/fa";
 
 interface TournamentCardProps {
@@ -17,11 +18,12 @@ interface TournamentCardProps {
 const TournamentCard: React.FC<TournamentCardProps> = ({ tournament }) => {
   const startDate = tournament.startDate.toDate();
   const navigate = useNavigate();
+  
   const handleCardClick = () => {
     navigate(`/torneo/${tournament.fakeId}`);
   };
-
-  const teamLimit = tournament.fakeTeamLimit == null ? tournament.teamLimit : tournament.fakeTeamLimit
+  const teamLimit =
+    tournament.fakeTeamLimit == null ? tournament.teamLimit : tournament.fakeTeamLimit;
 
   return (
     <div className={styles.tournamentCard} onClick={handleCardClick}>
@@ -46,10 +48,18 @@ const TournamentCard: React.FC<TournamentCardProps> = ({ tournament }) => {
               icon={<FaUserPlus />}
             />
           </div>
+          <div className="mt-1">
+            <ItemInfoText
+              backColor="transparent"
+              textColor="aqua"
+              text={`1er Lugar: ${tournament.awards[0]}`}
+              icon={<FaTrophy />}
+            />
+          </div>
         </div>
       </div>
       <div
-        className={`${styles.bottomTournCard} d-flex flex-wrap justify-content-between`}
+        className={`${styles.bottomTournCard} d-flex flex-wrap justify-content-between align-items-center`}
       >
         <ItemInfoText
           text={`Inicio: ${startDate.toLocaleDateString()}`}
@@ -61,6 +71,9 @@ const TournamentCard: React.FC<TournamentCardProps> = ({ tournament }) => {
           textColor="var(--third-color)"
         />
       </div>
+        <div className={styles.getInTourButton} onClick={handleCardClick}>
+          Entrar
+        </div>
     </div>
   );
 };
