@@ -1,0 +1,87 @@
+.tournamentCard {
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  margin: 20px;
+  max-width: 350px;
+  width: 350px;
+  height: 430px;
+  background-color: #102646;
+  color: #E1E1E6;
+  cursor: pointer;
+  transition: transform 0.3s, box-shadow 0.3s;
+
+  display: flex;
+  flex-direction: column;
+}
+
+.tournamentCard:hover {
+  transform: translateY(-10px);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.3);
+}
+
+.tournamentCoverImage {
+  width: 100%;
+  height: 200px;
+  object-fit: cover;
+}
+
+.tournamentContent {
+  flex-grow: 1; 
+  padding: 20px;
+}
+
+.tournamentTitle {
+  font-size: 22px;
+  font-weight: bold;
+  color: var(--third-color);
+  margin-bottom: 12px;
+}
+
+.tournamentDates, .tournamentTeams {
+  font-size: 15px;
+  color: #ABB2BF;
+  margin-bottom: 10px;
+}
+
+.tournamentDates {
+  font-weight: bold;
+}
+
+.tournamentTeams {
+  font-style: italic;
+}
+
+.tournamentList {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+  justify-content: center;
+}
+
+.bottomTournCard {
+  display: flex;
+  padding: 8px 20px;
+  background-color: #263d5f;
+  margin-top: auto;
+}
+
+
+.pastTournamentsSlider {
+  padding: 20px 0;
+}
+
+
+
+.tournamentCardContainer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  margin: 0 auto;
+  margin-bottom: 1.9rem;
+}
+
+.sliderGenContainer {
+  max-width: 600px;
+}

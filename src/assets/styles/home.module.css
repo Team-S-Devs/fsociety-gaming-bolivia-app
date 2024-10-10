@@ -1,0 +1,371 @@
+.homeContainer {
+  height: 100vh;
+  width: 100vw;
+  position: relative;
+  overflow-x: hidden;
+  background-color: rgb(4, 4, 26);
+  z-index: 0;
+}
+
+.subtitleHome {
+  margin-top: 4rem;
+  font-size: 1.6rem;
+  color: transparent;
+  background: linear-gradient(90deg, #df2424, rgb(243, 243, 243));
+  background: linear-gradient(90deg,#ff36a9,#ffdab4);
+  background: linear-gradient(90deg,#36ffea,#b4b6ff);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  color: transparent;
+}
+
+
+
+.backgroundImage {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  z-index: -2; 
+}
+
+.homeContainer::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background:   linear-gradient(to top, rgb(4, 4, 26), rgba(255, 255, 255, 0)),
+  linear-gradient(to right, rgb(4, 4, 26), rgba(6, 6, 61, 0.644));  ;  
+  z-index: -1;
+  pointer-events: none;
+}
+
+.homeContent {
+  position: relative;
+  z-index: 1;
+  text-align: center; 
+}
+
+
+/* Start Home Section */
+
+.sectionHomePrincipalContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding-top: 3rem;
+  margin-bottom: 6rem;
+  background-color: rgb(4, 3, 25);
+  width: 100%;
+}
+
+.startTextContainer {
+  text-align: center;
+  color: white;
+  width: 90%;
+  padding: 2rem;
+}
+
+.startTextContainer h2 {
+  color: #36ffea;
+  font-weight: 600;
+  font-size: 2.3rem;
+}
+
+.startTextContainer h1, .startTextContainer h2, .startTextContainer h4 {
+  margin-bottom: 1rem;
+}
+
+.startTextContainer button {
+  margin-top: 2rem;
+  padding: 1rem 2rem;
+  background-color: #36ffea;
+  color: black;
+  font-weight: 600;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.informativeBoxStartContainer {
+  display: flex;
+  justify-content: space-around;
+  align-items: flex-start;
+  flex-wrap: wrap;
+  width: 90%;
+  margin-top: 3rem;
+  gap: 1rem;
+}
+
+.informativeBoxStartContainer > div {
+  flex: 1 1 30%;
+  min-width: 250px;
+  max-width: 400px;
+  height: 270px;
+}
+
+.informativeBox {
+  background: linear-gradient(to top right, rgb(8, 18, 43), #191955);
+  color: white;
+  border: 2px solid #1c1c1e;
+  border-radius: 10px;
+  padding: 1.5rem;
+  text-align: center;
+  width: 30%;
+}
+
+.informativeBox h3 {
+  margin-bottom: 1rem;
+}
+
+.informativeBox p {
+  font-size: 1rem;
+}
+
+.icon {
+  font-size: 2rem;
+  margin-bottom: 1rem;
+  color: #36ffea;
+}
+
+
+.containerTextSection {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  padding: 2rem;
+  max-width: 1250px;
+  padding-top: 100px;
+}
+
+/* Left section styling */
+.informationLeftSection {
+  flex: 1;
+  display: flex;
+  align-items: flex-start;
+  position: relative;
+  margin-right: 1.5rem;
+  border-radius: 15px;
+  flex-basis: 50%;
+  
+}
+
+.informationLeftImage {
+  width: 100%;
+  height: 100%;
+  border-radius: 20px;
+  z-index: -1;
+  object-fit:cover;
+}
+
+.informationLeftSection::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background:   
+  /* linear-gradient(to bottom, rgba(4, 4, 26, 0.842), rgba(255, 255, 255, 0)), */
+  linear-gradient(90deg, rgba(3, 3, 26, 0.952), rgba(6, 6, 61, 0.288));
+  z-index: 0;
+  border-radius: 20px;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.informationTextContent {
+  flex: 1;
+  position: absolute;
+  bottom: 10%;
+  left: 5%;
+  color: white;
+  text-align: left;
+  gap: 1rem;
+  max-width: 90%;
+}
+
+.informationTextContent h2 {
+  font-size: 2rem;
+  margin-bottom: 1rem;
+}
+
+.informationTextContent p {
+  font-size: 1.1rem;
+  margin-bottom: 1rem;
+}
+
+.informationLinkText {
+  color: #3ec2ff;
+  font-weight: bold;
+  text-align: left;
+  text-decoration: none;
+}
+
+.informationLinkText:hover {
+  text-decoration: underline;
+}
+
+/* Right section styling */
+
+.informationRightSection {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 1rem;
+  flex-basis: 40%;
+}
+
+.informationInfoBox {
+  position: relative;
+  color: white;
+  padding: 1.5rem;
+  border-radius: 8px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  overflow: hidden;
+}
+
+.coverImagediscord {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 15px;
+  z-index: -1;
+}
+
+.informationInfoBox::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background:   
+  linear-gradient(to bottom, rgba(4, 4, 26, 0.842), rgba(255, 255, 255, 0)),
+  linear-gradient(to right, rgba(4, 4, 26, 0.76), rgba(6, 6, 61, 0.288));
+  z-index: 0;
+  pointer-events: none;
+}
+
+.informationIconContainer {
+  position: relative;
+}
+
+.informationIconContainer img {
+  width: 50px;
+  height: 50px;
+  margin-bottom: 1rem;
+}
+
+.textCardHomeSection {
+  z-index: 1;
+}
+
+
+.informationInfoBox h3 {
+  margin: 1rem 0;
+}
+
+.informationInfoBox p {
+  font-size: 1rem;
+  margin-bottom: 1rem;
+}
+
+.informationInfoBox .informationLinkText {
+  color: #3ec2ff;
+  font-weight: bold;
+  text-decoration: none;
+}
+
+.informationInfoBox .informationLinkText:hover {
+  text-decoration: underline;
+}
+
+
+@media (max-width: 700px) {
+  .containerTextSection {
+    flex-direction: column;
+  }
+
+  .informationLeftSection {
+    
+    flex-basis: 100%;
+    margin-right: 0;
+    margin-bottom: 1rem;
+  }
+
+  .informationLeftImage {
+    height: 300px;
+  }
+
+  .informationTextContent {
+    padding-top: 1rem;
+    bottom:initial;
+  }
+
+  .containerTextSection h2 {
+    font-size: 1.5rem; 
+  }
+
+  .textCardHomeSection h3 {
+    font-size: 1.2rem;
+  }
+
+  .informationTextContent p {
+    font-size: 1rem;
+  }
+}
+
+
+@media (max-width: 570px) {
+  .startTextContainer h1 {
+    font-size: 2.1rem;
+  }
+
+  .startTextContainer h2 {
+    font-size: 1.3rem;
+  }
+
+  .startTextContainer h4 {
+    text-align: left;
+    font-size: .9rem;
+  }
+
+  .informativeBoxStartContainer > div {
+    height: inherit;
+  }
+}
+
+@media (max-width: 480px) {
+  .informationTextContent h2 {
+    font-size: 1.2rem;
+  }
+
+  .informationTextContent p {
+    font-size: 0.9rem;
+  }
+
+  .informationLinkText {
+    font-size: 0.9rem;
+  }
+
+  .informationTextContent {
+    padding-top: 1rem;
+    bottom:10%;
+  }
+
+  .informationLeftImage {
+    height: 400px;
+  }
+}

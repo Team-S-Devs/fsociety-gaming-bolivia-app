@@ -1,0 +1,210 @@
+.participantsSection {
+    margin: 20px;
+    color: #ffffff;
+}
+
+.participantsTable {
+    background-color: #1c1c1c;
+    border-radius: 8px;
+    overflow: hidden;
+    border: 1px solid #1a283b;
+}
+
+.participantsTable th,
+.participantsTable td {
+    padding: 15px;
+    text-align: left;
+    cursor: pointer;
+    color: #ffffff;
+    background-color: #1c1c1c;
+}
+
+.participantsTable tr:hover td {
+    background-color: #1b2330; 
+}
+
+.participantsTable th {
+    background-color: #0e97af;
+    color: #ffffff;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+}
+
+.participantsTable-striped tbody tr:nth-of-type(odd) {
+    background-color: #2c2c2c;
+}
+
+.participantsTable-striped tbody tr:hover {
+    background-color: #3a3a3a;
+}
+
+.paginationContainer {
+    display: flex;
+    justify-content: center;
+    margin-top: 20px;
+}
+
+.paginationItem {
+    margin: 0 4px;
+    padding: 5px 6px;
+    -webkit-user-select: none;
+    user-select: none;
+    cursor: pointer;
+    border-radius: 10px;
+    transition: background-color 0.3s;
+    color: #ffffff; 
+    background-color: #1c1c1c; 
+}
+
+.paginationItem:hover {
+    background-color: #444444; 
+}
+
+.activePageButton {
+    background-color: #2ea6d2;
+    color: #ffffff;
+}
+
+.disabledButton {
+    color: #aaaaaa;
+    pointer-events: none;
+}
+
+
+/* Team View */
+
+.teamViewContainer {
+    justify-content: center;
+    width: 100%;
+    color: white;
+  }
+
+.teamInfoDetails {
+    padding: 6px;
+    position: relative;
+    background-color: var(--back-dark);
+    color: #fff;
+    text-align: center;
+}
+
+.teamCodeContainer {
+    max-width: 840px;
+    display: flex;
+    align-items: center;
+    vertical-align: middle;
+}
+
+.teamCodeContainer h4 {
+    margin-bottom: 0;
+}
+
+.teamCodeFigure {
+    background-color: #0e97af;
+    padding: .2rem;
+    margin-left: .6rem;
+    border-radius: 6px;
+    color: black;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.teamCodeFigure:hover {
+    cursor: pointer;
+    background-color: #4fc4d8d9;
+}
+
+.tableTeamView {
+    margin-top: 2rem;
+    max-width: 600px;
+    background-color: rgb(22, 21, 24);
+    border-radius: 15px;
+    z-index: 2; 
+    padding: 1rem;
+}
+
+.teamViewInfoContainer {
+    margin-top: 2.5rem;
+    padding: 2rem;
+    border-radius: 25px;
+    background-color: rgb(22, 21, 24);
+    max-width: 800px;
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.4);
+    z-index: 2;
+}
+
+  .bannerTeam {
+    position: relative;
+    margin-top: 90px;
+    width: 100%;
+    height: auto;
+    max-height: 200px;
+    overflow: hidden;
+    display: flex;
+    justify-content: right;
+    align-items: center;
+  }
+  
+  .bannerImageTeam {
+    object-fit: contain;
+    max-height: 200px;
+    z-index:-1;
+  }
+  
+  .profileContainer {
+    position: absolute;
+    top: -75px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 2;
+  }
+  
+  .profileImage {
+    border: 3px solid white;
+    border-radius: 50%;
+    z-index: 2;
+  }
+
+
+  .codeAction {
+    background-color: transparent;
+    display: flex;
+    justify-content: flex-end;
+    flex: 1 1 100px;
+    position: relative;
+    padding: 10px 20px;
+    background-color: transparent;
+    color: white;
+    border: none;
+    cursor: pointer;
+    font-size: 16px;
+    margin-bottom: 2rem;
+  }
+
+
+  .outTeamContainer {
+    display: flex;
+    justify-content: right;
+    align-items: right;
+    max-width: 820px;
+    margin-top: 2rem;
+  }
+
+  .outTeamContainer span {
+    background-color: rgba(255, 0, 0, 0.521);
+    border-radius: 6px;
+    width: 80px;
+    height: 30px;
+    font-weight: 600;
+    padding: .2rem;
+  }
+
+  .deleteButtonTeam {
+    border-radius: 6px;
+    border: none;
+    background:transparent;
+  }
+
+  .deleteButtonTeam:hover {
+    color: rgb(253, 37, 37);
+  }

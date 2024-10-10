@@ -1,13 +1,26 @@
 <!doctype html>
-<html lang="en">
+<html lang="es">
   <head>
     <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+    <link rel="icon" type="image/svg+xml" href="/logo.png" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Vite + React + TS</title>
+    <title>FSociety Gaming Bolivia</title>
+    <meta
+      property="og:image"
+      content="https://i.ibb.co/VYmwcWd/f.jpg"
+    />
+    <meta
+      name="description"
+      content="Únete a torneos profesionales de Mobile Legends Bolivia."
+    />
   </head>
   <body>
-    <div id="root"></div>
+    <div id="root" style="overflow-x: hidden;"></div>
     <script type="module" src="/src/main.tsx"></script>
+    <script>
+      if (global === undefined) {
+        var global = window;
+      }
+    </script>
   </body>
 </html>
