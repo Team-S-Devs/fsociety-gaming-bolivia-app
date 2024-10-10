@@ -49,7 +49,7 @@ export const fetchTournaments = async (): Promise<{ currentTournaments: Tourname
     return tournament;
   });
 
-  const currentTournaments = tournaments.filter(tournament => tournament.endDate.seconds >= now.seconds && !tournament.deleted);
+  const currentTournaments = tournaments.filter(tournament => tournament.endDate.seconds >= now.seconds && !tournament.deleted && tournament.active == true);
   const pastTournaments = tournaments.filter(tournament => tournament.endDate.seconds < now.seconds && !tournament.deleted);
 
   return { currentTournaments, pastTournaments };

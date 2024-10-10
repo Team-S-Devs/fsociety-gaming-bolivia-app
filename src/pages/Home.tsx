@@ -68,7 +68,7 @@ const Home: React.FC = () => {
       <InformationHomeSection />
 
       {pastTournaments.length > 0 && 
-        <div id="past-tournaments-section" className={styles.homeContent}>
+        <div id="past-tournaments-section" className={`${styles.homeContent} ${styles.pastToursContent}`}>
           <h2 className={styles.subtitleHome}>TORNEOS PASADOS</h2>
           <PastTournamentsSlider tournaments={pastTournaments} />
         </div>
