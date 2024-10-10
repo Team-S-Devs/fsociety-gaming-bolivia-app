@@ -25,6 +25,7 @@ export const fetchTournaments = async (): Promise<{ currentTournaments: Tourname
       previewImagePath: data.previewImagePath || imageBlank,
       participants: data.participants || 0,
       teamLimit: data.teamLimit || 0,
+      fakeTeamLimit: data.fakeTeamLimit || 0,
       modality: data.modality || TournamentModality.ELIMINATION,
       startDate: data.startDate || now,
       endDate: data.endDate || now,

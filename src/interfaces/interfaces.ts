@@ -84,6 +84,7 @@ export interface Tournament {
   previewImagePath: ImageRefPath;
   participants: number | "";
   teamLimit: number | "";
+  fakeTeamLimit: number | "";
   modality: TournamentModality;
   startDate: Timestamp;
   endDate: Timestamp;

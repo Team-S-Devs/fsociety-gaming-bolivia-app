@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { TextField, Typography } from "@mui/material";
+import { TextField, Typography, useTheme } from "@mui/material";
 import { getAuth, User } from "firebase/auth";
 import {
   collection,
@@ -24,6 +24,7 @@ import ProfileImage from "../../components/profile/ProfileImage";
 import { AuthUtils } from "../../utils/authUtils";
 import { toast } from "react-toastify";
 import Loader from "../Loader";
+import BlurBoxContainer from "../BlurBoxContainer";
 
 interface UserData {
   nickname: string;
@@ -35,6 +36,7 @@ interface UserData {
 
 const ProfileDetailsEdit: React.FC = () => {
   const auth = getAuth();
+  const theme = useTheme();
   const currentUser = auth.currentUser as User | null;
 
   const { userInfo } = useUserContext();
@@ -149,12 +151,12 @@ const ProfileDetailsEdit: React.FC = () => {
     };
 
   return (
-    <>
+    <BlurBoxContainer>
       {loading ? (
         <Loader />
       ) : (
         <form
-          className={styles.profileForm}
+        //   className={styles.profileForm}
           onSubmit={(e) => e.preventDefault()}
         >
           <ProfileImage />
@@ -231,17 +233,18 @@ const ProfileDetailsEdit: React.FC = () => {
             <MainButton
               title="Cambiar Contraseña"
               onClick={handleResetPassword}
-              color="#007bff"
+              color="transparent"
             />
             <MainButton
               title="Guardar"
               onClick={handleUpdateProfile}
               loading={updating}
+              color={theme.palette.secondary.main}
             />
           </div>
         </form>
       )}
-    </>
+    </BlurBoxContainer>
   );
 };
 

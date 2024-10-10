@@ -60,6 +60,9 @@ const TournamentForm: React.FC<TournamentFormProps> = ({
   const [teamLimitError, setTeamLimitError] = React.useState<string | null>(
     null
   );
+  const [faketeamLimitError, setFakeTeamLimitError] = React.useState<
+    string | null
+  >(null);
   const [priceError, setPriceError] = React.useState<string | null>(null);
   const [editorState, setEditorState] = useState<EditorState>(
     EditorState.createWithContent(convertFromRaw(tournament.description))
@@ -122,7 +125,8 @@ const TournamentForm: React.FC<TournamentFormProps> = ({
     if (
       !tournament.name ||
       !tournament.inscriptionPrice ||
-      !tournament.teamLimit
+      !tournament.teamLimit ||
+      !tournament.fakeTeamLimit
     ) {
       setError("Por favor, rellena todos los campos.");
       return false;
@@ -137,7 +141,16 @@ const TournamentForm: React.FC<TournamentFormProps> = ({
     }
 
     if (isNaN(tournament.teamLimit) || tournament.teamLimit <= 0) {
-      setTeamLimitError("El límite por equipo debe ser un número positivo.");
+      setTeamLimitError(
+        "El límite real por equipo debe ser un número positivo."
+      );
+      return false;
+    }
+
+    if (isNaN(tournament.fakeTeamLimit) || tournament.fakeTeamLimit <= 0) {
+      setFakeTeamLimitError(
+        "El límite falso por equipo debe ser un número positivo."
+      );
       return false;
     }
 
@@ -218,23 +231,22 @@ const TournamentForm: React.FC<TournamentFormProps> = ({
           }
         />
 
+        <TextField
+          fullWidth
+          margin="normal"
+          name="inscriptionPrice"
+          value={tournament.inscriptionPrice}
+          onChange={handleInputChange}
+          placeholder="Precio de inscripción en Bs"
+          label="Precio de inscripción (Bs)"
+          type="number"
+          required
+          error={!!priceError}
+          helperText={priceError}
+        />
+
         <div style={{ width: "100%" }}>
           <Grid container spacing={2}>
-            <Grid size={{ md: 6, sm: 6 }}>
-              <TextField
-                fullWidth
-                margin="normal"
-                name="inscriptionPrice"
-                value={tournament.inscriptionPrice}
-                onChange={handleInputChange}
-                placeholder="Precio de inscripción en Bs"
-                label="Precio de inscripción (Bs)"
-                type="number"
-                required
-                error={!!priceError}
-                helperText={priceError}
-              />
-            </Grid>
             <Grid size={{ md: 6, sm: 6 }}>
               <TextField
                 fullWidth
@@ -242,12 +254,27 @@ const TournamentForm: React.FC<TournamentFormProps> = ({
                 name="teamLimit"
                 value={tournament.teamLimit}
                 onChange={handleInputChange}
-                placeholder="Límite por equipos"
-                label="Límite de jugadores por equipo"
+                placeholder="Límite real por equipos"
+                label="Límite real de jugadores por equipo"
                 type="number"
                 required
                 error={!!teamLimitError}
                 helperText={teamLimitError}
+              />
+            </Grid>
+            <Grid size={{ md: 6, sm: 6 }}>
+              <TextField
+                fullWidth
+                margin="normal"
+                name="fakeTeamLimit"
+                value={tournament.fakeTeamLimit}
+                onChange={handleInputChange}
+                placeholder="Límite falso por equipos"
+                label="Límite de jugadores que se mostrará en la interfaz"
+                type="number"
+                required
+                error={!!faketeamLimitError}
+                helperText={faketeamLimitError}
               />
             </Grid>
           </Grid>
