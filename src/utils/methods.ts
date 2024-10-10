@@ -33,6 +33,7 @@ export const getEmptyTournament = (): Tournament => {
     },
     participants: 0,
     teamLimit: 0,
+    fakeTeamLimit: 0,
     modality: TournamentModality.ELIMINATION,
     startDate: Timestamp.now(),
     endDate: Timestamp.fromDate(dateObj),

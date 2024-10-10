@@ -21,6 +21,8 @@ const TournamentCard: React.FC<TournamentCardProps> = ({ tournament }) => {
     navigate(`/torneo/${tournament.fakeId}`);
   };
 
+  const teamLimit = tournament.fakeTeamLimit == null ? tournament.teamLimit : tournament.fakeTeamLimit
+
   return (
     <div className={styles.tournamentCard} onClick={handleCardClick}>
       <img
@@ -34,7 +36,7 @@ const TournamentCard: React.FC<TournamentCardProps> = ({ tournament }) => {
           <div className="d-flex flex-wrap justify-content-between mb-1">
             <ItemInfoText text={tournament.modality} icon={<FaCodeBranch />} />
             <ItemInfoText
-              text={`${tournament.teamLimit.toString()}v${tournament.teamLimit.toString()}`}
+              text={`${teamLimit.toString()}v${teamLimit.toString()}`}
               icon={<FaUsers />}
             />
           </div>
