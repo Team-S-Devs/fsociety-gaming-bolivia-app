@@ -1,23 +1,22 @@
-import React, { useEffect, useState } from 'react';
-import bannerApp from '../assets/backgroundSplash.jpg';
+import React, { useEffect, useState } from "react";
+import bannerApp from "../assets/backgroundSplash.jpg";
 import styles from "../assets/styles/home.module.css";
-import SliderHome from '../components/slider/SliderHome';
-import TournamentList from '../components/tournament/TournamentList';
-import Footer from '../components/Footer';
-import { fetchTournaments } from '../contexts/TournamentContext';
-import { Tournament } from '../interfaces/interfaces';
-import Splash from './Splash';
-import { ToastContainer, toast } from 'react-toastify';
-import CustomModal from '../components/home/CustomModal';
-import { useUserContext } from '../contexts/UserContext';
-import StartHomeSection from './homeSections/StartHomeSection';
-import InformationHomeSection from './homeSections/InformationHomeSection';
+import SliderHome from "../components/slider/SliderHome";
+import TournamentList from "../components/tournament/TournamentList";
+import Footer from "../components/Footer";
+import { fetchTournaments } from "../contexts/TournamentContext";
+import { Tournament } from "../interfaces/interfaces";
+import Splash from "./Splash";
+import { ToastContainer, toast } from "react-toastify";
+import CustomModal from "../components/home/CustomModal";
+import { useUserContext } from "../contexts/UserContext";
+import StartHomeSection from "./homeSections/StartHomeSection";
+import InformationHomeSection from "./homeSections/InformationHomeSection";
 
 const Home: React.FC = () => {
   const [tournaments, setTournaments] = useState<Tournament[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [showModal, setShowModal] = useState<boolean>(false);
-
   const { user, isAdmin } = useUserContext();
 
   useEffect(() => {
@@ -26,7 +25,9 @@ const Home: React.FC = () => {
         const data = await fetchTournaments();
         setTournaments(data);
       } catch (error) {
-        toast.error("Error al cargar los torneos. Por favor, inténtelo de nuevo más tarde.");
+        toast.error(
+          "Error al cargar los torneos. Por favor, inténtelo de nuevo más tarde."
+        );
       } finally {
         setLoading(false);
       }
@@ -56,26 +57,36 @@ const Home: React.FC = () => {
   return (
     <main className={styles.homeContainer}>
       <CustomModal show={showModal} onClose={() => setShowModal(false)} />
-      <img src={bannerApp} alt="banner app" className={styles.backgroundImage} />
-      <div id="tournaments-section"  className={styles.homeContent}>
+      <img
+        src={bannerApp}
+        alt="banner app"
+        className={styles.backgroundImage}
+      />
+      <div id="tournaments-section" className={styles.homeContent}>
         <SliderHome />
-        <h2 className={styles.subtitleHome}>TORNEOS ACTUALES</h2>
-        <TournamentList tournaments={tournaments} />
+        <div id="list-tournaments">
+          <h2 className={styles.subtitleHome}>TORNEOS ACTUALES</h2>
+          <TournamentList tournaments={tournaments} />
+        </div>
       </div>
-      <StartHomeSection user={user} />
-      <InformationHomeSection />
+      <div id="start-home-section">
+        <StartHomeSection user={user} />
+      </div>
+      <div id="information-home-section">
+        <InformationHomeSection />
+      </div>
       <Footer />
       <ToastContainer
-        style={{marginTop: '4rem'}}
-        position="top-right" 
+        style={{ marginTop: "4rem" }}
+        position="top-right"
         autoClose={5000}
-        hideProgressBar 
-        newestOnTop 
-        closeOnClick 
-        rtl={false} 
-        pauseOnFocusLoss 
-        draggable 
-        pauseOnHover 
+        hideProgressBar
+        newestOnTop
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
       />
     </main>
   );

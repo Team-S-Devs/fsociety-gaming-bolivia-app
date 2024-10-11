@@ -188,6 +188,15 @@
   justify-content: center;
   align-items: center;
   margin-left: 1rem;
+  text-decoration: none;
+  color: var(--header-links-color);
+  cursor: pointer;
+  transition: color 0.3s ease;
+}
+
+.headerLink:hover {
+  color: #36ffea;
+  text-decoration:underline;
 }
 
 @media (max-width: 1268px) {

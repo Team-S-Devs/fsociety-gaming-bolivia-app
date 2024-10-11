@@ -15,17 +15,30 @@ import { doc, getDoc } from "firebase/firestore";
 import { CollectionNames } from "../utils/collectionNames";
 import { db } from "../utils/firebase-config";
 import { AdminSettingsInterface } from "../interfaces/interfaces";
+import { useNavigate } from "react-router-dom";
 
 const Header: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false);
   const { width } = useWindowSize();
   const { user, isAdmin, userInfo } = useUserContext();
+  const navigate = useNavigate();
   const [twitchStatus, setTwitchStatus] = useState<
     "loading" | "online" | "offline"
   >("loading");
   const [adminSettings, setAdminSettings] = useState<AdminSettingsInterface>(
     getEmptyAdminSettings()
   );
+
+  const scrollToTournaments = () => {
+    if (window.location.pathname !== "/") {
+      navigate("/");
+    } else {
+      const tournamentSection = document.getElementById("list-tournaments");
+      if (tournamentSection) {
+        tournamentSection.scrollIntoView({ behavior: "smooth" });
+      }
+    }
+  };
 
   useEffect(() => {
     const fetchBannerById = async () => {
@@ -123,15 +136,19 @@ const Header: React.FC = () => {
                 </>
               )}
               <div className={styles.headerLink} onClick={onClickHeader}>
-                <Link to={PagesNames.Tournaments}>
-                  <span className={`${styles.link} ml-1`}>Torneos</span>
+                <Link to={PagesNames.TournamentRules}>
+                  <span className={`${styles.link} ml-1`}>Reglamento</span>
                 </Link>
               </div>
               <div className={styles.headerLink} onClick={onClickHeader}>
-                <Link to={PagesNames.Teams}>
-                  <span className={`${styles.link} ml-1`}>Equipos</span>
+                <Link to={PagesNames.DisclosurePolicy}>
+                  <span className={`${styles.link} ml-1`}>Info</span>
                 </Link>
               </div>
+              <div className={styles.headerLink} onClick={scrollToTournaments}>
+                <span className={`${styles.link} ml-1`}>Torneo</span>
+              </div>
+
               <div className={styles.headerLink} onClick={onClickHeader}>
                 <Link to={user ? PagesNames.Profile : PagesNames.Auth}>
                   <img
