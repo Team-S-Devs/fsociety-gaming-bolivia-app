@@ -72,7 +72,7 @@ const TournamentCard: React.FC<TournamentCardProps> = ({ tournament }) => {
         />
       </div>
         <div className={styles.getInTourButton} onClick={handleCardClick}>
-          Entrar
+          Inscribirse
         </div>
     </div>
   );
