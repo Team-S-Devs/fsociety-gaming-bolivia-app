@@ -22,22 +22,27 @@ const DeleteConfirmationDialog: React.FC<DeleteConfirmationDialogProps> = ({
   onClose,
   onConfirm,
   loadingDelete,
-  title="Eliminar Torneo",
-  description="¿Estás seguro que deseas eliminar este torneo?. \nEsta acción no se puede deshacer."
+  title = "Eliminar Torneo",
+  description = "¿Estás seguro que deseas eliminar este torneo?. \nEsta acción no se puede deshacer.",
 }) => {
   return (
     <Dialog open={open} onClose={onClose}>
       <DialogTitle>{title}</DialogTitle>
       <DialogContent>
-        <DialogContentText>
-          {description}
-        </DialogContentText>
+        <DialogContentText>{description}</DialogContentText>
       </DialogContent>
       <DialogActions>
-        <Button onClick={onClose} style={{ color: "#fff"}}>
+        <Button
+          onClick={onClose}
+          style={{ color: "#fff", paddingLeft: 0, paddingRight: 0 }}
+        >
           Cancelar
         </Button>
-        <Button onClick={onConfirm} color="error" autoFocus>
+        <Button
+          onClick={onConfirm}
+          color="error"
+          autoFocus
+        >
           {loadingDelete ? "Eliminando..." : "Eliminar"}
         </Button>
       </DialogActions>

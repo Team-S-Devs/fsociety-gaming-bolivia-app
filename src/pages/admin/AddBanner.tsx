@@ -83,7 +83,7 @@ const AddBanner: React.FC = () => {
             success={success}
             error={error}
             setError={setError}
-            title="Añadir Nuevo Torneo"
+            title="Añadir Nuevo Baner"
             file={file}
             setFile={setFile}
             setSuccess={setSuccess}

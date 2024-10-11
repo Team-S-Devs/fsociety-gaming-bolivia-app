@@ -65,6 +65,7 @@ export const getPaginatedBanners = async (
 
   let tournamentsQuery = query(
     tournamentsCollection,
+    where("deleted", "==", false),
     orderBy("position", "desc"),
     limit(numPerPage)
   );
@@ -74,6 +75,7 @@ export const getPaginatedBanners = async (
   } else if (direction === "prev" && endBeforeDoc) {
     tournamentsQuery = query(
       tournamentsCollection,
+      where("deleted", "==", false),
       orderBy("position", "desc"),
       endBefore(endBeforeDoc),
       limitToLast(numPerPage)
