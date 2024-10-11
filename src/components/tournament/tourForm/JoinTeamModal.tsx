@@ -82,6 +82,7 @@ const JoinTeamModal: React.FC<JoinTeamModalProps> = ({
         const tournamentRef = doc(db, CollectionNames.Tournaments, tournament.id!);
         await updateDoc(tournamentRef, {
           teams: arrayUnion(newTeam),
+          participants: (tournament.participants || 0) + 1,
         });
   
         setError("");
@@ -97,49 +98,50 @@ const JoinTeamModal: React.FC<JoinTeamModalProps> = ({
       setIsTeamSaving(false);
     }
   };
+  
 
   const handleJoinTeam = async () => {
     setIsTeamSaving(true);
     const user = auth.currentUser;
-
+  
     if (!user) {
       setError("Usuario no autenticado");
       setIsTeamSaving(false);
       return;
     }
-
+  
     if (!inputTeamCode) {
       setError("El código del equipo es obligatorio");
       setIsTeamSaving(false);
       return;
     }
-
+  
     try {
       if (tournament) {
         const tournamentRef = doc(db, CollectionNames.Tournaments, tournament.id!);
         const tournamentSnap = await getDoc(tournamentRef);
-
+  
         if (tournamentSnap.exists()) {
           const teams = tournamentSnap.data().teams || [];
           const team = teams.find((team: any) => team.code === inputTeamCode);
-
+  
           if (team) {
             const isAlreadyMember = team.members.some(
               (member: TeamMember) => member.memberId === user.uid
             );
-
+  
             if (isAlreadyMember) {
               setError("Ya eres miembro de este equipo");
               setIsTeamSaving(false);
               return;
             }
-
+  
             const userRef = doc(db, "users", user.uid);
             const userSnap = await getDoc(userRef);
-
+  
             if (userSnap.exists()) {
               const userData = userSnap.data() as UserInterface;
-
+  
               const updatedMembers: TeamMember[] = [
                 ...team.members,
                 {
@@ -149,18 +151,21 @@ const JoinTeamModal: React.FC<JoinTeamModalProps> = ({
                   joinedAt: Timestamp.now()
                 },
               ];
-
+  
               const updatedTeam = {
                 ...team,
                 members: updatedMembers,
               };
-
+  
               const updatedTeams = teams.map((t: any) =>
                 t.code === team.code ? updatedTeam : t
               );
-
-              await updateDoc(tournamentRef, { teams: updatedTeams });
-
+  
+              await updateDoc(tournamentRef, {
+                teams: updatedTeams,
+                participants: (tournament.participants || 0) + 1,
+              });
+  
               setError("");
               setIsTeamSaving(false);
               setIsTeamSaved(true);
@@ -184,6 +189,7 @@ const JoinTeamModal: React.FC<JoinTeamModalProps> = ({
       setIsTeamSaving(false);
     }
   };
+  
 
   const handleJoinWithoutTeam = async () => {
     setIsTeamSaving(true);
