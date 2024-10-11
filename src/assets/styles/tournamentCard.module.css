@@ -5,7 +5,7 @@
   margin: 20px;
   max-width: 350px;
   width: 350px;
-  height: 430px;
+  height: 470px;
   background-color: #102646;
   color: #E1E1E6;
   cursor: pointer;
@@ -28,7 +28,7 @@
 
 .tournamentContent {
   flex-grow: 1; 
-  padding: 20px;
+  padding: 17px;
 }
 
 .tournamentTitle {
@@ -72,16 +72,14 @@
 }
 
 
-
-.tournamentCardContainer {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  width: 100%;
-  margin: 0 auto;
-  margin-bottom: 1.9rem;
-}
-
 .sliderGenContainer {
   max-width: 600px;
+}
+
+.getInTourButton {
+  background-color: rgb(44, 182, 201);
+  color: black;
+  font-weight: 600;
+  border-radius: 6px;
+  padding: .3rem;
 }

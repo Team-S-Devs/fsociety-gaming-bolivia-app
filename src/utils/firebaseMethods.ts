@@ -66,7 +66,7 @@ export const getPaginatedBanners = async (
   let tournamentsQuery = query(
     tournamentsCollection,
     orderBy("position", "desc"),
-    limit(numPerPage)
+    limit(numPerPage),
   );
 
   if (direction === "next" && startAfterDoc) {
