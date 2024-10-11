@@ -9,13 +9,16 @@ import {
   Button,
   Divider,
   TextField,
+  MenuItem,
+  Select,
 } from "@mui/material";
 import { Timestamp } from "firebase/firestore";
 import { BiExpand } from "react-icons/bi";
-import { Tournament } from "../../../interfaces/interfaces";
+import { Team, Tournament } from "../../../interfaces/interfaces";
 import Grid from "@mui/material/Grid2";
 import { LoadingButton } from "@mui/lab";
 import styles from "../../../assets/styles/buttons.module.css";
+import { timestampToDate } from "../../../utils/methods";
 
 interface TeamsPaymentProps {
   tournament: Tournament;
@@ -50,39 +53,218 @@ const TeamsPayment: React.FC<TeamsPaymentProps> = ({
       setExpandedNotPaid(isExpanded ? panel : false);
     };
 
-  const handlePaymentToggle = (teamIndex: number, playerIndex: number) => {
-    const updatedTeams = [...tournament.teams];
-    const player = updatedTeams[teamIndex].members[playerIndex];
-    player.payment = !player.payment;
-    player.paidAt = player.payment ? Timestamp.now() : "not-paid";
-    setTournament({ ...tournament, teams: updatedTeams });
+  function hasUserPaid(userId: string): boolean {
+    return (
+      tournament != null &&
+      tournament.paidUsersId.some((paidUser) => paidUser.userId === userId)
+    );
+  }
+
+  function paidUserAt(userId: string): Timestamp {
+    const paid = tournament.paidUsersId.filter(
+      (paidUser) => paidUser.userId === userId
+    );
+    if (paid.length > 0) {
+      return paid[0].paidAt;
+    } else return Timestamp.now();
+  }
+
+  const handlePaymentToggle = (userId: string) => {
+    const updatedTournament = { ...tournament };
+    if (hasUserPaid(userId)) {
+      updatedTournament.paidUsersId = updatedTournament.paidUsersId.filter(
+        (paidUser) => paidUser.userId !== userId
+      );
+      updatedTournament.paidUsersJustId.filter(
+        (paidUserId) => paidUserId !== userId
+      );
+    } else {
+      updatedTournament.paidUsersJustId.push(userId);
+      updatedTournament.paidUsersId.push({
+        paidAt: Timestamp.now(),
+        userId: userId,
+      });
+    }
+    setTournament({ ...updatedTournament });
   };
 
   const handleMarkAllAsPaid = (teamIndex: number) => {
-    const updatedTeams = [...tournament.teams];
-    updatedTeams[teamIndex].members.forEach((player) => {
-      player.payment = true;
-      player.paidAt = Timestamp.now();
+    const updatedTournament = { ...tournament };
+    tournament.teams[teamIndex].members.forEach((player) => {
+      if (!hasUserPaid(player.memberId || "")) {
+        updatedTournament.paidUsersId.push({
+          paidAt: Timestamp.now(),
+          userId: player.memberId || "not-paid",
+        });
+        updatedTournament.paidUsersJustId.push(player.memberId)
+      }
     });
-    setTournament({ ...tournament, teams: updatedTeams });
+    setTournament(updatedTournament);
   };
 
-  const timestampToDate = (firebaseTimestamp: Timestamp) => {
-    try {
-      const date = firebaseTimestamp.toDate();
+  const handleAssignToTeam = (userId: string, teamId: string) => {
+    const updatedTournament = { ...tournament };
+    const team = updatedTournament.teams.find((team) => team.id === teamId);
 
-      const formattedDate = date.toLocaleDateString("es-ES", {
-        day: "2-digit",
-        month: "2-digit",
-        year: "numeric",
-      });
-      return formattedDate;
-    } catch (e) {
-      return "";
+    if (team && team.members.length < Number(tournament.teamLimit)) {
+      const player = tournament.usersNoTeam.find(
+        (user) => user.memberId === userId
+      );
+      if (player) {
+        team.members.push(player);
+        updatedTournament.usersNoTeam = updatedTournament.usersNoTeam.filter(
+          (user) => user.memberId !== userId
+        );
+        setTournament(updatedTournament);
+      }
+    } else {
+      setError("El equipo ha alcanzado el límite de jugadores.");
     }
   };
 
-  const rendermembers = (teamIndex: number, members: any[]) => (
+  function allTeamMembersPaid(team: Team): boolean {
+    return team.members.every((player) =>
+      tournament.paidUsersId.some(
+        (paidUser) => paidUser.userId === player.memberId
+      )
+    );
+  }
+
+  const availableTeams = tournament.teams.filter(
+    (team) => team.members.length < Number(tournament.teamLimit)
+  );
+
+  const filterTeamsSearch = (teams: Team[]) => {
+    const filteredTeams = teams.filter(
+      (team) =>
+        team.name.toLowerCase().includes(teamSearch.toLowerCase()) &&
+        team.members.some(
+          (player) =>
+            player.user.nickname
+              .toLowerCase()
+              .includes(playerSearch.toLowerCase()) ||
+            player.user.email
+              .toLowerCase()
+              .includes(playerSearch.toLowerCase()) ||
+            player.user.phone.toString().includes(playerSearch.toLowerCase())
+        )
+    );
+    return filteredTeams;
+  };
+
+  const handleRemoveFromTeam = (userId: string, teamId: string) => {
+    const updatedTournament = { ...tournament };
+    const team = updatedTournament.teams.find((team) => team.id === teamId);
+
+    if (team) {
+      // Filtrar al jugador del equipo
+      team.members = team.members.filter((member) => member.user.id !== userId);
+
+      // Añadir al jugador a la lista de "sin equipo"
+      const removedPlayer = tournament.teams
+        .flatMap((team) => team.members)
+        .find((player) => player.user.id === userId);
+
+      if (removedPlayer) {
+        updatedTournament.usersNoTeam.push(removedPlayer);
+      }
+
+      setTournament(updatedTournament);
+    }
+  };
+
+  const renderUsersNoTeam = () => (
+    <>
+      <Typography variant="h6" sx={{ marginTop: 4 }}>
+        Jugadores Sin Equipo
+      </Typography>
+      <Divider sx={{ marginBottom: 2 }} />
+      {tournament.usersNoTeam
+        .filter(
+          (player) =>
+            player.user.nickname
+              .toLowerCase()
+              .includes(playerSearch.toLowerCase()) ||
+            player.user.email
+              .toLowerCase()
+              .includes(playerSearch.toLowerCase()) ||
+            player.user.phone.toString().includes(playerSearch.toLowerCase())
+        )
+        .map((user) => (
+          <div
+            style={{
+              borderWidth: 1,
+              borderRadius: 20,
+              borderColor: "white",
+              borderStyle: "solid",
+              padding: 10,
+              marginBottom: 10,
+            }}
+            key={user.memberId}
+          >
+            <Grid container spacing={2} alignItems="center">
+              <Grid size={{ md: 6, xs: 12 }}>
+                <Typography>{user.user.nickname}</Typography>
+              </Grid>
+              <Grid size={{ md: 6, xs: 12 }}>
+                <Typography>{user.user.email}</Typography>
+              </Grid>
+              <Grid size={{ md: 6, xs: 12 }}>
+                <Typography>{user.user.phone}</Typography>
+              </Grid>
+              <Divider />
+              <Grid size={{ md: 6, xs: 12 }}>
+                <FormControlLabel
+                  control={
+                    <Checkbox
+                      checked={hasUserPaid(user.memberId ?? "")}
+                      onChange={() => handlePaymentToggle(user.memberId ?? "")}
+                      color="secondary"
+                    />
+                  }
+                  label="Pagado"
+                />
+              </Grid>
+              <Grid size={{ md: 6, xs: 12 }}>
+                <Select
+                  defaultValue=""
+                  onChange={(e) =>
+                    handleAssignToTeam(
+                      user.memberId ?? "",
+                      e.target.value as string
+                    )
+                  }
+                  displayEmpty
+                >
+                  <MenuItem value="">
+                    <em>Asignar a un equipo</em>
+                  </MenuItem>
+                  {availableTeams.map((team) => (
+                    <MenuItem key={team.id} value={team.id}>
+                      {team.name}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </Grid>
+            </Grid>
+          </div>
+        ))}
+    </>
+  );
+
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    setLoading(true);
+    setError(null);
+    try {
+      await submit(e);
+    } catch (error) {
+      setError("Error al enviar el formulario. Inténtalo de nuevo.");
+    }
+    setLoading(false);
+  };
+
+  const rendermembers = (teamId: string, members: any[], captainId: string) => (
     <>
       {members
         .filter(
@@ -92,7 +274,7 @@ const TeamsPayment: React.FC<TeamsPaymentProps> = ({
               .includes(playerSearch.toLowerCase()) ||
             player.user.email.toLowerCase().includes(playerSearch.toLowerCase())
         )
-        .map((player, playerIndex) => (
+        .map((player) => (
           <div
             style={{
               borderWidth: 1,
@@ -105,6 +287,11 @@ const TeamsPayment: React.FC<TeamsPaymentProps> = ({
             key={player.id}
           >
             <Grid container spacing={2} alignItems="center">
+              {captainId === player.memberId && (
+                <Grid size={{ md: 12, xs: 12 }}>
+                  <Typography color="success">CAPITÁN</Typography>
+                </Grid>
+              )}
               <Grid size={{ md: 6, xs: 12 }}>
                 <Typography>{player.user.nickname}</Typography>
               </Grid>
@@ -120,10 +307,10 @@ const TeamsPayment: React.FC<TeamsPaymentProps> = ({
                   Se unió el {timestampToDate(player.joinedAt)}
                 </Typography>
               </Grid>
-              {player.payment && (
+              {hasUserPaid(player.memberId) && (
                 <Grid size={{ md: 6, xs: 12 }}>
                   <Typography>
-                    Pagó el {timestampToDate(player.paidAt)}
+                    Pagó el {timestampToDate(paidUserAt(player.memberId))}
                   </Typography>
                 </Grid>
               )}
@@ -133,50 +320,28 @@ const TeamsPayment: React.FC<TeamsPaymentProps> = ({
                 <FormControlLabel
                   control={
                     <Checkbox
-                      checked={player.payment}
-                      onChange={() =>
-                        handlePaymentToggle(teamIndex, playerIndex)
-                      }
+                      checked={hasUserPaid(player.memberId)}
+                      onChange={() => handlePaymentToggle(player.memberId)}
                       color="secondary"
                     />
                   }
                   label="Pagado"
                 />
               </Grid>
+              <Grid size={{ md: 6, xs: 12 }}>
+                <Button
+                  color="warning"
+                  variant="outlined"
+                  onClick={() => handleRemoveFromTeam(player.memberId, teamId)}
+                >
+                  Eliminar de equipo
+                </Button>
+              </Grid>
             </Grid>
           </div>
         ))}
     </>
   );
-
-  const filterTeams = (team: any) => {
-    const teamMatches = team.name
-      .toLowerCase()
-      .includes(teamSearch.toLowerCase());
-
-    const hasMatchingPlayer = team.members.some(
-      (player: any) =>
-        player.user.nickname
-          .toLowerCase()
-          .includes(playerSearch.toLowerCase()) ||
-        player.user.email.toLowerCase().includes(playerSearch.toLowerCase())
-    );
-
-    return teamMatches && hasMatchingPlayer;
-  };
-
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-
-    setLoading(true);
-    setError(null);
-    try {
-      await submit(e);
-    } catch (error) {
-      setError("Error al enviar el formulario. Inténtalo de nuevo.");
-    }
-    setLoading(false);
-  };
 
   return (
     <div>
@@ -203,10 +368,10 @@ const TeamsPayment: React.FC<TeamsPaymentProps> = ({
         />
 
         <TextField
-          label="Buscar jugador por nickname o email"
+          label="Buscar jugador por nickname, email o teléfono"
           variant="outlined"
           fullWidth
-          sx={{ marginBottom: 4 }}
+          sx={{ marginBottom: 2 }}
           value={playerSearch}
           onChange={(e) => setPlayerSearch(e.target.value)}
         />
@@ -215,27 +380,23 @@ const TeamsPayment: React.FC<TeamsPaymentProps> = ({
           Equipos con Todos los Jugadores Pagados
         </Typography>
         <Divider sx={{ marginBottom: 2 }} />
-        {tournament.teams
-          .filter(
-            (team) =>
-              team.members.every((player) => player.payment) &&
-              filterTeams(team)
-          )
-          .map((team, teamIndex) => (
-            <Accordion
-              key={team.name + teamIndex}
-              style={{ background: "#3b3e8f" }}
-              expanded={expandedPaid === `paid${teamIndex}`}
-              onChange={handleChangePaid(`paid${teamIndex}`)}
-            >
-              <AccordionSummary expandIcon={<BiExpand />}>
-                <Typography>{team.name}</Typography>
-              </AccordionSummary>
-              <AccordionDetails>
-                {rendermembers(teamIndex, team.members)}
-              </AccordionDetails>
-            </Accordion>
-          ))}
+        {filterTeamsSearch(
+          tournament.teams.filter((team) => allTeamMembersPaid(team))
+        ).map((team, teamIndex) => (
+          <Accordion
+            key={team.name + teamIndex}
+            style={{ background: "#3b3e8f" }}
+            expanded={expandedPaid === team.id}
+            onChange={handleChangePaid(team.id ?? "false")}
+          >
+            <AccordionSummary expandIcon={<BiExpand />}>
+              <Typography>{team.name}</Typography>
+            </AccordionSummary>
+            <AccordionDetails>
+              {rendermembers(team.id ?? "", team.members, team.captainId)}
+            </AccordionDetails>
+          </Accordion>
+        ))}
 
         <Divider sx={{ marginBottom: 2 }} />
 
@@ -243,35 +404,34 @@ const TeamsPayment: React.FC<TeamsPaymentProps> = ({
           Equipos con Jugadores Pendientes de Pago
         </Typography>
         <Divider sx={{ marginBottom: 2 }} />
-        {tournament.teams
-          .filter(
-            (team) =>
-              team.members.some((player) => !player.payment) &&
-              filterTeams(team)
-          )
-          .map((team, teamIndex) => (
-            <Accordion
-              key={team.name + teamIndex}
-              style={{ background: "#3b3e8f" }}
-              expanded={expandedNotPaid === `paid${teamIndex}`}
-              onChange={handleChangeNotPaid(`paid${teamIndex}`)}
-            >
-              <AccordionSummary expandIcon={<BiExpand />}>
-                <Typography>{team.name}</Typography>
-              </AccordionSummary>
-              <AccordionDetails>
-                {rendermembers(teamIndex, team.members)}
-                <Button
-                  variant="contained"
-                  color="secondary"
-                  onClick={() => handleMarkAllAsPaid(teamIndex)}
-                  sx={{ marginTop: 2 }}
-                >
-                  Marcar a todos como pagados
-                </Button>
-              </AccordionDetails>
-            </Accordion>
-          ))}
+        {filterTeamsSearch(
+          tournament.teams.filter((team) => !allTeamMembersPaid(team))
+        ).map((team, teamIndex) => (
+          <Accordion
+            key={team.name + teamIndex}
+            style={{ background: "#3b3e8f" }}
+            expanded={expandedNotPaid === team.id}
+            onChange={handleChangeNotPaid(team.id ?? "false")}
+          >
+            <AccordionSummary expandIcon={<BiExpand />}>
+              <Typography>{team.name}</Typography>
+            </AccordionSummary>
+            <AccordionDetails>
+              {rendermembers(team.id ?? "", team.members, team.captainId)}
+              <Button
+                variant="contained"
+                color="secondary"
+                onClick={() => handleMarkAllAsPaid(teamIndex)}
+                sx={{ marginTop: 2 }}
+              >
+                Marcar a todos como pagados
+              </Button>
+            </AccordionDetails>
+          </Accordion>
+        ))}
+
+        {renderUsersNoTeam()}
+
         <LoadingButton
           type="submit"
           fullWidth

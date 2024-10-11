@@ -1,147 +1,161 @@
 .modalOverlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(0, 0, 0, 0.7);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    z-index: 1000;
-  }
-  
-  .modalContent {
-    background: linear-gradient(170deg, rgb(13, 13, 56), rgb(31, 31, 95));
-    padding: 20px;
-    border-radius: 10px;
-    width: 500px;
-    max-width: 90%;
-    text-align: center;
-    color: white;
-    position: relative;
-  }
-  
-  .closeButton {
-    position: absolute;
-    top: 10px;
-    right: 10px;
-    background: none;
-    border: none;
-    color: white;
-    font-size: 18px;
-    cursor: pointer;
-  }
-  
-  .promotionCard {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    position: relative;
-    margin-top: 10px;
-    background-color: rgb(4, 4, 26);
-    border-radius: 15px;
-    border-bottom-right-radius: 50px;
-  }
-  
-  .promoImage {
-    width: 100%;
-    height: 100%;
-    position: absolute;
-    border-radius: 15px;
-    border-bottom-right-radius: 50px;
-    object-fit: cover;
-    margin-bottom: 10px;
-  }
-  
-  .promotionCard::before {
-    content: '';
-    position: absolute;
-    border-radius: 15px;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background:   
-    linear-gradient(to bottom, rgb(4, 4, 26), rgba(255, 255, 255, 0)),
-    linear-gradient(to right, rgba(4, 4, 26, 0.76), rgba(6, 6, 61, 0.288));
-    z-index: 2;
-    pointer-events: none;
-  }
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.7);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
 
-  .promoText {
-    text-align: left;
-    padding: 1rem;
-    z-index: 2;
-  }
+.modalContent {
+  background: linear-gradient(170deg, rgb(13, 13, 56), rgb(31, 31, 95));
+  padding: 20px;
+  border-radius: 10px;
+  width: 500px;
+  max-width: 90%;
+  text-align: center;
+  color: white;
+  position: relative;
+}
 
-  .promoText h3 {
-    color: #00A4E0;
-    margin: 10px 0;
-  }
-  
-  .registerButton {
-    background: #00A4E0;
-    color: white;
-    border: none;
-    padding: 10px 20px;
-    border-radius: 5px;
-    cursor: pointer;
-    margin-top: 10px;
-  }
-  
+.closeButton {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: none;
+  border: none;
+  color: white;
+  font-size: 18px;
+  cursor: pointer;
+}
+
+.promotionCard {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: relative;
+  margin-top: 10px;
+  background-color: rgb(4, 4, 26);
+  border-radius: 15px;
+  border-bottom-right-radius: 50px;
+}
+
+.promoImage {
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  border-radius: 15px;
+  border-bottom-right-radius: 50px;
+  object-fit: cover;
+  margin-bottom: 10px;
+}
+
+.promotionCard::before {
+  content: '';
+  position: absolute;
+  border-radius: 15px;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background:   
+  linear-gradient(to bottom, rgb(4, 4, 26), rgba(255, 255, 255, 0)),
+  linear-gradient(to right, rgba(4, 4, 26, 0.76), rgba(6, 6, 61, 0.288));
+  z-index: 2;
+  pointer-events: none;
+}
+
+.promoText {
+  text-align: left;
+  padding: 1rem;
+  z-index: 2;
+}
+
+.promoText h3 {
+  color: #00A4E0;
+  margin: 10px 0;
+}
+
+.registerButton {
+  background: #00A4E0;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 5px;
+  cursor: pointer;
+  margin-top: 10px;
+}
+
 .infoLastCard {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    position: relative;
-    margin-top: 10px;
-    background-color: rgb(4, 4, 26);
-    border-radius: 15px;
-    border-bottom-right-radius: 50px;    
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: relative;
+  margin-top: 10px;
+  background-color: rgb(4, 4, 26);
+  border-radius: 15px;
+  border-bottom-right-radius: 50px;    
 }
 
 .infoLastCard::before {
-    content: '';
-    position: absolute;
-    border-radius: 15px;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background:   
-    linear-gradient(to right, rgb(4, 4, 26), rgba(255, 255, 255, 0));
-    z-index: 2;
-    pointer-events: none;
+  content: '';
+  position: absolute;
+  border-radius: 15px;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background:   
+  linear-gradient(to right, rgb(4, 4, 26), rgba(255, 255, 255, 0));
+  z-index: 2;
+  pointer-events: none;
+}
+
+.extraInfo {
+  padding: 15px;
+  border-radius: 8px;
+  margin-top: 20px;
+  z-index: 2;
+  font-size: 1.1rem;
+  font-weight: 550;
+}
+
+.infoButton {
+  background: #FF9000;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 5px;
+  cursor: pointer;
+  margin-top: 10px;
+}
+
+
+@media (max-width: 650px) {
+  .modalOverlay {
+      margin-top: 2rem;
   }
 
-  .extraInfo {
-    padding: 15px;
-    border-radius: 8px;
-    margin-top: 20px;
-    z-index: 2;
-    font-size: 1.1rem;
-    font-weight: 550;
+  .modalContent h2 {
+    font-size: 1.2rem;
   }
-  
+
   .infoButton {
-    background: #FF9000;
-    color: white;
-    border: none;
-    padding: 10px 20px;
-    border-radius: 5px;
-    cursor: pointer;
-    margin-top: 10px;
+      padding: 1rem;
+      font-size: .9rem;
+  }
+
+  
+  .modalContent h2 {
+    font-size: 1.1rem;
   }
   
-
-@media (max-width: 340px) {
-    .modalOverlay {
-        margin-top: 20px;
-    }
-
-    .infoButton {
-        padding: 1rem;
-        font-size: .9rem;
-    }
+  .closeButton {
+    top: 0px;
+    right: 3px;
+  }
 }

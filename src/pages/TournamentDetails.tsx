@@ -1,6 +1,11 @@
 import React, { useEffect, useState, useMemo } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { Category, Tournament, Team, TeamMember } from "../interfaces/interfaces";
+import {
+  Category,
+  Tournament,
+  Team,
+  TeamMember,
+} from "../interfaces/interfaces";
 import styles from "../assets/styles/tournamentDetails.module.css";
 import Splash from "./Splash";
 import { getTournamentByFakeId } from "../utils/authUtils";
@@ -14,6 +19,9 @@ import Loader from "../components/Loader";
 import ParticipantsViewSection from "./tournamentView/ParticipantsViewSection";
 import AwardsViewSection from "./tournamentView/AwardsViewSection";
 import MatchesViewSection from "./tournamentView/MatchesViewSection";
+import PaymentStepsDialog from "../components/dialog/PaymentStepsDialog";
+import { Box, Typography, useMediaQuery, useTheme } from "@mui/material";
+import { useUserContext } from "../contexts/UserContext";
 import { WPP_NUMBER } from "../utils/constants";
 import ConfirmationModal from "../components/tournament/tourForm/ConfirmationModal";
 
@@ -22,50 +30,86 @@ const TournamentDetails: React.FC = () => {
   const navigate = useNavigate();
   const [tournament, setTournament] = useState<Tournament | null>(null);
   const [actualCategory, setActualCategory] = useState(1);
-  const [actualPrevView, setActualPrevView] = useState<React.ReactNode | null>(null);
+  const [actualPrevView, setActualPrevView] = useState<React.ReactNode | null>(
+    null
+  );
   const [isImageLoaded, setIsImageLoaded] = useState(false);
   const [userTeam, setUserTeam] = useState<Team | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isUserLogged, setIsUserLogged] = useState<boolean>(false);
+  const [openModalPayment, setOpenModalPayment] = useState<boolean>(false);
+  const { user } = useUserContext();
+
+  const theme = useTheme();
+  const isSmallScreen = useMediaQuery(theme.breakpoints.down("sm"));
+
+  function hasUserPaid(userId: string): boolean {
+    return (
+      tournament != null &&
+      tournament.paidUsersId.some((paidUser) => paidUser.userId === userId)
+    );
+  }
+
+  useEffect(() => {
+    if (!(tournament?.active && new Date() < tournament?.endDate.toDate()))
+      setOpenModalPayment(false);
+    else
+      setOpenModalPayment(
+        (userTeam &&
+          user?.uid &&
+          tournament &&
+          tournament.paidUsersId &&
+          !hasUserPaid(user.uid)) ||
+          false
+      );
+  }, [userTeam, tournament]);
   const [userInNoTeam, setUserInNoTeam] = useState(false);
   const [showConfirmation, setShowConfirmation] = useState(false);
 
+  const [isTournamentEnded, setIsTournamentEnded] = useState<boolean>(false);
+
   useEffect(() => {
     const checkUserLoggedIn = () => {
-        const user = auth.currentUser;
-        setIsUserLogged(!!user);
+      const user = auth.currentUser;
+      setIsUserLogged(!!user);
     };
 
     if (!fakeId) {
-        toast.error("El Fake ID del torneo no está definido");
-        return;
+      toast.error("El Fake ID del torneo no está definido");
+      return;
     }
 
     const fetchTournament = async () => {
-        const fetchedTournament = await getTournamentByFakeId(fakeId);
-        setTournament(fetchedTournament);
+      const fetchedTournament = await getTournamentByFakeId(fakeId);
+      setTournament(fetchedTournament);
+      const isTournamentEnded = fetchedTournament?.endDate?.toDate()
+        ? fetchedTournament.endDate.toDate() < new Date()
+        : false;
 
-        const user = auth.currentUser;
-        if (user && fetchedTournament?.teams) {
-            const team = fetchedTournament.teams.find((team) =>
-                team.members.some((member: TeamMember) => member.memberId === user.uid)
-            );
-            setUserTeam(team || null);
+      setIsTournamentEnded(isTournamentEnded);
 
-            const isUserInNoTeam = Array.isArray(fetchedTournament.usersNoTeam)
-            ? fetchedTournament.usersNoTeam.some((member) => member.memberId === user.uid)
-            : false;
+      const user = auth.currentUser;
+      if (user && fetchedTournament?.teams) {
+        const team = fetchedTournament.teams.find((team) =>
+          team.members.some(
+            (member: TeamMember) => member.memberId === user.uid
+          )
+        );
+        setUserTeam(team || null);
 
+        const isUserInNoTeam = Array.isArray(fetchedTournament.usersNoTeam)
+          ? fetchedTournament.usersNoTeam.some(
+              (member) => member.memberId === user.uid
+            )
+          : false;
 
-            console.log(isUserInNoTeam);
-            setUserInNoTeam(isUserInNoTeam);
-        }
+        setUserInNoTeam(isUserInNoTeam);
+      }
     };
 
     fetchTournament();
     checkUserLoggedIn();
   }, [fakeId]);
-
 
   const SliderCategories: Category[] = useMemo(
     () => [
@@ -125,7 +169,7 @@ const TournamentDetails: React.FC = () => {
       navigate("/autenticar");
     } else {
       if (!userTeam) {
-          openModal();
+        openModal();
       } else {
         openTournament();
       }
@@ -135,15 +179,20 @@ const TournamentDetails: React.FC = () => {
   const handleShowContactBox = () => {
     setShowConfirmation(true);
     setIsModalOpen(true);
-  }
+  };
 
   const handleConfirmation = () => {
     setShowConfirmation(false);
     setIsModalOpen(false);
     const user = auth.currentUser;
     if (user) {
-      const message = `Hola, soy ${user.email || "Usuario Nuevo"} y me uní a la lista de jugadores sin equipo en el torneo actual.`;
-      window.open(`https://wa.me/${WPP_NUMBER}?text=${encodeURIComponent(message)}`, '_blank');
+      const message = `Hola, soy ${
+        user.email || "Usuario Nuevo"
+      } y me uní a la lista de jugadores sin equipo en el torneo actual.`;
+      window.open(
+        `https://wa.me/${WPP_NUMBER}?text=${encodeURIComponent(message)}`,
+        "_blank"
+      );
     }
   };
 
@@ -170,11 +219,57 @@ const TournamentDetails: React.FC = () => {
 
       <div className={styles.tournamentInfoDetails}>
         <div className={`${styles.actionsTourDetails} container`}>
+          {userTeam &&
+            user?.uid &&
+            tournament.paidUsersId &&
+            !hasUserPaid(user.uid) && (
+              <Box
+                sx={{
+                  textAlign: "center",
+                  display: "flex",
+                  flexDirection: "row",
+                  alignItems: "center",
+                  paddingRight: isSmallScreen ? 0 : 4,
+                  marginBottom: isSmallScreen ? 2 : 0,
+                }}
+              >
+                <Box
+                  sx={{
+                    marginRight: isSmallScreen ? 1 : 4,
+                  }}
+                >
+                  <Typography
+                    variant={isSmallScreen ? "subtitle1" : "body2"}
+                    style={{ fontSize: isSmallScreen ? "1.1em" : "1.3em" }}
+                    color="warning"
+                    textAlign={"left"}
+                    gutterBottom
+                  >
+                    No has completado el pago para unirte al torneo.
+                  </Typography>
+                </Box>
+                <button
+                  className={styles.warningButton}
+                  onClick={() => setOpenModalPayment(true)}
+                >
+                  Verificar Pago
+                </button>
+              </Box>
+            )}
           <button
             className={styles.joinButtonTourDetails}
-            onClick={userInNoTeam ? handleShowContactBox : handleJoinButtonClick}
+            onClick={
+              userInNoTeam ? handleShowContactBox : handleJoinButtonClick
+            }
+            disabled={isTournamentEnded}
           >
-            {userInNoTeam ? "Unido" : !userTeam ? "Unirme al Torneo" : "Ver Equipo"}
+            {isTournamentEnded
+              ? "Torneo terminado"
+              : userInNoTeam
+              ? "Unido"
+              : !userTeam
+              ? "Unirme al Torneo"
+              : "Ver Equipo"}
           </button>
         </div>
         <h1 className={styles.titleTourDetails}>{tournament.name}</h1>
@@ -185,7 +280,7 @@ const TournamentDetails: React.FC = () => {
         />
         {actualPrevView}
       </div>
-      {(!userTeam && !userInNoTeam) && (
+      {!userTeam && !userInNoTeam && (
         <JoinTeamModal
           tournament={tournament}
           isModalOpen={isModalOpen}
@@ -216,6 +311,10 @@ const TournamentDetails: React.FC = () => {
         pauseOnFocusLoss
         draggable
         pauseOnHover
+      />
+      <PaymentStepsDialog
+        open={openModalPayment}
+        setOpen={setOpenModalPayment}
       />
     </div>
   );

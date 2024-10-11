@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import logo from '../assets/logoFsociety3.png';
 import styles from "../assets/styles/splashScreen.module.css";
 import stylesHome from "../assets/styles/home.module.css";

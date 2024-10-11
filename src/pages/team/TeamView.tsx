@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import { Tournament, Team, TeamMember, UserType } from "../../interfaces/interfaces";
+import { Tournament, Team, TeamMember } from "../../interfaces/interfaces";
 import { getTournamentByFakeId } from "../../utils/authUtils";
 import styles from "../../assets/styles/teamsParticipants.module.css";
 import imageBanner from "../../assets/bannerTeam5.png";
@@ -29,7 +29,7 @@ const TeamView: React.FC = () => {
   const [isImageLoaded, setIsImageLoaded] = useState(false);
   const { width } = useWindowSize();
   const [isMember, setIsMember] = useState(false);
-  const { user, userInfo, isAdmin, loading: userLoading } = useUserContext();
+  const { user, isAdmin, loading: userLoading } = useUserContext();
   const [showModal, setShowModal] = useState(false);
   const [memberToDelete, setMemberToDelete] = useState<string | undefined>(undefined);
   const [deleteLoading, setDeleteLoading] = useState(false);
@@ -129,6 +129,7 @@ const TeamView: React.FC = () => {
   
         await updateDoc(tournamentDocRef, {
           teams: updatedTeams,
+          participants : (tournament.participants || 0) -1
         });
   
         setTeam({
@@ -151,6 +152,7 @@ const TeamView: React.FC = () => {
       setDeleteLoading(false);
     }
   };
+  
 
   const handleLeaveTeam = () => {
     const user = auth.currentUser;

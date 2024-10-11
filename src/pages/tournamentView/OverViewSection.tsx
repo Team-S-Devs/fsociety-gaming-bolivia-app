@@ -30,7 +30,7 @@ const OverViewSection: React.FC<OverViewSectionProps> = ({ tournament }) => {
           <div className={styles.detailsTourDetails}>
             <InfoContainerStyled
               leftText="Participantes:"
-              rightText={`${tournament.participants}/64`}
+              rightText={`${tournament.participants}`}
               icon={<FaUsers />}
             />
             <InfoContainerStyled

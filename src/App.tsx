@@ -17,6 +17,9 @@ const theme = createTheme({
     success: {
       main: "#42d546",
     },
+    warning: {
+      main: "#f6c23e"
+    }
   },
   typography: {
     allVariants: {
@@ -39,7 +42,7 @@ const theme = createTheme({
         root: {
           borderRadius: "8px",
           boxShadow: "0 0 6px rgba(0, 0, 0, 0.15)",
-          background: "#fff",
+          background: "#1a064f",
         },
       },
     },

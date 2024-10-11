@@ -54,22 +54,22 @@ export interface UserInterface {
 }
 
 export interface ImageRefPath {
-    ref: string;
-    url: string;
+  ref: string;
+  url: string;
 }
 
 export interface RawContent {
-  blocks: [],
-  entityMap: {}
+  blocks: [];
+  entityMap: {};
 }
 
 export interface Match {
   id: string;
   teamA: Team;
   teamB: Team;
-  scoreA: string; 
-  scoreB: string; 
-  played: boolean; 
+  scoreA: string;
+  scoreB: string;
+  played: boolean;
 }
 
 export interface Tournament {
@@ -84,21 +84,33 @@ export interface Tournament {
   previewImagePath: ImageRefPath;
   participants: number | "";
   teamLimit: number | "";
+  fakeTeamLimit: number | "";
   modality: TournamentModality;
   startDate: Timestamp;
   endDate: Timestamp;
   teams: Team[];
+  matches: Record<string, Match[]>;
   usersNoTeam: TeamMember[]; 
-  matches: Record<string, Match[]>; 
   createdAt: Timestamp;
   deleted: boolean;
   active: boolean;
   teamWinnerId?: string;
+  rankings: {
+    firstTeamId: string | "none";
+    secondTeamId: string | "none";
+    thirdTeamId: string | "none";
+    fourthTeamId: string | "none";
+  };
+  paidUsersId: {
+    paidAt: Timestamp;
+    userId: string;
+  }[];
+  paidUsersJustId: string[];
+  registeredUsers: string[];
 }
 
 export interface TeamMember {
   memberId: string;
-  payment: boolean;
   user: UserInterface;
   paidAt: Timestamp | "not-paid";
   joinedAt: Timestamp;

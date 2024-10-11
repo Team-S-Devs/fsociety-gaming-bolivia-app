@@ -1,7 +1,6 @@
 import React from "react";
 import { Button, Spinner } from "react-bootstrap";
 import styles from "../../assets/styles/tournamentDetails.module.css";
-import { TeamMember } from "../../interfaces/interfaces";
 
 const DeleteMemberModal: React.FC<{
   showModal: boolean;

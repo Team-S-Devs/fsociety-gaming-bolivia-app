@@ -1,8 +1,5 @@
 import slide1 from '../assets/bannerPremios.png';
 import slide3 from '../assets/tournamentExample.png';
-import imageTour from '../assets/bannerFsociety.jpg';
-import { Tournament, TournamentModality } from '../interfaces/interfaces';
-import { Timestamp } from 'firebase/firestore';
 
 interface SliderItem {
   id: number;
@@ -29,21 +26,5 @@ export const SliderData: SliderItem[] = [
     title: "Premios Unicos",
     desc: "Incribe a tu equipo que estas esperando",
     cover: slide3,
-  },
-];
-
-export const Tournaments: Tournament[] = [
-  {
-    id: "1",
-    name: "Torneo MLBB",
-    imagePath: imageTour,
-    inscriptionPrice: 30,
-    participants: 0,
-    teamLimit: 5,
-    modality: TournamentModality.ELIMINATION,
-    startDate: Timestamp.fromDate(new Date(2024, 3, 20)), 
-    endDate: Timestamp.fromDate(new Date(2024, 4, 5)),
-    teams: ["Team 1", "Team 2"],
-    createdAt: Timestamp.now(),
   },
 ];

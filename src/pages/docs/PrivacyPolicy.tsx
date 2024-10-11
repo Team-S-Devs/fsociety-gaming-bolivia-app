@@ -13,7 +13,7 @@ import { BsDot } from "react-icons/bs";
 
 const PrivacyPolicy: React.FC = () => {
   return (
-    <ContainerWithBackground urlImage="/src/assets/bannerFsociety.jpg">
+    <ContainerWithBackground urlImage="/assets/bannerFsociety.jpg">
       <Box
         sx={{
           padding: "16px",

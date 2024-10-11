@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import { Category } from "../../../interfaces/interfaces";
 import styles from "../../../assets/styles/tournamentDetails.module.css";
 import { Container } from "react-bootstrap";
