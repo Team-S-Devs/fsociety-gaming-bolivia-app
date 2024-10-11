@@ -18,7 +18,7 @@ const Admin: React.FC = () => {
       ) : !isAdmin ? (
         <Error404 />
       ) : (
-        <ContainerWithBackground urlImage="/src/assets/bannerFsociety.jpg">
+        <ContainerWithBackground urlImage="/assets/bannerFsociety.jpg">
           <Container style={{ paddingTop: 78, paddingBottom: 50 }}>
             <BlurBoxContainer>
               <Grid container spacing={8}>

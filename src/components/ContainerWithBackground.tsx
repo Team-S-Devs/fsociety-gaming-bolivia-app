@@ -1,13 +1,13 @@
 import { Box, Container } from "@mui/material";
 import React, { ReactNode } from "react";
+import bg from "../assets/bannerFsociety.jpg"
 
 interface ContainerWithBackgroundProps {
-  urlImage: string;
+  urlImage?: string;
   children: ReactNode;
 }
 
 const ContainerWithBackground: React.FC<ContainerWithBackgroundProps> = ({
-  urlImage = "",
   children,
 }) => {
   return (
@@ -19,7 +19,7 @@ const ContainerWithBackground: React.FC<ContainerWithBackgroundProps> = ({
         justifyContent: "center",
         minHeight: "100vh",
         width: "100vw",
-        backgroundImage: `url(${urlImage})`,
+        backgroundImage: `url(${bg})`,
         backgroundSize: "cover",
         backgroundPosition: "center",
         overflowX: "hidden",

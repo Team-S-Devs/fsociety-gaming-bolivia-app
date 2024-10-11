@@ -63,7 +63,7 @@ const Authentication: React.FC = () => {
   };
 
   return (
-    <ContainerWithBackground urlImage="/src/assets/bannerFsociety.jpg">
+    <ContainerWithBackground urlImage="/assets/bannerFsociety.jpg">
       <Container maxWidth="sm">
         <BlurBoxContainer>
           {emailSent ? (

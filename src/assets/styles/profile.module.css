@@ -1,9 +1,8 @@
 .profileContainer {
   display: flex;
   flex-direction: column;
-  justify-content: center;
+  justify-content: flex-start;
   align-items: center;
-  padding: 32px;
   min-height: 100vh;
   border-radius: 8px;
 }

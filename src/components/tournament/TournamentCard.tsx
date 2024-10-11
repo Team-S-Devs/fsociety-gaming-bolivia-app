@@ -8,6 +8,7 @@ import {
   FaUsers,
   FaUserPlus,
   FaDollarSign,
+  FaTrophy,
 } from "react-icons/fa";
 
 interface TournamentCardProps {
@@ -17,9 +18,12 @@ interface TournamentCardProps {
 const TournamentCard: React.FC<TournamentCardProps> = ({ tournament }) => {
   const startDate = tournament.startDate.toDate();
   const navigate = useNavigate();
+  
   const handleCardClick = () => {
-    navigate(`/tournament/${tournament.fakeId}`);
+    navigate(`/torneo/${tournament.fakeId}`);
   };
+  const teamLimit =
+    tournament.fakeTeamLimit == null ? tournament.teamLimit : tournament.fakeTeamLimit;
 
   return (
     <div className={styles.tournamentCard} onClick={handleCardClick}>
@@ -34,20 +38,28 @@ const TournamentCard: React.FC<TournamentCardProps> = ({ tournament }) => {
           <div className="d-flex flex-wrap justify-content-between mb-1">
             <ItemInfoText text={tournament.modality} icon={<FaCodeBranch />} />
             <ItemInfoText
-              text={`${tournament.teamLimit.toString()}v${tournament.teamLimit.toString()}`}
+              text={`${teamLimit.toString()}v${teamLimit.toString()}`}
               icon={<FaUsers />}
             />
           </div>
           <div>
             <ItemInfoText
-              text={`Participantes: ${tournament.participants}/64`}
+              text={`Participantes: ${tournament.participants}`}
               icon={<FaUserPlus />}
+            />
+          </div>
+          <div className="mt-1">
+            <ItemInfoText
+              backColor="transparent"
+              textColor="aqua"
+              text={`1er Lugar: ${tournament.awards[0]}`}
+              icon={<FaTrophy />}
             />
           </div>
         </div>
       </div>
       <div
-        className={`${styles.bottomTournCard} d-flex flex-wrap justify-content-between`}
+        className={`${styles.bottomTournCard} d-flex flex-wrap justify-content-between align-items-center`}
       >
         <ItemInfoText
           text={`Inicio: ${startDate.toLocaleDateString()}`}
@@ -59,6 +71,9 @@ const TournamentCard: React.FC<TournamentCardProps> = ({ tournament }) => {
           textColor="var(--third-color)"
         />
       </div>
+        <div className={styles.getInTourButton} onClick={handleCardClick}>
+          Inscribirse
+        </div>
     </div>
   );
 };

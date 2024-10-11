@@ -129,6 +129,7 @@ const TeamView: React.FC = () => {
   
         await updateDoc(tournamentDocRef, {
           teams: updatedTeams,
+          participants : (tournament.participants || 0) -1
         });
   
         setTeam({
@@ -151,6 +152,7 @@ const TeamView: React.FC = () => {
       setDeleteLoading(false);
     }
   };
+  
 
   const handleLeaveTeam = () => {
     const user = auth.currentUser;
