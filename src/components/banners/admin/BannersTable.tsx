@@ -44,9 +44,7 @@ const BannersTable: React.FC<BannersTableProps> = ({
   const navigate = useNavigate();
   const [openDialog, setOpenDialog] = useState<boolean>(false);
   const [loadingDelete, setLoadingDelete] = useState<boolean>(false);
-  const [selectedBannerId, setSelectedBannerId] = useState<
-    string | null
-  >(null);
+  const [selectedBannerId, setSelectedBannerId] = useState<string | null>(null);
 
   const handleToggleHidden = async (banner: Banner) => {
     if (!banner.id) return;
@@ -79,11 +77,7 @@ const BannersTable: React.FC<BannersTableProps> = ({
   const confirmDelete = async () => {
     try {
       if (!selectedBannerId) return;
-      const BannerRef = doc(
-        db,
-        CollectionNames.Banners,
-        selectedBannerId
-      );
+      const BannerRef = doc(db, CollectionNames.Banners, selectedBannerId);
       setLoadingDelete(true);
       await updateDoc(BannerRef, { deleted: true });
       setBanners((prev) =>
@@ -93,7 +87,7 @@ const BannersTable: React.FC<BannersTableProps> = ({
       setSelectedBannerId(null);
       setLoadingDelete(false);
     } catch (error) {
-      alert("No se pudo eliminar el torneo");
+      alert("No se pudo eliminar el banner");
     }
   };
 
@@ -236,6 +230,8 @@ const BannersTable: React.FC<BannersTableProps> = ({
         onClose={handleCloseDialog}
         onConfirm={confirmDelete}
         loadingDelete={loadingDelete}
+        title="Eliminar Banner"
+        description="¿Estás seguro que deseas eliminar este banner?. \nEsta acción no se puede deshacer."
       />
     </Box>
   );

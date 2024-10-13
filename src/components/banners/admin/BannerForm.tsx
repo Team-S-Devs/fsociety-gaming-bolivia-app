@@ -160,10 +160,10 @@ const BannerForm: React.FC<BannerFormProps> = ({
           {isEditing
             ? loading
               ? "Editando..."
-              : "Editar Torneo"
+              : "Editar Banner"
             : loading
             ? "Creando..."
-            : "Crear Torneo"}
+            : "Crear Banner"}
         </LoadingButton>
       </form>
     </Box>
