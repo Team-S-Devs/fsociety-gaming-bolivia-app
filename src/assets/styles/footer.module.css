@@ -2,6 +2,10 @@
     color: #fff;
   }
   
+  .ionRight {
+    cursor: pointer;
+  }
+
   .footerEmail:hover {
     color: var(--bg);
   }
