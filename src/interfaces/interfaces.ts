@@ -12,13 +12,16 @@ export enum TournamentUserType {
 }
 
 export enum RangeUser {
-  WARRIOR = "Warrior",
+  WARRIOR = "Guerrerp",
   ELITE = "Elite",
-  MASTER = "Master",
-  GRANDMASTER = "Grandmaster",
-  EPIC = "Epic",
-  LEGEND = "Legend",
-  MYTHIC = "Mythic"
+  MASTER = "Maestro",
+  GRANDMASTER = "Gran Maestro",
+  EPIC = "Epico",
+  LEGEND = "Leyenda",
+  MYTHIC = "Mítico",
+  GLORY_MYTHIC = "Gloria Mítica",
+  MYTHIC_INMORTAL = "Mítico Inmortal",
+  MYTHIC_HONORED = "Mítico Honorario"
 }
 
 

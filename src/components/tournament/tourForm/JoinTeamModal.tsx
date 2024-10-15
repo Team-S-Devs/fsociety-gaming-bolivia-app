@@ -3,13 +3,26 @@ import styles from "../../../assets/styles/tournamentDetails.module.css";
 import { toast } from "react-toastify";
 import { FaCodeBranch } from "react-icons/fa";
 import { auth, db } from "../../../utils/firebase-config";
-import { doc, updateDoc, arrayUnion, getDoc, Timestamp } from "firebase/firestore";
+import {
+  doc,
+  updateDoc,
+  arrayUnion,
+  getDoc,
+  Timestamp,
+} from "firebase/firestore";
 import ItemInfoText from "../../tournament/ItemInfoText";
 import JoinModal from "../../tournament/tourForm/JoinModal";
 import Loader from "../../Loader";
-import { Tournament, Team, UserInterface, TeamMember, RangeUser } from "../../../interfaces/interfaces";
+import {
+  Tournament,
+  Team,
+  UserInterface,
+  TeamMember,
+  RangeUser,
+} from "../../../interfaces/interfaces";
 import { useUserContext } from "../../../contexts/UserContext";
 import { CollectionNames } from "../../../utils/collectionNames";
+import CustomDropdown from "./CustomDropDown";
 
 interface JoinTeamModalProps {
   tournament: Tournament | null;
@@ -24,9 +37,11 @@ const JoinTeamModal: React.FC<JoinTeamModalProps> = ({
   isModalOpen,
   closeModal,
   setUserTeam,
-  setUserNoTeam
+  setUserNoTeam,
 }) => {
-  const [modalView, setModalView] = useState<"default" | "createTeam" | "joinTeam" | "enterWithoutTeam">("default");
+  const [modalView, setModalView] = useState<
+    "default" | "createTeam" | "joinTeam" | "enterWithoutTeam"
+  >("default");
   const [teamName, setTeamName] = useState("");
   const [teamCode, setTeamCode] = useState("");
   const [inputTeamCode, setInputTeamCode] = useState("");
@@ -38,30 +53,33 @@ const JoinTeamModal: React.FC<JoinTeamModalProps> = ({
 
   const handleSaveTeam = async () => {
     setIsTeamSaving(true);
-  
+
     if (!teamName) {
       setError("El nombre del equipo es obligatorio");
       setIsTeamSaving(false);
       return;
     }
-  
+
     const user = auth.currentUser;
     if (!user) {
       setError("Usuario no autenticado");
       setIsTeamSaving(false);
       return;
     }
-  
+
     try {
       if (!userInfo) {
         setError("Usuario no encontrado en la base de datos.");
         setIsTeamSaving(false);
         return;
       }
-  
-      const generatedCode = Math.random().toString(36).substring(2, 8).toUpperCase();
+
+      const generatedCode = Math.random()
+        .toString(36)
+        .substring(2, 8)
+        .toUpperCase();
       setTeamCode(generatedCode);
-  
+
       const newTeam: Team = {
         id: user.uid,
         name: teamName,
@@ -72,19 +90,23 @@ const JoinTeamModal: React.FC<JoinTeamModalProps> = ({
             memberId: user.uid,
             user: userInfo,
             paidAt: "not-paid",
-            joinedAt: Timestamp.now()
+            joinedAt: Timestamp.now(),
           },
         ],
-        banner: { ref: "Team Banner", url: "" }
+        banner: { ref: "Team Banner", url: "" },
       };
-  
+
       if (tournament) {
-        const tournamentRef = doc(db, CollectionNames.Tournaments, tournament.id!);
+        const tournamentRef = doc(
+          db,
+          CollectionNames.Tournaments,
+          tournament.id!
+        );
         await updateDoc(tournamentRef, {
           teams: arrayUnion(newTeam),
           participants: (tournament.participants || 0) + 1,
         });
-  
+
         setError("");
         setIsTeamSaving(false);
         setIsTeamSaved(true);
@@ -98,74 +120,77 @@ const JoinTeamModal: React.FC<JoinTeamModalProps> = ({
       setIsTeamSaving(false);
     }
   };
-  
 
   const handleJoinTeam = async () => {
     setIsTeamSaving(true);
     const user = auth.currentUser;
-  
+
     if (!user) {
       setError("Usuario no autenticado");
       setIsTeamSaving(false);
       return;
     }
-  
+
     if (!inputTeamCode) {
       setError("El código del equipo es obligatorio");
       setIsTeamSaving(false);
       return;
     }
-  
+
     try {
       if (tournament) {
-        const tournamentRef = doc(db, CollectionNames.Tournaments, tournament.id!);
+        const tournamentRef = doc(
+          db,
+          CollectionNames.Tournaments,
+          tournament.id!
+        );
         const tournamentSnap = await getDoc(tournamentRef);
-  
+
         if (tournamentSnap.exists()) {
           const teams = tournamentSnap.data().teams || [];
           const team = teams.find((team: any) => team.code === inputTeamCode);
-  
+
           if (team) {
             const isAlreadyMember = team.members.some(
               (member: TeamMember) => member.memberId === user.uid
             );
-  
+
             if (isAlreadyMember) {
               setError("Ya eres miembro de este equipo");
               setIsTeamSaving(false);
               return;
             }
-  
+
             const userRef = doc(db, "users", user.uid);
             const userSnap = await getDoc(userRef);
-  
+
             if (userSnap.exists()) {
               const userData = userSnap.data() as UserInterface;
-  
+
               const updatedMembers: TeamMember[] = [
                 ...team.members,
                 {
                   memberId: user.uid,
                   paidAt: "not-paid",
                   user: userData,
-                  joinedAt: Timestamp.now()
+                  joinedAt: Timestamp.now(),
                 },
               ];
-  
+
               const updatedTeam = {
                 ...team,
                 members: updatedMembers,
               };
-  
+
               const updatedTeams = teams.map((t: any) =>
                 t.code === team.code ? updatedTeam : t
               );
-  
+
               await updateDoc(tournamentRef, {
                 teams: updatedTeams,
                 participants: (tournament.participants || 0) + 1,
               });
-  
+
               setError("");
               setIsTeamSaving(false);
               setIsTeamSaved(true);
@@ -189,48 +214,51 @@ const JoinTeamModal: React.FC<JoinTeamModalProps> = ({
       setIsTeamSaving(false);
     }
   };
-  
 
   const handleJoinWithoutTeam = async () => {
     setIsTeamSaving(true);
     const user = auth.currentUser;
-  
+
     if (!user) {
       setError("Usuario no autenticado");
       setIsTeamSaving(false);
       return;
     }
-  
+
     if (!selectedRange) {
       setError("Debes escoger un rango");
       setIsTeamSaving(false);
       return;
     }
-  
+
     try {
       if (tournament) {
-        const tournamentRef = doc(db, CollectionNames.Tournaments, tournament.id!);
+        const tournamentRef = doc(
+          db,
+          CollectionNames.Tournaments,
+          tournament.id!
+        );
         const tournamentSnap = await getDoc(tournamentRef);
-  
+
         if (tournamentSnap.exists()) {
           const usersNoTeam = tournamentSnap.data().usersNoTeam || [];
-  
+
           const isAlreadyJoined = usersNoTeam.some(
             (member: any) => member.memberId === user.uid
           );
-  
+
           if (isAlreadyJoined) {
             setError("Ya te has registrado sin equipo");
             setIsTeamSaving(false);
             return;
           }
-  
+
           const userRef = doc(db, "users", user.uid);
           const userSnap = await getDoc(userRef);
-  
+
           if (userSnap.exists()) {
             const userData = userSnap.data() as UserInterface;
-  
+
             const newUserWithoutTeam = {
               memberId: user.uid,
               payment: false,
@@ -241,11 +269,11 @@ const JoinTeamModal: React.FC<JoinTeamModalProps> = ({
               },
               joinedAt: Timestamp.now(),
             };
-  
+
             await updateDoc(tournamentRef, {
               usersNoTeam: arrayUnion(newUserWithoutTeam),
             });
-  
+
             setError("");
             setIsTeamSaving(false);
             setIsTeamSaved(true);
@@ -262,11 +290,12 @@ const JoinTeamModal: React.FC<JoinTeamModalProps> = ({
         }
       }
     } catch (error) {
-      setError("Ocurrió un error al registrarte sin equipo. Inténtalo nuevamente.");
+      setError(
+        "Ocurrió un error al registrarte sin equipo. Inténtalo nuevamente."
+      );
       setIsTeamSaving(false);
     }
   };
-  
 
   const closeHandler = () => {
     closeModal();
@@ -293,11 +322,11 @@ const JoinTeamModal: React.FC<JoinTeamModalProps> = ({
             icon={<FaCodeBranch />}
             onClick={() => setModalView("joinTeam")}
           />
-          <ItemInfoText 
-            text="Entrar sin equipo" 
-            icon={<FaCodeBranch />} 
-            onClick={() => setModalView("enterWithoutTeam")} 
-            />
+          <ItemInfoText
+            text="Entrar sin equipo"
+            icon={<FaCodeBranch />}
+            onClick={() => setModalView("enterWithoutTeam")}
+          />
         </div>
       )}
 
@@ -367,21 +396,14 @@ const JoinTeamModal: React.FC<JoinTeamModalProps> = ({
       {modalView === "enterWithoutTeam" && (
         <div className={styles.modalForm}>
           <h3 className={styles.modalTitle}>Entrar sin equipo</h3>
-          <select
-            title="selector"
-            value={selectedRange || ""}
-            onChange={(e) => setSelectedRange(e.target.value as RangeUser)}
-            className={styles.modalInput}
-          >
-            <option value="">Escoge tu rango</option>
-            {Object.values(RangeUser).map((range) => (
-              <option key={range} value={range}>
-                {range}
-              </option>
-            ))}
-          </select>
+          <CustomDropdown />
+
           {error && <p style={{ color: "red" }}>{error}</p>}
-          <button onClick={handleJoinWithoutTeam} className={styles.modalButton}>
+
+          <button
+            onClick={handleJoinWithoutTeam}
+            className={styles.modalButton}
+          >
             Unirme sin equipo
           </button>
           <button onClick={closeHandler} className={styles.modalButtonClose}>
@@ -389,7 +411,6 @@ const JoinTeamModal: React.FC<JoinTeamModalProps> = ({
           </button>
         </div>
       )}
-
     </JoinModal>
   );
 };
