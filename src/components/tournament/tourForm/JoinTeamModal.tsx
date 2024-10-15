@@ -396,7 +396,7 @@ const JoinTeamModal: React.FC<JoinTeamModalProps> = ({
       {modalView === "enterWithoutTeam" && (
         <div className={styles.modalForm}>
           <h3 className={styles.modalTitle}>Entrar sin equipo</h3>
-          <CustomDropdown />
+          <CustomDropdown selectedRange={selectedRange} setSelectedRange={setSelectedRange} />
 
           {error && <p style={{ color: "red" }}>{error}</p>}
 

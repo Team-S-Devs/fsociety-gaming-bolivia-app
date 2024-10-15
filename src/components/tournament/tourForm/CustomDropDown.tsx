@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import styles from "../../../assets/styles/tournamentCard.module.css";
 
 import rango1 from "../../../assets/ranges/rango1-min.png";
@@ -13,7 +13,6 @@ import rango9 from "../../../assets/ranges/rango9-min.png";
 import rango10 from "../../../assets/ranges/rango10-min.png";
 import { RangeUser } from "../../../interfaces/interfaces";
 
-
 const ranges = [
   { label: RangeUser.WARRIOR, image: rango1 },
   { label: RangeUser.ELITE, image: rango2 },
@@ -27,9 +26,17 @@ const ranges = [
   { label: RangeUser.MYTHIC_HONORED, image: rango10 },
 ];
 
-const CustomDropdown = () => {
-  const [selectedRange, setSelectedRange] = useState<RangeUser | null>(null);
-  const [isOpen, setIsOpen] = useState(false);
+// Define props interface
+interface CustomDropdownProps {
+  selectedRange: RangeUser | null;
+  setSelectedRange: React.Dispatch<React.SetStateAction<RangeUser | null>>;
+}
+
+const CustomDropdown: React.FC<CustomDropdownProps> = ({
+  selectedRange,
+  setSelectedRange,
+}) => {
+  const [isOpen, setIsOpen] = React.useState(false);
 
   const handleSelect = (range: RangeUser) => {
     setSelectedRange(range);
