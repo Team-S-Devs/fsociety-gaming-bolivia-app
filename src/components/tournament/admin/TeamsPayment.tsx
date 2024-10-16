@@ -212,6 +212,11 @@ const TeamsPayment: React.FC<TeamsPaymentProps> = ({
               <Grid size={{ md: 6, xs: 12 }}>
                 <Typography>{user.user.phone}</Typography>
               </Grid>
+              {user.user.range &&
+                <Grid size={{ md: 6, xs: 12 }}>
+                  <Typography>{user.user.range}</Typography>
+                </Grid>
+              }
               <Divider />
               <Grid size={{ md: 6, xs: 12 }}>
                 <FormControlLabel
