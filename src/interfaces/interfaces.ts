@@ -125,6 +125,7 @@ export interface Team {
   captainId: string;
   code: string;
   banner: ImageRefPath;
+  range?: string;
   members: TeamMember[];
 }
 

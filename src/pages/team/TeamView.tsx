@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
-import { Tournament, Team, TeamMember } from "../../interfaces/interfaces";
+import { useNavigate, useParams } from "react-router-dom";
+import { Tournament, Team, TeamMember, RangeUser } from "../../interfaces/interfaces";
 import { getTournamentByFakeId } from "../../utils/authUtils";
 import styles from "../../assets/styles/teamsParticipants.module.css";
 import imageBanner from "../../assets/bannerTeam5.png";
@@ -20,6 +20,7 @@ import { doc, updateDoc } from "firebase/firestore";
 import { auth, db } from "../../utils/firebase-config";
 import Error from "../Error404";
 import DeleteMemberModal from "../../components/teams/DeleteMemberModal";
+import CustomDropdown from "../../components/tournament/tourForm/CustomDropDown";
 
 const TeamView: React.FC = () => {
   const { fakeId, captainId } = useParams<{ fakeId: string; captainId: string }>();
@@ -33,6 +34,10 @@ const TeamView: React.FC = () => {
   const [showModal, setShowModal] = useState(false);
   const [memberToDelete, setMemberToDelete] = useState<string | undefined>(undefined);
   const [deleteLoading, setDeleteLoading] = useState(false);
+  const [selectedRange, setSelectedRange] = useState<RangeUser | null>(null);
+  const [disabledRange, setDisableRange] = useState<boolean>();
+  const navigate = useNavigate();
+
 
   useEffect(() => {
     const fetchTournamentAndTeam = async () => {
@@ -62,6 +67,12 @@ const TeamView: React.FC = () => {
             (member: TeamMember) => member.memberId === user.uid
           );
           setIsMember(!!member);
+
+          if (foundTeam.range !== "") {
+            setSelectedRange(foundTeam.range as RangeUser);
+          }
+          setDisableRange(!member);
+          
         }
 
         setLoading(false);
@@ -77,6 +88,33 @@ const TeamView: React.FC = () => {
   const handleImageLoad = () => {
     setIsImageLoaded(true);
   };
+
+  const handleSaveRange = async () => {
+    if (!selectedRange || !tournament || !team || !tournament.id) return;
+  
+    if (team.range === selectedRange) {
+      toast.info("El rango ya está establecido");
+      return;
+    }
+  
+    try {
+      const tournamentDocRef = doc(db, "tournaments", tournament.id);
+      const updatedTeams = tournament.teams.map((t: Team) =>
+        t.captainId === team.captainId ? { ...t, range: selectedRange } : t
+      );
+  
+      await updateDoc(tournamentDocRef, {
+        teams: updatedTeams,
+      });
+  
+      setTeam((prevTeam) => prevTeam ? { ...prevTeam, range: selectedRange } : null);
+  
+      toast.success("Rango actualizado correctamente");
+    } catch (error) {
+      toast.error("Error al actualizar el rango");
+    }
+  };
+  
 
   const handleCopyCode = () => {
     if (team?.code) {
@@ -176,9 +214,15 @@ const TeamView: React.FC = () => {
   };
   
   
+  // Navigation handlers
+  const handleGoBack = () => {
+    navigate(-1); // Go back to the previous page
+  };
+
+  const handleGoToTeamsSection = () => {
+    navigate("/teams"); // Navigate to the Teams section
+  };
   
-
-
   const handleModalClose = () => {
     setShowModal(false);
   };
@@ -224,6 +268,7 @@ const TeamView: React.FC = () => {
         </div>
 
         <div className={styles.teamInfoDetails}>
+          
           <div className={styles.profileContainer}>
             <TeamImageUpload
               tournamentId={tournament?.id || ""}
@@ -232,7 +277,24 @@ const TeamView: React.FC = () => {
               isAdmin={isAdmin}
               onUpdate={(updatedTeam) => setTeam(updatedTeam)}
             />
+        <div className={styles.navigationButtons}>
+        <button onClick={handleGoBack} className={styles.backButton}>
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="24"
+            height="24"
+            viewBox="0 0 24 24"
+            fill="white"
+          >
+            <path d="M15.41 7L14 5.59 8.59 11 14 16.41 15.41 15 11.83 11.41z" />
+          </svg>
+          <p>
+            back
+            </p>
+      </button>
+        </div>
           </div>
+          
 
           {width >= 600 && isMember && getCodeView}
 
@@ -242,6 +304,21 @@ const TeamView: React.FC = () => {
           >
             {team.name}
           </h1>
+          {(selectedRange != null || isMember ) &&
+            <div className={`${styles.rangeSelection} container`}>
+                <h4>Rango de equipo:</h4>
+                <div className={styles.containerRangeOptions}>
+                  <CustomDropdown
+                    disabled={disabledRange}
+                    selectedRange={selectedRange}
+                    setSelectedRange={setSelectedRange}
+                  />
+                  {isMember &&
+                    <div className={styles.saveRangeTeam} onClick={handleSaveRange}>Cambiar</div>
+                  }
+                </div>
+              </div>
+          }
 
           <div className={`container ${styles.teamViewInfoContainer}`}>
             {width < 600 && isMember && getCodeView}
@@ -306,6 +383,7 @@ const TeamView: React.FC = () => {
         loading={deleteLoading}
         memberId={memberToDelete}
       />
+
       <ToastContainer style={{marginTop: '70px'}}
          position="top-right"
          autoClose={1500}

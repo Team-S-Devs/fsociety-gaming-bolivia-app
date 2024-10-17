@@ -26,15 +26,16 @@ const ranges = [
   { label: RangeUser.MYTHIC_HONORED, image: rango10 },
 ];
 
-// Define props interface
 interface CustomDropdownProps {
   selectedRange: RangeUser | null;
   setSelectedRange: React.Dispatch<React.SetStateAction<RangeUser | null>>;
+  disabled?: boolean;
 }
 
 const CustomDropdown: React.FC<CustomDropdownProps> = ({
   selectedRange,
   setSelectedRange,
+  disabled = false,
 }) => {
   const [isOpen, setIsOpen] = React.useState(false);
 
@@ -47,7 +48,8 @@ const CustomDropdown: React.FC<CustomDropdownProps> = ({
     <div className={styles.dropdownContainer}>
       <div
         className={styles.dropdownSelected}
-        onClick={() => setIsOpen(!isOpen)}
+        onClick={() => !disabled && setIsOpen(!isOpen)}
+        style={{ cursor: disabled ? "default" : "pointer" }}
       >
         {selectedRange ? (
           <div className={styles.dropdownOption}>
@@ -63,7 +65,7 @@ const CustomDropdown: React.FC<CustomDropdownProps> = ({
         )}
       </div>
 
-      {isOpen && (
+      {!disabled && isOpen && (
         <div className={styles.dropdownOptions}>
           {ranges.map((range) => (
             <div

@@ -127,7 +127,7 @@ const TournamentDetails: React.FC = () => {
       },
       {
         id: 3,
-        value: "PARTICIPANTES",
+        value: "EQUIPOS",
         component: <ParticipantsViewSection tournament={tournament} />,
       },
       {
