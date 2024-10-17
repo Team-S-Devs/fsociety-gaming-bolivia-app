@@ -14,7 +14,7 @@ import OverViewSection from "./tournamentView/OverViewSection";
 import { toast, ToastContainer } from "react-toastify";
 import Footer from "../components/Footer";
 import JoinTeamModal from "../components/tournament/tourForm/JoinTeamModal";
-import { auth } from "../utils/firebase-config";
+import { auth, db } from "../utils/firebase-config";
 import Loader from "../components/Loader";
 import ParticipantsViewSection from "./tournamentView/ParticipantsViewSection";
 import AwardsViewSection from "./tournamentView/AwardsViewSection";
@@ -24,6 +24,7 @@ import { Box, Typography, useMediaQuery, useTheme } from "@mui/material";
 import { useUserContext } from "../contexts/UserContext";
 import { WPP_NUMBER } from "../utils/constants";
 import ConfirmationModal from "../components/tournament/tourForm/ConfirmationModal";
+import { arrayRemove, doc, getDoc, updateDoc } from "firebase/firestore";
 
 const TournamentDetails: React.FC = () => {
   const { fakeId } = useParams<{ fakeId: string }>();
@@ -33,6 +34,7 @@ const TournamentDetails: React.FC = () => {
   const [actualPrevView, setActualPrevView] = useState<React.ReactNode | null>(
     null
   );
+  const [loading, setLoading] = useState<boolean>(false);
   const [isImageLoaded, setIsImageLoaded] = useState(false);
   const [userTeam, setUserTeam] = useState<Team | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -125,7 +127,7 @@ const TournamentDetails: React.FC = () => {
       },
       {
         id: 3,
-        value: "PARTICIPANTES",
+        value: "EQUIPOS",
         component: <ParticipantsViewSection tournament={tournament} />,
       },
       {
@@ -175,6 +177,44 @@ const TournamentDetails: React.FC = () => {
       }
     }
   };
+  
+  const leaveNoTeamList = async () => {
+    if (user?.uid && tournament?.id) {
+      setLoading(true);
+      try {
+        const tournamentRef = doc(db, "tournaments", tournament.id);
+        const tournamentDoc = await getDoc(tournamentRef);
+        
+        if (!tournamentDoc.exists()) {
+          toast.error("El torneo no existe.");
+          return;
+        }
+
+        const currentData = tournamentDoc.data();
+        const updatedUsersNoTeam = currentData.usersNoTeam?.filter(
+          (member: any) => member.memberId !== user.uid
+        ) || [];
+        
+        await updateDoc(tournamentRef, {
+          usersNoTeam: updatedUsersNoTeam,
+        });
+
+        toast.success("Has salido de la lista de usuarios sin equipo.");
+        setUserInNoTeam(false);
+        setShowConfirmation(false);
+        setIsModalOpen(false);
+      } catch (error) {
+        console.error("Error al salir de la lista: ", error);
+        toast.error("Hubo un error al salir de la lista.");
+      } finally {
+        setLoading(false);
+      }
+    } else {
+      toast.error("ID de torneo no disponible.");
+    }
+  };
+  
+
 
   const handleShowContactBox = () => {
     setShowConfirmation(true);
@@ -266,7 +306,7 @@ const TournamentDetails: React.FC = () => {
             {isTournamentEnded
               ? "Torneo terminado"
               : userInNoTeam
-              ? "Unido"
+              ? "Registrado"
               : !userTeam
               ? "Unirme al Torneo"
               : "Ver Equipo"}
@@ -291,12 +331,14 @@ const TournamentDetails: React.FC = () => {
       )}
       {showConfirmation && (
         <ConfirmationModal
+        onExit={leaveNoTeamList}
           isOpen={isModalOpen}
           onClose={() => setIsModalOpen(false)}
           onConfirm={handleConfirmation}
           title="Confirmación"
           message="Te uniste a la lista de usuarios sin equipo. El administrador te asignará a un equipo que se adecue a tu rango."
           confirmText="Contactar"
+          loading={loading}
         />
       )}
       <Footer />

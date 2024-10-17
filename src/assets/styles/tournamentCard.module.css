@@ -141,3 +141,21 @@
   height: 20px;
   margin-right: 10px;
 }
+
+.dropdownOptions::-webkit-scrollbar {
+  width: 8px;
+}
+
+.dropdownOptions::-webkit-scrollbar-track {
+  background: #2b2b40;
+}
+
+.dropdownOptions::-webkit-scrollbar-thumb {
+  background-color: #40405a;
+  border-radius: 10px;
+  border: 2px solid #2b2b40;
+}
+
+.dropdownOptions::-webkit-scrollbar-thumb:hover {
+  background-color: #505070;
+}
