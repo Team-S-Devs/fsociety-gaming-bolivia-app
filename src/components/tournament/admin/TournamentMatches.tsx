@@ -607,7 +607,7 @@ const TournamentBrackets: React.FC<TournamentBracketsProps> = ({
         {`${leagueType === "leagueOne" ? "Liga 1" : "Liga 2"}`}
       </Typography>
 
-      {leagueType === "leagueTwo" && rounds.length === 0 && (
+      {leagueType === "leagueTwo" && (
         <TeamSelector
           tournament={tournament}
           onSelectLeagueTwoTeams={(selectedTeamsIds: string[]) => {
@@ -642,7 +642,9 @@ const TournamentBrackets: React.FC<TournamentBracketsProps> = ({
                 <Grid size={{ sm: 4.5, xs: 6 }}>
                   <Autocomplete
                     options={remainingTeams}
-                    getOptionLabel={(option) => option.name}
+                    getOptionLabel={(option) =>
+                      option.name + " - Rango: " + (option.range ?? "Sin rango")
+                    }
                     value={
                       selectedTeamA
                         ? remainingTeams.find(
@@ -666,7 +668,9 @@ const TournamentBrackets: React.FC<TournamentBracketsProps> = ({
                 <Grid size={{ sm: 4.5, xs: 6 }}>
                   <Autocomplete
                     options={remainingTeams}
-                    getOptionLabel={(option) => option.name}
+                    getOptionLabel={(option) =>
+                      option.name + " - Rango: " + (option.range ?? "Sin rango")
+                    }
                     value={
                       selectedTeamB
                         ? remainingTeams.find(

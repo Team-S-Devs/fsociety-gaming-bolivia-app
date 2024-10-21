@@ -1,10 +1,11 @@
 import React, { useState } from "react";
-import { FormControl, Typography, Box, Grid } from "@mui/material";
+import { FormControl, Typography, Box } from "@mui/material";
 import Autocomplete from "@mui/material/Autocomplete";
 import TextField from "@mui/material/TextField";
 import { Tournament } from "../../../interfaces/interfaces";
 import { LoadingButton } from "@mui/lab";
 import styles from "../../../assets/styles/buttons.module.css";
+import Grid from "@mui/material/Grid2";
 
 export interface Rankings {
   firstTeamId: string | "none";
@@ -86,7 +87,7 @@ const RankingSetter: React.FC<RankingSetterProps> = ({
           Establecer Rankings de Equipos
         </Typography>
         <Grid container spacing={2}>
-          <Grid item xs={12} sm={6}>
+          <Grid size={{xs: 12, sm: 6}}>
             <FormControl fullWidth>
               <Autocomplete
                 options={paidTeams}
@@ -105,7 +106,7 @@ const RankingSetter: React.FC<RankingSetterProps> = ({
             </FormControl>
           </Grid>
 
-          <Grid item xs={12} sm={6}>
+          <Grid size={{xs: 12, sm: 6}}>
             <FormControl fullWidth>
               <Autocomplete
                 options={paidTeams}
@@ -124,7 +125,7 @@ const RankingSetter: React.FC<RankingSetterProps> = ({
             </FormControl>
           </Grid>
 
-          <Grid item xs={12} sm={6}>
+          <Grid size={{xs: 12, sm: 6}}>
             <FormControl fullWidth>
               <Autocomplete
                 options={paidTeams}
@@ -143,7 +144,7 @@ const RankingSetter: React.FC<RankingSetterProps> = ({
             </FormControl>
           </Grid>
 
-          <Grid item xs={12} sm={6}>
+          <Grid size={{xs: 12, sm: 6}}>
             <FormControl fullWidth>
               <Autocomplete
                 options={paidTeams}

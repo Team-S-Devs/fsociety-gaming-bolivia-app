@@ -10,6 +10,7 @@ import { Timestamp } from "firebase/firestore";
 import { getEmptyTournament } from "../../../utils/methods";
 import { LoadingButton } from "@mui/lab";
 import styles from "../../../assets/styles/buttons.module.css";
+import FinalSetter from "./FinalSetter";
 
 interface TabPanelProps {
   children?: React.ReactNode;
@@ -243,6 +244,16 @@ const TournamentLeagues: React.FC<TournamentLeaguesProps> = ({
             setMatchesProgram={setMatchesProgram2}
           />
         </CustomTabPanel>
+
+        {
+          !!tournament.teamWinnerId && tournament.teamLeagueTwoWinnerId && (
+            <FinalSetter
+              tournament={tournament}
+              setTournament={setTournament}
+            />
+          )
+        }
+
         <LoadingButton
           type="submit"
           fullWidth

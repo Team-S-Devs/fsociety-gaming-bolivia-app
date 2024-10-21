@@ -124,6 +124,8 @@ export interface Tournament {
     thirdTeamId: string | "none";
     fourthTeamId: string | "none";
   };
+  finalMatch?: Match,
+  finalProgram?: MatchProgramSet,
   paidUsersId: {
     paidAt: Timestamp;
     userId: string;

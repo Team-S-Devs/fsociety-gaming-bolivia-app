@@ -12,11 +12,12 @@ import {
 } from "@mui/material";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import dayjs, { Dayjs } from "dayjs";
-import { Tournament, Team, MatchProgramSet } from "../../interfaces/interfaces";
+import { Tournament, Team, MatchProgramSet } from "../../../interfaces/interfaces";
 import { Timestamp } from "firebase/firestore";
 import { TimePicker } from "@mui/x-date-pickers/TimePicker";
 import { v4 } from "uuid";
 import Grid from "@mui/material/Grid2";
+import TransmisionPreview from "../TransmisionPreview";
 
 interface Props {
   tournament: Tournament;
@@ -322,6 +323,15 @@ const ViewTournamentMatches: React.FC<Props> = ({
             Mostrar siguiente ronda
           </Button>
         )}
+
+        <br />
+        <TransmisionPreview
+          selectedRound={selectedRound}
+          tournament={tournament}
+          roundName={roundKeys[selectedRound]}
+          roundDate={roundDates[selectedRound] ?? new Date()}
+          matchesProgram={matchesProgram}
+        />
       </Box>
     </Container>
   );

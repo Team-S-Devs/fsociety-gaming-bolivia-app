@@ -126,6 +126,11 @@ const TournamentDetails: React.FC = () => {
         component: <MatchesViewSection tournament={tournament} />,
       },
       {
+        id: 5,
+        value: "TRANS. PARTIDAS",
+        component: <MatchesViewSection tournament={tournament} />,
+      },
+      {
         id: 3,
         value: "EQUIPOS",
         component: <ParticipantsViewSection tournament={tournament} />,
@@ -204,7 +209,6 @@ const TournamentDetails: React.FC = () => {
         setShowConfirmation(false);
         setIsModalOpen(false);
       } catch (error) {
-        console.error("Error al salir de la lista: ", error);
         toast.error("Hubo un error al salir de la lista.");
       } finally {
         setLoading(false);

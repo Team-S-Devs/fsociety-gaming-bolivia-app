@@ -1,7 +1,7 @@
 import { Box, Tab, Tabs, Typography } from "@mui/material";
 import React, { useState } from "react";
 import { MatchProgramSet, Tournament } from "../../../interfaces/interfaces";
-import ViewTournamentMatches from "../ViewTournamentMatches";
+import ViewTournamentMatches from "./ViewTournamentMatches";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider/LocalizationProvider";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { getEmptyTournament } from "../../../utils/methods";
