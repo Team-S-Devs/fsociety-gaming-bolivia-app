@@ -12,7 +12,7 @@ export enum TournamentUserType {
 }
 
 export enum RangeUser {
-  WARRIOR = "Guerrerp",
+  WARRIOR = "Guerrero",
   ELITE = "Elite",
   MASTER = "Maestro",
   GRANDMASTER = "Gran Maestro",
@@ -85,7 +85,7 @@ export interface Tournament {
   inscriptionPrice: number | "";
   imagePath: ImageRefPath;
   previewImagePath: ImageRefPath;
-  participants: number | "";
+  participants: number;
   teamLimit: number | "";
   fakeTeamLimit: number | "";
   modality: TournamentModality;

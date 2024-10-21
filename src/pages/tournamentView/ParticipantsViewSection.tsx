@@ -64,8 +64,8 @@ const ParticipantsViewSection: React.FC<ParticipantsViewSectionProps> = ({
         <table className={`${styles.participantsTable} table table-striped`}>
           <thead>
             <tr>
-              <th>Name</th>
-              <th>Members</th>
+              <th>Nombre</th>
+              <th>Miembros</th>
             </tr>
           </thead>
           <tbody>
@@ -84,7 +84,7 @@ const ParticipantsViewSection: React.FC<ParticipantsViewSectionProps> = ({
               ))
             ) : (
               <tr>
-                <td colSpan={2}>Loading teams...</td>
+                <td colSpan={2}>Cargando Equipos...</td>
               </tr>
             )}
           </tbody>
