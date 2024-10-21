@@ -1,12 +1,9 @@
 import { Box, Tab, Tabs, Typography } from "@mui/material";
 import React, { useState } from "react";
-import TournamentMatches from "./TournamentMatches";
-import {
-  Match,
-  MatchProgramSet,
-  Tournament,
-} from "../../../interfaces/interfaces";
-import { Timestamp } from "firebase/firestore";
+import { MatchProgramSet, Tournament } from "../../../interfaces/interfaces";
+import ViewTournamentMatches from "../ViewTournamentMatches";
+import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider/LocalizationProvider";
+import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { getEmptyTournament } from "../../../utils/methods";
 import { LoadingButton } from "@mui/lab";
 import styles from "../../../assets/styles/buttons.module.css";
@@ -40,7 +37,7 @@ function a11yProps(index: number) {
   };
 }
 
-interface TournamentLeaguesProps {
+interface TournamentLeaguesProgramProps {
   tournament: Tournament;
   setTournament: React.Dispatch<React.SetStateAction<Tournament>>;
   error: string | null;
@@ -49,9 +46,8 @@ interface TournamentLeaguesProps {
   submit: (e: React.FormEvent<HTMLFormElement>, t: Tournament) => Promise<void>;
 }
 
-const TournamentLeagues: React.FC<TournamentLeaguesProps> = ({
+const TournamentLeaguesProgram: React.FC<TournamentLeaguesProgramProps> = ({
   tournament,
-  setTournament,
   error,
   success,
   setError,
@@ -59,19 +55,15 @@ const TournamentLeagues: React.FC<TournamentLeaguesProps> = ({
 }) => {
   const [selectedLeague, setSelectedLeague] = useState(0);
 
-  const [rounds1, setRounds1] = useState<Match[][]>([]);
+  const [roundKeys1, setRoundKeys1] = useState<string[]>([]);
   const [matchesProgram1, setMatchesProgram1] = useState<MatchProgramSet[][]>(
     []
   );
-  const [roundDates1, setRoundDates1] = useState<Date[][]>([]);
-  const [roundNames1, setRoundNames1] = useState<string[]>([]);
 
-  const [rounds2, setRounds2] = useState<Match[][]>([]);
+  const [roundKeys2, setRoundKeys2] = useState<string[]>([]);
   const [matchesProgram2, setMatchesProgram2] = useState<MatchProgramSet[][]>(
     []
   );
-  const [roundDates2, setRoundDates2] = useState<Date[][]>([]);
-  const [roundNames2, setRoundNames2] = useState<string[]>([]);
 
   const [loading, setLoading] = useState<boolean>(false);
 
@@ -91,9 +83,16 @@ const TournamentLeagues: React.FC<TournamentLeaguesProps> = ({
   const handleUpdateTournament = async (
     leagueType: "leagueOne" | "leagueTwo"
   ): Promise<Tournament | false> => {
-    const rounds = leagueType === "leagueOne" ? rounds1 : rounds2;
-    const roundNames = leagueType === "leagueOne" ? roundNames1 : roundNames2;
-    const roundDates = leagueType === "leagueOne" ? roundDates1 : roundDates2;
+    const selectedLeague =
+      leagueType === "leagueOne"
+        ? tournament.matches
+        : tournament.matchesLeagueTwo ?? {};
+
+    const rounds = Object.keys(selectedLeague)
+      .sort((a, b) => selectedLeague[b].length - selectedLeague[a].length)
+      .map((key) => selectedLeague[key]);
+
+    const roundNames = leagueType === "leagueOne" ? roundKeys1 : roundKeys2;
     const matchesProgram =
       leagueType === "leagueOne" ? matchesProgram1 : matchesProgram2;
 
@@ -101,12 +100,6 @@ const TournamentLeagues: React.FC<TournamentLeaguesProps> = ({
       alert("No puedes tener dos rondas con el mismo nombre");
       return false;
     }
-    const roundsObj = rounds.reduce((acc, curr, index) => {
-      acc[
-        roundNames[index] != undefined ? roundNames[index] : `Ronda-${index}`
-      ] = curr;
-      return acc;
-    }, {} as Record<string, Match[]>);
 
     let roundProgram: Record<string, MatchProgramSet[]> = {};
 
@@ -117,7 +110,7 @@ const TournamentLeagues: React.FC<TournamentLeaguesProps> = ({
 
         for (let j = 0; j < round.length; j++) {
           matchesProgramTmp.push({
-            dateTime: Timestamp.fromDate(roundDates[i][j]),
+            dateTime: matchesProgram[i][j].dateTime,
             online: matchesProgram[i][j].online ?? false,
           });
         }
@@ -132,7 +125,7 @@ const TournamentLeagues: React.FC<TournamentLeaguesProps> = ({
 
         for (let j = 0; j < round.length; j++) {
           matchesProgramTmp.push({
-            dateTime: Timestamp.fromDate(roundDates[i][j]),
+            dateTime: matchesProgram[i][j].dateTime,
             online: matchesProgram[i][j].online ?? false,
           });
         }
@@ -147,13 +140,11 @@ const TournamentLeagues: React.FC<TournamentLeaguesProps> = ({
     if (leagueType === "leagueOne") {
       tournmt = {
         ...tournament,
-        matches: roundsObj,
         matchesProgram: roundProgram,
       };
     } else {
       tournmt = {
         ...tournament,
-        matchesLeagueTwo: roundsObj,
         matchesLeagueTwoProgram: roundProgram,
       };
     }
@@ -213,36 +204,28 @@ const TournamentLeagues: React.FC<TournamentLeaguesProps> = ({
             <Tab label="Liga 2" {...a11yProps(1)} />
           </Tabs>
         </Box>
-        <CustomTabPanel value={selectedLeague} index={0}>
-          <TournamentMatches
-            tournament={tournament}
-            setTournament={setTournament}
-            leagueType="leagueOne"
-            rounds={rounds1}
-            setRounds={setRounds1}
-            roundDates={roundDates1}
-            setRoundDates={setRoundDates1}
-            roundNames={roundNames1}
-            setRoundNames={setRoundNames1}
-            matchesProgram={matchesProgram1}
-            setMatchesProgram={setMatchesProgram1}
-          />
-        </CustomTabPanel>
-        <CustomTabPanel value={selectedLeague} index={1}>
-          <TournamentMatches
-            tournament={tournament}
-            setTournament={setTournament}
-            leagueType="leagueTwo"
-            rounds={rounds2}
-            setRounds={setRounds2}
-            roundDates={roundDates2}
-            setRoundDates={setRoundDates2}
-            roundNames={roundNames2}
-            setRoundNames={setRoundNames2}
-            matchesProgram={matchesProgram2}
-            setMatchesProgram={setMatchesProgram2}
-          />
-        </CustomTabPanel>
+        <LocalizationProvider dateAdapter={AdapterDayjs}>
+          <CustomTabPanel value={selectedLeague} index={0}>
+            <ViewTournamentMatches
+              tournament={tournament}
+              leagueType="leagueOne"
+              roundKeys={roundKeys1}
+              setRoundKeys={setRoundKeys1}
+              matchesProgram={matchesProgram1}
+              setMatchesProgram={setMatchesProgram1}
+            />
+          </CustomTabPanel>
+          <CustomTabPanel value={selectedLeague} index={1}>
+            <ViewTournamentMatches
+              tournament={tournament}
+              leagueType="leagueTwo"
+              roundKeys={roundKeys2}
+              setRoundKeys={setRoundKeys2}
+              matchesProgram={matchesProgram2}
+              setMatchesProgram={setMatchesProgram2}
+            />
+          </CustomTabPanel>
+        </LocalizationProvider>
         <LoadingButton
           type="submit"
           fullWidth
@@ -260,4 +243,4 @@ const TournamentLeagues: React.FC<TournamentLeaguesProps> = ({
   );
 };
 
-export default TournamentLeagues;
+export default TournamentLeaguesProgram;

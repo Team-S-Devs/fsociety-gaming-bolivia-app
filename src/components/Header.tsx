@@ -22,7 +22,7 @@ const Header: React.FC = () => {
   const { width } = useWindowSize();
   const { user, isAdmin, userInfo } = useUserContext();
   const navigate = useNavigate();
-  const [twitchStatus, setTwitchStatus] = useState<
+  const [twitchStatus, _setTwitchStatus] = useState<
     "loading" | "online" | "offline"
   >("loading");
   const [adminSettings, setAdminSettings] = useState<AdminSettingsInterface>(
@@ -58,7 +58,7 @@ const Header: React.FC = () => {
     setIsOpen(false);
   }, [useWindowSize]);
 
-  useEffect(() => {
+  /* useEffect(() => {
     const getTwitchStatus = async () => {
       const username = "rubius";
       try {
@@ -78,7 +78,7 @@ const Header: React.FC = () => {
     };
 
     getTwitchStatus();
-  }, []);
+  }, []); */
 
   const onClickHeader = () => {
     setIsOpen(!isOpen);

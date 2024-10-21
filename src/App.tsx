@@ -18,14 +18,14 @@ const theme = createTheme({
       main: "#42d546",
     },
     warning: {
-      main: "#f6c23e"
-    }
+      main: "#f6c23e",
+    },
   },
   typography: {
     allVariants: {
       color: "#FFF",
-      wordWrap: 'break-word',       
-      wordBreak: 'break-word',      
+      wordWrap: "break-word",
+      wordBreak: "break-word",
     },
     fontFamily: "Orbitron, sans-serif",
     fontSize: 18,
@@ -114,11 +114,43 @@ const theme = createTheme({
             backgroundColor: "#120438",
           },
           "&.Mui-selected": {
-            backgroundColor: "#15acac", 
+            backgroundColor: "#15acac",
             "&:hover": {
               backgroundColor: "#109797",
             },
           },
+        },
+      },
+    },
+    MuiAutocomplete: {
+      styleOverrides: {
+        root: {
+          backgroundColor: "#1a064f",
+        },
+        paper: {
+          backgroundColor: "#1a064f",
+        },
+        option: {
+          "&:hover": {
+            backgroundColor: "#120438",
+          },
+        },
+
+        clearIndicator: {
+          color: "#FFFFFF",
+          "&:hover": {
+            color: "#FF4081",
+          },
+        },
+        popupIndicator: {
+          color: "#FFFFFF",
+          "&:hover": {
+            color: "#FF4081",
+          },
+        },
+        tag: {
+          color: '#fff', 
+          backgroundColor: 'rgba(255, 255, 255, 0.1)',
         },
       },
     },
@@ -253,7 +285,7 @@ const theme = createTheme({
       styleOverrides: {
         root: {
           backgroundColor: "#3b3e8f",
-          color: "#ffffff", 
+          color: "#ffffff",
           "&:before": {
             display: "none",
           },
@@ -266,8 +298,8 @@ const theme = createTheme({
     MuiAccordionSummary: {
       styleOverrides: {
         root: {
-          backgroundColor: "#3b3e8f", 
-          color: "#ffffff", 
+          backgroundColor: "#3b3e8f",
+          color: "#ffffff",
         },
       },
     },
@@ -275,27 +307,27 @@ const theme = createTheme({
       styleOverrides: {
         root: {
           backgroundColor: "#2c2f6b",
-          color: "#ffffff", 
+          color: "#ffffff",
         },
       },
     },
     MuiTabs: {
       styleOverrides: {
         root: {
-          color: '#ffffff',
+          color: "#ffffff",
         },
       },
     },
     MuiTab: {
       styleOverrides: {
         root: {
-          color: '#ffffff', 
-          '&.Mui-selected': {
-            backgroundColor: '#15acac', 
-            color: '#ffffff', 
+          color: "#ffffff",
+          "&.Mui-selected": {
+            backgroundColor: "#15acac",
+            color: "#ffffff",
           },
-          '&:hover': {
-            backgroundColor: '#15acac', 
+          "&:hover": {
+            backgroundColor: "#15acac",
           },
         },
       },

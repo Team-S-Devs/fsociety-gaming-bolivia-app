@@ -1,16 +1,12 @@
-import React, { ReactNode, useState } from "react";
+import React, { SyntheticEvent, useState } from "react";
 import {
-  MenuItem,
-  Select,
   Typography,
   Box,
-  FormControl,
-  InputLabel,
-  ListItemText,
+  TextField,
   Checkbox,
-  SelectChangeEvent,
+  Autocomplete,
 } from "@mui/material";
-import { Tournament } from "../../../interfaces/interfaces";
+import { Team, Tournament } from "../../../interfaces/interfaces";
 
 interface TeamSelectorProps {
   tournament: Tournament;
@@ -26,12 +22,11 @@ const TeamSelector: React.FC<TeamSelectorProps> = ({
   );
 
   const handleSelectChange = (
-    event: SelectChangeEvent<string[]>,
-    _child: ReactNode
+    _event: SyntheticEvent<Element, Event>,
+    value: Team[]
   ) => {
-    const selectedTeamIds = event.target.value as string[];
-    setSelectedTeams(selectedTeamIds);
-    onSelectLeagueTwoTeams(selectedTeamIds);
+    setSelectedTeams(value.map((teams) => teams.id ?? ""));
+    onSelectLeagueTwoTeams(value.map((teams) => teams.id ?? ""));
   };
 
   const initialTeams = tournament.teams.filter((team) =>
@@ -47,30 +42,24 @@ const TeamSelector: React.FC<TeamSelectorProps> = ({
       <Typography variant="h6">Equipos para la Liga 2</Typography>
 
       <br />
-      <FormControl fullWidth>
-        <InputLabel id="team-selector-label">Equipos</InputLabel>
-        <Select
-          labelId="team-selector-label"
-          multiple
-          value={selectedTeams}
-          onChange={handleSelectChange}
-          renderValue={(selected) =>
-            (selected as string[])
-              .map((teamId) => {
-                const team = initialTeams.find((t) => t.id === teamId);
-                return team ? team.name : "Unknown team";
-              })
-              .join(", ")
-          }
-        >
-          {initialTeams.map((team) => (
-            <MenuItem key={team.id} value={team.id}>
-              <Checkbox checked={selectedTeams.includes(team.id!)} />
-              <ListItemText primary={team.name} />
-            </MenuItem>
-          ))}
-        </Select>
-      </FormControl>
+      <Autocomplete
+        multiple
+        options={initialTeams}
+        getOptionLabel={(option) => option.name}
+        value={initialTeams.filter((team) =>
+          selectedTeams.includes(team.id ?? "")
+        )}
+        onChange={handleSelectChange}
+        renderInput={(params) => (
+          <TextField {...params} label="Equipos" variant="outlined" />
+        )}
+        renderOption={(props, option, { selected }) => (
+          <li {...props}>
+            <Checkbox checked={selected} />
+            {option.name}
+          </li>
+        )}
+      />
 
       <div>
         <br />

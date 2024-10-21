@@ -6,26 +6,25 @@ import {
   Box,
   Container,
   Card,
-  Grid,
   Switch,
   TextField,
   Button,
 } from "@mui/material";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import dayjs, { Dayjs } from "dayjs";
-import {
-  Match,
-  Tournament,
-  Team,
-  MatchProgramSet,
-} from "../../interfaces/interfaces";
+import { Tournament, Team, MatchProgramSet } from "../../interfaces/interfaces";
 import { Timestamp } from "firebase/firestore";
 import { TimePicker } from "@mui/x-date-pickers/TimePicker";
 import { v4 } from "uuid";
+import Grid from "@mui/material/Grid2";
 
 interface Props {
   tournament: Tournament;
   leagueType: "leagueOne" | "leagueTwo";
+  roundKeys: string[];
+  setRoundKeys: React.Dispatch<React.SetStateAction<string[]>>;
+  matchesProgram: MatchProgramSet[][];
+  setMatchesProgram: React.Dispatch<React.SetStateAction<MatchProgramSet[][]>>;
 }
 
 interface MatchProgramDisplayProps {
@@ -63,19 +62,19 @@ const MatchProgramDisplay: React.FC<MatchProgramDisplayProps> = ({
         alignItems="center"
         spacing={2}
       >
-        <Grid item xs={12} md={5}>
+        <Grid size={{ xs: 12, md: 5 }}>
           <Typography variant="body1">
             {matchNumber}. {teamA.name} <strong>vs</strong> {teamB.name}
           </Typography>
         </Grid>
-        <Grid item xs={6} md={3}>
+        <Grid size={{ xs: 6, md: 3 }}>
           <TimePicker
             label="Hora:"
             value={dayjs(matchDate)}
             onChange={handleTimeChange}
           />
         </Grid>
-        <Grid item xs={6} md={2}>
+        <Grid size={{ xs: 6, md: 2 }}>
           <div
             style={{ display: "flex", alignItems: "center", marginBottom: 8 }}
           >
@@ -92,11 +91,16 @@ const MatchProgramDisplay: React.FC<MatchProgramDisplayProps> = ({
   );
 };
 
-const ViewTournamentMatches: React.FC<Props> = ({ tournament, leagueType }) => {
-  const [roundKeys, setRoundKeys] = useState<string[]>([]);
+const ViewTournamentMatches: React.FC<Props> = ({
+  tournament,
+  leagueType,
+  roundKeys,
+  setRoundKeys,
+  matchesProgram,
+  setMatchesProgram,
+}) => {
   const [roundDates, setRoundDates] = useState<Date[]>([]);
   const [selectedRound, setSelectedRound] = useState(0);
-  const [matchesProgram, setMatchesProgram] = useState<MatchProgramSet[][]>([]);
 
   const selectedLeague =
     leagueType === "leagueOne"
@@ -116,7 +120,7 @@ const ViewTournamentMatches: React.FC<Props> = ({ tournament, leagueType }) => {
     const roundNames: string[] = [...roundKeys];
     const generatedProgram = [...matchesProgram];
 
-    const currentRoundsLength = Object.keys(matchesProgram).length;
+    const currentRoundsLength = Object.keys(matchesProgram ?? {}).length;
 
     if (maxMatchesLength > 1) {
       const nextRoundKey = `Ronda ${currentRoundsLength + 1}`;
@@ -138,28 +142,31 @@ const ViewTournamentMatches: React.FC<Props> = ({ tournament, leagueType }) => {
   useEffect(() => {
     const generateMatchesProgram = () => {
       const roundNames: string[] = [];
-      const matchesNamesInProgram = Object.keys(selectedProgram).sort(
+      const matchesNamesInProgram = Object.keys(selectedProgram ?? {}).sort(
         (a, b) => selectedProgram[b].length - selectedProgram[a].length
       );
 
-      const generatedProgram: MatchProgramSet[][] = Object.keys(selectedLeague)
-        .sort((a, b) => selectedLeague[b].length - selectedLeague[a].length)
+      const selectedProcess =
+        Object.keys(selectedLeague) > Object.keys(selectedProgram)
+          ? selectedLeague
+          : selectedProgram;
+
+      const generatedProgram: MatchProgramSet[][] = Object.keys(
+        selectedProcess ?? {}
+      )
+        .sort((a, b) => selectedProcess[b].length - selectedProcess[a].length)
         .map((roundKey) => {
           roundNames.push(roundKey);
-          return tournament.matches[roundKey].map(
-            (_match: Match, idx: number) => {
-              const existingProgram =
-                tournament.matchesProgram?.[roundKey]?.[idx];
+          return selectedProcess[roundKey]?.map((_match, idx: number) => {
+            const existingProgram = selectedProgram?.[roundKey]?.[idx];
 
-              return {
-                dateTime:
-                  existingProgram?.dateTime ||
-                  Timestamp.fromDate(new Date()),
-                online: existingProgram?.online || false,
-                id: existingProgram?.id || "",
-              };
-            }
-          );
+            return {
+              dateTime:
+                existingProgram?.dateTime || Timestamp.fromDate(new Date()),
+              online: existingProgram?.online || false,
+              id: existingProgram?.id || "",
+            };
+          });
         });
 
       setMatchesProgram(generatedProgram);
@@ -171,11 +178,7 @@ const ViewTournamentMatches: React.FC<Props> = ({ tournament, leagueType }) => {
     };
 
     generateMatchesProgram();
-  }, [
-    tournament.matches,
-    tournament.matchesProgram,
-    leagueType,
-  ]);
+  }, [tournament.matches, tournament.matchesProgram, leagueType]);
 
   useEffect(() => {
     setRoundDates(
@@ -294,7 +297,7 @@ const ViewTournamentMatches: React.FC<Props> = ({ tournament, leagueType }) => {
               } as Team);
 
             return (
-              <Grid key={`${selectedRound}-${matchIdx}`} xs={12}>
+              <Grid key={`${selectedRound}-${matchIdx}`} size={{ xs: 12 }}>
                 <MatchProgramDisplay
                   matchProgram={matchProgram}
                   matchNumber={matchNumber}
@@ -310,13 +313,15 @@ const ViewTournamentMatches: React.FC<Props> = ({ tournament, leagueType }) => {
           })}
         </Grid>
 
-        <Button
-          onClick={generateNextRound}
-          color="secondary"
-          variant="outlined"
-        >
-          Mostrar siguiente ronda
-        </Button>
+        {matchesProgram.length > 0 && (
+          <Button
+            onClick={generateNextRound}
+            color="secondary"
+            variant="outlined"
+          >
+            Mostrar siguiente ronda
+          </Button>
+        )}
       </Box>
     </Container>
   );
