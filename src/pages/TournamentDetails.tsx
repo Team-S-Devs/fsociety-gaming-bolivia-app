@@ -24,7 +24,9 @@ import { Box, Typography, useMediaQuery, useTheme } from "@mui/material";
 import { useUserContext } from "../contexts/UserContext";
 import { WPP_NUMBER } from "../utils/constants";
 import ConfirmationModal from "../components/tournament/tourForm/ConfirmationModal";
-import { arrayRemove, doc, getDoc, updateDoc } from "firebase/firestore";
+import { doc, getDoc, updateDoc } from "firebase/firestore";
+import TransmisionViewSection from "./tournamentView/TransmisionViewSection";
+import { getEmptyTournament } from "../utils/methods";
 
 const TournamentDetails: React.FC = () => {
   const { fakeId } = useParams<{ fakeId: string }>();
@@ -126,6 +128,11 @@ const TournamentDetails: React.FC = () => {
         component: <MatchesViewSection tournament={tournament} />,
       },
       {
+        id: 5,
+        value: "TRANS. PARTIDAS",
+        component: <TransmisionViewSection tournament={tournament ?? getEmptyTournament()} />,
+      },
+      {
         id: 3,
         value: "EQUIPOS",
         component: <ParticipantsViewSection tournament={tournament} />,
@@ -204,7 +211,6 @@ const TournamentDetails: React.FC = () => {
         setShowConfirmation(false);
         setIsModalOpen(false);
       } catch (error) {
-        console.error("Error al salir de la lista: ", error);
         toast.error("Hubo un error al salir de la lista.");
       } finally {
         setLoading(false);
@@ -259,7 +265,7 @@ const TournamentDetails: React.FC = () => {
 
       <div className={styles.tournamentInfoDetails}>
         <div className={`${styles.actionsTourDetails} container`}>
-          {userTeam &&
+          {(userTeam || userInNoTeam) &&
             user?.uid &&
             tournament.paidUsersId &&
             !hasUserPaid(user.uid) && (
@@ -357,6 +363,7 @@ const TournamentDetails: React.FC = () => {
       <PaymentStepsDialog
         open={openModalPayment}
         setOpen={setOpenModalPayment}
+        price={tournament.inscriptionPrice}
       />
     </div>
   );

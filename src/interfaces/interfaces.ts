@@ -37,9 +37,18 @@ export interface Banner {
   hidden: boolean;
 }
 
+export interface PaymentQRData {
+  accountNumber: string;
+  accountName: string;
+  bank: string;
+}
+
 export interface AdminSettingsInterface {
   twitchChannel: string;
   paymentQR: ImageRefPath;
+  paymentQRData: PaymentQRData;
+  paymentQRTwo: ImageRefPath;
+  paymentQRDataTwo: PaymentQRData;
 }
 
 export interface UserInterface {
@@ -75,6 +84,12 @@ export interface Match {
   played: boolean;
 }
 
+export interface MatchProgramSet {
+  id?: string;
+  dateTime: Timestamp;
+  online: boolean;
+}
+
 export interface Tournament {
   id?: string;
   fakeId: string;
@@ -92,18 +107,25 @@ export interface Tournament {
   startDate: Timestamp;
   endDate: Timestamp;
   teams: Team[];
-  matches: Record<string, Match[]>;
+  leagueTwoTeamsIds: string[];
+  matches: Record<string, Match[]>; 
+  matchesProgram: Record<string, MatchProgramSet[]>;
+  matchesLeagueTwo: Record<string, Match[]>;
+  matchesLeagueTwoProgram: Record<string, MatchProgramSet[]>;
   usersNoTeam: TeamMember[]; 
   createdAt: Timestamp;
   deleted: boolean;
   active: boolean;
-  teamWinnerId?: string;
+  teamWinnerId?: string; // For league one
+  teamLeagueTwoWinnerId?: string;
   rankings: {
     firstTeamId: string | "none";
     secondTeamId: string | "none";
     thirdTeamId: string | "none";
     fourthTeamId: string | "none";
   };
+  finalMatch?: Match,
+  finalProgram?: MatchProgramSet,
   paidUsersId: {
     paidAt: Timestamp;
     userId: string;
