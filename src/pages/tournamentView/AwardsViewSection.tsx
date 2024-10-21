@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Tournament } from "../../interfaces/interfaces";
-import { FaTrophy } from "react-icons/fa";
+import { AiTwotoneTrophy } from "react-icons/ai";
 import styles from "../../assets/styles/tournamentDetails.module.css";
 import { Link } from "react-router-dom";
 import { PagesNames } from "../../utils/constants";
@@ -68,7 +68,7 @@ const AwardsViewSection: React.FC<AwardsViewSectionProps> = ({ tournament }) => 
                   }`}
                 >
                   <div className={styles.awardIcon}>
-                    <FaTrophy className={styles.trophyIcon} />
+                    <AiTwotoneTrophy className={styles.trophyIcon} />
                   </div>
                   <div className={styles.awardDetails}>
                     <span className={styles.position}>#{index + 1}</span>

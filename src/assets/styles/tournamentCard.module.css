@@ -83,3 +83,79 @@
   border-radius: 6px;
   padding: .3rem;
 }
+
+.tournamentCardContainer {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 1.8rem;
+}
+
+/* Styles dropdown ranges */
+
+.dropdownContainer {
+  position: relative;
+  width: 200px;
+  margin-bottom: 1rem;
+}
+
+.dropdownSelected {
+  background-color: #1e1e2f;
+  padding: 10px;
+  cursor: pointer;
+  border: 1px solid #2b2b40;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  color: #ffffff;
+  max-height: 60px;
+}
+
+.dropdownOptions {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  background-color: #2b2b40; 
+  border: 1px solid #3c3c52;
+  width: 100%;
+  max-height: 300px;
+  overflow-y: auto;
+  z-index: 1000;
+  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.3);
+}
+
+.dropdownOption {
+  padding: 10px;
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  color: #ffffff;
+  transition: background-color 0.2s ease-in-out;
+}
+
+.dropdownOption:hover {
+  background-color: #40405a;
+}
+
+.rangeImage {
+  width: 20px;
+  height: 20px;
+  margin-right: 10px;
+}
+
+.dropdownOptions::-webkit-scrollbar {
+  width: 8px;
+}
+
+.dropdownOptions::-webkit-scrollbar-track {
+  background: #2b2b40;
+}
+
+.dropdownOptions::-webkit-scrollbar-thumb {
+  background-color: #40405a;
+  border-radius: 10px;
+  border: 2px solid #2b2b40;
+}
+
+.dropdownOptions::-webkit-scrollbar-thumb:hover {
+  background-color: #505070;
+}

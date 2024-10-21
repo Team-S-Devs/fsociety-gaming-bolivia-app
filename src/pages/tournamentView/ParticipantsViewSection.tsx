@@ -59,7 +59,7 @@ const ParticipantsViewSection: React.FC<ParticipantsViewSectionProps> = ({
 
   return (
     <div className={styles.participantsSection}>
-      <h2>Teams</h2>
+      <h2>Equipos</h2>
       <div className="table-responsive container mt-3">
         <table className={`${styles.participantsTable} table table-striped`}>
           <thead>

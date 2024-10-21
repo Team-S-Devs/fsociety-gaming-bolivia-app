@@ -56,9 +56,6 @@ const Footer: React.FC = () => {
               <h4>Links</h4>
               <ul>
                 <li>
-                  <i className="ion-ios-arrow-right"></i> <a href="/">Inicio</a>
-                </li>
-                <li>
                   <i className="ion-ios-arrow-right"></i>{" "}
                   <a onClick={scrollToInformation} className={styles.ionRight}>
                     Info
@@ -80,7 +77,7 @@ const Footer: React.FC = () => {
             <Col lg={4} md={6} className={styles.footerContact}>
               <h4>Contáctanos</h4>
               <p>
-                Fsociety Gamming Bolivia <br />
+                Fsociety Gaming Bolivia <br />
                 <strong>Redes: </strong>
               </p>
 

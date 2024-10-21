@@ -208,3 +208,56 @@
   .deleteButtonTeam:hover {
     color: rgb(253, 37, 37);
   }
+
+  .rangeSelection {
+    max-width: 800px;
+  }
+
+  .rangeSelection h4 {
+    font-size: 1rem;
+    color:#0e97af;
+  }
+
+  .containerRangeOptions {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+
+  .saveRangeTeam {
+    background-color:#0e97af;
+    border-radius: 10px;
+    height: 30px;
+    width: 90px;
+    padding-inline: .6rem;
+    font-weight: 600;
+  }
+
+  .navigationButtons {
+    max-width: 800px;
+    width: 100vw;
+    text-align: left;
+    display: flex;
+    flex-direction: row;
+  }
+
+  .backButton {
+    display: flex;
+  }
+
+  .backButton p {
+    padding-top: 2px;
+  }
+
+  .navigationButtons button {
+    text-decoration: none;
+    background: none;
+    border: none;
+    font-size: .8rem;
+  }
+
+  @media (max-width: 306px) {
+    .backButton p {
+      display: none;
+    }
+  }
