@@ -219,10 +219,6 @@ const TeamView: React.FC = () => {
     navigate(-1); // Go back to the previous page
   };
 
-  const handleGoToTeamsSection = () => {
-    navigate("/teams"); // Navigate to the Teams section
-  };
-  
   const handleModalClose = () => {
     setShowModal(false);
   };

@@ -9,8 +9,7 @@ import {
   Button,
   Divider,
   TextField,
-  MenuItem,
-  Select,
+  Autocomplete,
 } from "@mui/material";
 import { Timestamp } from "firebase/firestore";
 import { BiExpand } from "react-icons/bi";
@@ -96,7 +95,7 @@ const TeamsPayment: React.FC<TeamsPaymentProps> = ({
           paidAt: Timestamp.now(),
           userId: player.memberId || "not-paid",
         });
-        updatedTournament.paidUsersJustId.push(player.memberId)
+        updatedTournament.paidUsersJustId.push(player.memberId);
       }
     });
     setTournament(updatedTournament);
@@ -212,11 +211,11 @@ const TeamsPayment: React.FC<TeamsPaymentProps> = ({
               <Grid size={{ md: 6, xs: 12 }}>
                 <Typography>{user.user.phone}</Typography>
               </Grid>
-              {user.user.range &&
+              {user.user.range && (
                 <Grid size={{ md: 6, xs: 12 }}>
-                  <Typography>{user.user.range}</Typography>
+                  <Typography>Rango: {user.user.range}</Typography>
                 </Grid>
-              }
+              )}
               <Divider />
               <Grid size={{ md: 6, xs: 12 }}>
                 <FormControlLabel
@@ -231,25 +230,29 @@ const TeamsPayment: React.FC<TeamsPaymentProps> = ({
                 />
               </Grid>
               <Grid size={{ md: 6, xs: 12 }}>
-                <Select
-                  defaultValue=""
-                  onChange={(e) =>
-                    handleAssignToTeam(
-                      user.memberId ?? "",
-                      e.target.value as string
-                    )
+                <Autocomplete
+                  options={availableTeams}
+                  getOptionLabel={(option) =>
+                    option.name + " - Rango: " + (option.range ?? "Sin rango")
                   }
-                  displayEmpty
-                >
-                  <MenuItem value="">
-                    <em>Asignar a un equipo</em>
-                  </MenuItem>
-                  {availableTeams.map((team) => (
-                    <MenuItem key={team.id} value={team.id}>
-                      {team.name}
-                    </MenuItem>
-                  ))}
-                </Select>
+                  onChange={(_event, newValue) => {
+                    if (newValue?.id) {
+                      handleAssignToTeam(user.memberId ?? "", newValue.id);
+                    }
+                  }}
+                  renderInput={(params) => (
+                    <TextField
+                      {...params}
+                      label="Asignar a un equipo"
+                      variant="outlined"
+                      placeholder="Seleccionar equipo"
+                    />
+                  )}
+                  isOptionEqualToValue={(option, value) =>
+                    option.id === value.id
+                  }
+                  noOptionsText="No hay equipos disponibles"
+                />
               </Grid>
             </Grid>
           </div>
@@ -398,6 +401,13 @@ const TeamsPayment: React.FC<TeamsPaymentProps> = ({
               <Typography>{team.name}</Typography>
             </AccordionSummary>
             <AccordionDetails>
+              {team.range && (
+                <>
+                  <br />
+                  <Typography>Rango: {team.range}</Typography>
+                  <br />
+                </>
+              )}
               {rendermembers(team.id ?? "", team.members, team.captainId)}
             </AccordionDetails>
           </Accordion>

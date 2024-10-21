@@ -94,6 +94,12 @@ const TournamentsList: React.FC = () => {
     setPage((prev) => prev + 1);
   };
 
+  const getTeamLimit = (tournament: Tournament) => {
+    return tournament.fakeTeamLimit == null
+      ? tournament.teamLimit
+      : tournament.fakeTeamLimit;
+  };
+
   return (
     <Box>
       <Box
@@ -161,7 +167,7 @@ const TournamentsList: React.FC = () => {
                           </Grid>
                           <Grid sx={{ sm: 6 }}>
                             <ItemInfoText
-                              text={`${tournament.teamLimit.toString()}v${tournament.teamLimit.toString()}`}
+                              text={`${getTeamLimit(tournament)}v${getTeamLimit(tournament)}`}
                               icon={<FaUsers />}
                             />
                           </Grid>

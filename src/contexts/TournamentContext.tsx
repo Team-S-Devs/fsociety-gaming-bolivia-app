@@ -44,7 +44,11 @@ export const fetchTournaments = async (): Promise<{ currentTournaments: Tourname
       },
       paidUsersId: data.paidUsersId || undefined,
       paidUsersJustId: data.paidUsersJustId || [],
-      registeredUsers: data.registeredUsers || []
+      registeredUsers: data.registeredUsers || [],
+      leagueTwoTeamsIds: data.leagueTwoTeamsIds || [],
+      matchesProgram: data.matchesProgram || {},
+      matchesLeagueTwo: data.matchesLeagueTwo || {},
+      matchesLeagueTwoProgram: data.matchesLeagueTwoProgram || {}
     };
 
     return tournament;
