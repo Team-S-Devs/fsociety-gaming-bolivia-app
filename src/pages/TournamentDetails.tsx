@@ -219,7 +219,7 @@ const TournamentDetails: React.FC = () => {
 
       <div className={styles.tournamentInfoDetails}>
         <div className={`${styles.actionsTourDetails} container`}>
-          {userTeam &&
+          {(userTeam || userInNoTeam) &&
             user?.uid &&
             tournament.paidUsersId &&
             !hasUserPaid(user.uid) && (
@@ -315,6 +315,7 @@ const TournamentDetails: React.FC = () => {
       <PaymentStepsDialog
         open={openModalPayment}
         setOpen={setOpenModalPayment}
+        price={tournament.inscriptionPrice}
       />
     </div>
   );

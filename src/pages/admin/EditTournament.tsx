@@ -25,6 +25,7 @@ import Tab from "@mui/material/Tab";
 import Box from "@mui/material/Box";
 import TeamsPayment from "../../components/tournament/admin/TeamsPayment";
 import TournamentMatches from "../../components/tournament/admin/TournamentMatches";
+import TournamentLeagues from "../../components/tournament/admin/TournamentLeagues";
 
 interface TabPanelProps {
   children?: React.ReactNode;
@@ -81,7 +82,8 @@ const EditTournament: React.FC = () => {
 
         if (!querySnapshot.empty) {
           const tournamentDoc = querySnapshot.docs[0];
-          setTournament(tournamentDoc.data() as Tournament);
+          const tournamentTmp = tournamentDoc.data() as Tournament;
+          setTournament({ id: tournamentDoc.id, ...tournamentTmp });
           setDocId(tournamentDoc.id);
         } else {
           setError("Torneo no encontrado.");
@@ -110,40 +112,44 @@ const EditTournament: React.FC = () => {
     }
   };
 
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (
+    e: React.FormEvent<HTMLFormElement>,
+    tourn: Tournament = getEmptyTournament()
+  ) => {
     e.preventDefault();
     setError(null);
     setSuccess(null);
 
+    const tournamentToUpdate = !!tourn.id ? tourn : tournament;
     if (
-      !tournament ||
-      !tournament.name ||
-      !tournament.startDate ||
-      !tournament.endDate
+      !tournamentToUpdate ||
+      !tournamentToUpdate.name ||
+      !tournamentToUpdate.startDate ||
+      !tournamentToUpdate.endDate
     ) {
       setError("Por favor, rellena todos los campos.");
       return;
     }
 
     try {
-      let imagePath = tournament.imagePath;
-      let previewImagePath = tournament.previewImagePath;
+      let imagePath = tournamentToUpdate.imagePath;
+      let previewImagePath = tournamentToUpdate.previewImagePath;
 
       if (file) {
-        const ref = tournament.imagePath.ref;
+        const ref = tournamentToUpdate.imagePath.ref;
         const url = await handleUploadImage(ref, file);
         imagePath = { url, ref };
       }
 
       if (previewfile) {
-        const ref = tournament.previewImagePath.ref;
+        const ref = tournamentToUpdate.previewImagePath.ref;
         const url = await handleUploadImage(ref, previewfile);
         previewImagePath = { url, ref };
       }
 
       if (docId) {
         await updateDoc(doc(db, CollectionNames.Tournaments, docId), {
-          ...tournament,
+          ...tournamentToUpdate,
           imagePath,
           previewImagePath,
           updatedAt: Timestamp.now(),
@@ -222,6 +228,16 @@ const EditTournament: React.FC = () => {
                 />
               </CustomTabPanel>
               <CustomTabPanel value={value} index={2}>
+                <TournamentLeagues
+                  tournament={tournament}
+                  setTournament={setTournament}
+                  success={success}
+                  error={error}
+                  setError={setError}
+                  submit={handleSubmit}
+                />
+              </CustomTabPanel>
+              <CustomTabPanel value={value} index={3}>
                 <TournamentMatches
                   tournament={tournament}
                   setTournament={setTournament}
@@ -229,6 +245,7 @@ const EditTournament: React.FC = () => {
                   error={error}
                   setError={setError}
                   submit={handleSubmit}
+                  leagueType="leagueTwo"
                 />
               </CustomTabPanel>
             </>

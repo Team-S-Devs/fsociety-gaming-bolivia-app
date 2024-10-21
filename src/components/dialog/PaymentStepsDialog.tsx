@@ -13,21 +13,131 @@ import {
   CircularProgress,
 } from "@mui/material";
 import { FaWhatsapp } from "react-icons/fa";
-import { AdminSettingsInterface } from "../../interfaces/interfaces";
-import { getEmptyAdminSettings } from "../../utils/methods";
+import {
+  AdminSettingsInterface,
+  PaymentQRData,
+} from "../../interfaces/interfaces";
+import { getEmptyAdminSettings, getEmptyPayment } from "../../utils/methods";
 import { doc, getDoc } from "firebase/firestore";
 import { db } from "../../utils/firebase-config";
 import { CollectionNames } from "../../utils/collectionNames";
 import { WPP_NUMBER } from "../../utils/constants";
+import Grid from "@mui/material/Grid2";
+import Slider from "react-slick";
 
 interface PaymentStepsDialogInterface {
   open: boolean;
   setOpen: React.Dispatch<React.SetStateAction<boolean>>;
+  price: number | "";
 }
+
+interface PaymentQRDisplayProps {
+  data: PaymentQRData;
+  price: number | "";
+}
+
+const PaymentQRDisplay: React.FC<PaymentQRDisplayProps> = ({ data, price }) => {
+  return (
+    <Grid
+      container
+      justifyContent="center"
+      alignItems="center"
+      sx={{ marginTop: 4 }}
+    >
+      <Grid size={{ xs: 12 }}>
+        <Typography variant="body1">
+          <strong>Número de cuenta:</strong> {data?.accountNumber ?? ""}
+        </Typography>
+      </Grid>
+
+      <Grid size={{ xs: 12 }}>
+        <Typography variant="body1">
+          <strong>Pagar a:</strong> {data?.accountName ?? ""}
+        </Typography>
+      </Grid>
+
+      <Grid size={{ xs: 12 }}>
+        <Typography variant="body1">
+          <strong>Banco:</strong> {data?.bank ?? ""}
+        </Typography>
+      </Grid>
+      <Grid size={{ xs: 12 }}>
+        <Typography variant="body1">
+          <strong>Monto a pagar:</strong> Bs. {price}
+        </Typography>
+      </Grid>
+    </Grid>
+  );
+};
+
+interface QRSliderProps {
+  adminSettings: AdminSettingsInterface;
+  price: number | "";
+}
+
+const QRSlider: React.FC<QRSliderProps> = ({ adminSettings, price }) => {
+  const sliderSettings = {
+    dots: true,
+    infinite: true,
+    speed: 500,
+    slidesToShow: 1,
+    slidesToScroll: 1,
+    autoplay: false,
+  };
+
+  return (
+    <Slider {...sliderSettings}>
+      <Box
+        sx={{
+          textAlign: "center",
+          my: 2,
+        }}
+      >
+        <div
+          style={{
+            display: "flex",
+            flexDirection: "row",
+            justifyContent: "center",
+            alignItems: "center",
+          }}
+        >
+          <img
+            src={adminSettings.paymentQR.url}
+            alt="QR Code 1"
+            style={{ height: "400px" }}
+          />
+        </div>
+        <PaymentQRDisplay data={adminSettings.paymentQRData} price={price} />
+      </Box>
+
+      <Box sx={{ textAlign: "center", my: 2 }}>
+        <div
+          style={{
+            display: "flex",
+            flexDirection: "row",
+            justifyContent: "center",
+            alignItems: "center",
+          }}
+        >
+          <img
+            src={adminSettings.paymentQRTwo?.url ?? ""}
+            alt="QR Code 2"
+            style={{ height: "400px" }}
+          />
+        </div>
+        <PaymentQRDisplay
+          data={adminSettings.paymentQRDataTwo ?? getEmptyPayment()}
+          price={price}
+        />
+      </Box>
+    </Slider>
+  );
+};
 
 const PaymentStepsDialog: React.FC<PaymentStepsDialogInterface> = ({
   open,
   setOpen,
+  price,
 }) => {
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<boolean>(false);
@@ -72,7 +182,9 @@ const PaymentStepsDialog: React.FC<PaymentStepsDialogInterface> = ({
           <Stepper activeStep={-1} orientation="vertical">
             <Step>
               <StepLabel>
-                <Typography variant="body1">Paga el siguiente QR</Typography>
+                <Typography variant="body1">
+                  Paga a uno de los siguientes QR
+                </Typography>
               </StepLabel>
               {loading ? (
                 <div style={{ display: "flex", justifyContent: "center" }}>
@@ -84,13 +196,9 @@ const PaymentStepsDialog: React.FC<PaymentStepsDialogInterface> = ({
                   favor.
                 </Typography>
               ) : (
-                <Box sx={{ textAlign: "center", my: 2 }}>
-                  <img
-                    src={adminSettings.paymentQR.url}
-                    alt="QR Code"
-                    style={{ width: "200px", height: "200px" }}
-                  />
-                </Box>
+                <div style={{ paddingLeft: 24, paddingRight: 24 }}>
+                  <QRSlider adminSettings={adminSettings} price={price} />
+                </div>
               )}
             </Step>
 

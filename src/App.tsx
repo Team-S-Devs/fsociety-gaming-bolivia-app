@@ -108,7 +108,17 @@ const theme = createTheme({
     MuiMenuItem: {
       styleOverrides: {
         root: {
-          color: "#000",
+          color: "#fff",
+          background: "#1a064f",
+          "&:hover": {
+            backgroundColor: "#120438",
+          },
+          "&.Mui-selected": {
+            backgroundColor: "#15acac", 
+            "&:hover": {
+              backgroundColor: "#109797",
+            },
+          },
         },
       },
     },

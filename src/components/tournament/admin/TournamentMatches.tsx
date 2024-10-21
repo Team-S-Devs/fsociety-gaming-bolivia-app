@@ -6,6 +6,9 @@ import {
   MenuItem,
   Paper,
   TextField,
+  Divider,
+  Tabs,
+  Tab,
 } from "@mui/material";
 import { v4 as uuidv4 } from "uuid";
 import {
@@ -16,10 +19,26 @@ import {
   IRoundProps as RoundProps,
 } from "react-brackets";
 import Grid from "@mui/material/Grid2";
-import { Match, Team, Tournament } from "../../../interfaces/interfaces";
+import {
+  Match,
+  MatchProgramSet,
+  Team,
+  Tournament,
+} from "../../../interfaces/interfaces";
 import { LoadingButton } from "@mui/lab";
 import styles from "../../../assets/styles/buttons.module.css";
-import { calculateRoundsNumber } from "../../../utils/methods";
+import {
+  calculateRoundsNumber,
+  getEmptyTournament,
+} from "../../../utils/methods";
+import { Timestamp } from "firebase/firestore";
+import dayjs, { Dayjs } from "dayjs";
+import { DatePicker } from "@mui/x-date-pickers/DatePicker";
+import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider/LocalizationProvider";
+import { TimePicker } from "@mui/x-date-pickers/TimePicker";
+import CustomNumberInput from "../../inputs/CustomNumberInput";
+import TeamSelector from "./TeamsSelector";
 
 interface TournamentBracketsProps {
   tournament: Tournament;
@@ -27,12 +46,13 @@ interface TournamentBracketsProps {
   error: string | null;
   success: string | null;
   setError: React.Dispatch<React.SetStateAction<string | null>>;
-  submit: (e: React.FormEvent<HTMLFormElement>) => Promise<void>;
+  submit: (e: React.FormEvent<HTMLFormElement>, t: Tournament) => Promise<void>;
+  leagueType: "leagueOne" | "leagueTwo";
 }
 
 const noTeam: Team = {
   id: "no-team",
-  name: "SIn equipo",
+  name: "SIN EQUIPO",
   captainId: "",
   code: "",
   banner: {
@@ -49,24 +69,87 @@ const TournamentBrackets: React.FC<TournamentBracketsProps> = ({
   success,
   setError,
   submit,
+  leagueType = "leagueOne",
 }) => {
-  const matches = Object.keys(tournament.matches)
-    .sort()
-    .map((key) => tournament.matches[key]);
-  const [rounds, setRounds] = useState<Match[][]>(matches);
-  const initialTeams = tournament.teams.filter((team) =>
+  const selectedLeague =
+    leagueType === "leagueOne"
+      ? tournament.matches
+      : tournament.matchesLeagueTwo ?? {};
+
+  const selectedProgram =
+    leagueType === "leagueOne"
+      ? tournament.matchesProgram
+      : tournament.matchesLeagueTwoProgram ?? {};
+
+  const paidTeams = tournament.teams.filter((team) =>
     team.members.every((player) =>
       tournament.paidUsersId.some(
         (paidUser) => paidUser.userId === player.memberId
       )
     )
   );
+
+  const initialTeams =
+    leagueType === "leagueOne"
+      ? paidTeams
+      : tournament.teams.filter((team) =>
+          tournament.leagueTwoTeamsIds?.includes(team.id!)
+        );
+
+  const [rounds, setRounds] = useState<Match[][]>([]);
+
+  const [matchesProgram, setMatchesProgram] = useState<MatchProgramSet[][]>([]);
+  const [roundDates, setRoundDates] = useState<Date[][]>([]);
+  const [roundNames, setRoundNames] = useState<string[]>([]);
+
   const [remainingTeams, setRemainingTeams] = useState<Team[]>([]);
   const [selectedTeamA, setSelectedTeamA] = useState<string>("");
   const [selectedTeamB, setSelectedTeamB] = useState<string>("");
-  const [loading, setLoading] = React.useState<boolean>(false);
+  const [loading, setLoading] = useState<boolean>(false);
+
+  const [selectedRound, setSelectedRound] = useState(0);
+
+  useEffect(() => {}, []);
 
   useEffect(() => {
+    const matchesNamesInProgram = Object.keys(selectedProgram).sort(
+      (a, b) => selectedProgram[b].length - selectedProgram[a].length
+    );
+
+    const matchesNames = Object.keys(selectedLeague).sort(
+      (a, b) => selectedLeague[b].length - selectedLeague[a].length
+    );
+
+    setRoundNames(
+      matchesNames.length > matchesNamesInProgram.length
+        ? matchesNames
+        : matchesNamesInProgram
+    );
+  }, [tournament]);
+
+  useEffect(() => {
+    const matches = Object.keys(selectedLeague)
+      .sort((a, b) => selectedLeague[b].length - selectedLeague[a].length)
+      .map((key) => selectedLeague[key]);
+
+    const generatedProgram: MatchProgramSet[][] = Object.keys(selectedLeague)
+      .sort((a, b) => selectedLeague[b].length - selectedLeague[a].length)
+      .map((roundKey) => {
+        roundNames.push(roundKey);
+        return selectedLeague[roundKey].map((_match: Match, idx: number) => {
+          const existingProgram = selectedProgram?.[roundKey]?.[idx];
+
+          return {
+            dateTime:
+              existingProgram?.dateTime || Timestamp.fromDate(new Date()),
+            online: existingProgram?.online || false,
+            id: existingProgram?.id || "",
+          };
+        });
+      });
+    setRounds(matches);
+    setMatchesProgram(generatedProgram);
+
     if (matches.length === 0) setRemainingTeams(initialTeams);
     else {
       const teams = matches[matches.length - 1]
@@ -74,7 +157,15 @@ const TournamentBrackets: React.FC<TournamentBracketsProps> = ({
         .flat();
       setRemainingTeams(initialTeams.filter((team) => !teams.includes(team)));
     }
-  }, [tournament.matches]);
+  }, [tournament.matches, tournament.matchesLeagueTwo]);
+
+  useEffect(() => {
+    setRoundDates(
+      matchesProgram.map((round) => {
+        return round.map((program) => program.dateTime.toDate() || new Date());
+      })
+    );
+  }, [matchesProgram]);
 
   const addManualMatch = () => {
     if (selectedTeamA && selectedTeamB && selectedTeamA !== selectedTeamB) {
@@ -144,19 +235,85 @@ const TournamentBrackets: React.FC<TournamentBracketsProps> = ({
     }
   };
 
+  function hasDuplicates(arr: string[]) {
+    const seen = new Set();
+
+    for (const item of arr) {
+      if (seen.has(item)) {
+        return true;
+      }
+      seen.add(item);
+    }
+
+    return false;
+  }
+
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    if (hasDuplicates(roundNames)) {
+      alert("No puedes tener dos rondas con el mismo nombre");
+      return;
+    }
     const roundsObj = rounds.reduce((acc, curr, index) => {
-      acc[`round${index}`] = curr;
+      acc[
+        roundNames[index] != undefined ? roundNames[index] : `Ronda-${index}`
+      ] = curr;
       return acc;
     }, {} as Record<string, Match[]>);
 
-    setTournament((prev) => ({ ...prev, matches: roundsObj }));
+    let roundProgram: Record<string, MatchProgramSet[]> = {};
 
+    if (rounds.length > matchesProgram.length) {
+      for (let i = 0; i < rounds.length; i++) {
+        const round = rounds[i];
+        const matchesProgramTmp: MatchProgramSet[] = [];
+
+        for (let j = 0; j < round.length; j++) {
+          matchesProgramTmp.push({
+            dateTime: Timestamp.fromDate(roundDates[i][j]),
+            online: matchesProgram[i][j].online ?? false,
+          });
+        }
+        roundProgram[
+          roundNames[i] != undefined ? roundNames[i] : `Ronda-${i}`
+        ] = matchesProgramTmp;
+      }
+    } else {
+      for (let i = 0; i < matchesProgram.length; i++) {
+        const round = matchesProgram[i];
+        const matchesProgramTmp: MatchProgramSet[] = [];
+
+        for (let j = 0; j < round.length; j++) {
+          matchesProgramTmp.push({
+            dateTime: Timestamp.fromDate(roundDates[i][j]),
+            online: matchesProgram[i][j].online ?? false,
+          });
+        }
+        roundProgram[
+          roundNames[i] != undefined ? roundNames[i] : `Ronda-${i}`
+        ] = matchesProgramTmp;
+      }
+    }
+
+    let tournmt = getEmptyTournament();
+
+    if (leagueType === "leagueOne") {
+      tournmt = {
+        ...tournament,
+        matches: roundsObj,
+        matchesProgram: roundProgram,
+      };
+    } else {
+      tournmt = {
+        ...tournament,
+        matchesLeagueTwo: roundsObj,
+        matchesLeagueTwoProgram: roundProgram,
+      };
+    }
     setLoading(true);
     setError(null);
     try {
-      await submit(e);
+      await submit(e, tournmt);
     } catch (error) {
       setError("Error al enviar el formulario. Inténtalo de nuevo.");
     }
@@ -198,7 +355,8 @@ const TournamentBrackets: React.FC<TournamentBracketsProps> = ({
     scoreType: "scoreA" | "scoreB",
     score: string
   ) => {
-    const updatedRounds = [...rounds];
+    let updatedRounds = [...rounds];
+    const updatedNames = [...roundNames];
     const currentRound = updatedRounds[roundIndex];
 
     const updatedMatch = currentRound.find((match) => match.id === matchId);
@@ -216,9 +374,12 @@ const TournamentBrackets: React.FC<TournamentBracketsProps> = ({
           updatedRounds[roundIndex + 1].length > 0
         ) {
           updatedRounds[roundIndex + 1] = nextRound;
+          // updatedRounds = generateNewMatches(roundIndex + 1)
           updatedRounds.splice(roundIndex + 2);
+          updatedNames.splice(roundIndex + 1);
         } else if (nextRound.length > 0) {
           updatedRounds.push(nextRound);
+          updatedNames.push(`Ronda ${updatedRounds.length}`);
         }
       }
 
@@ -227,25 +388,63 @@ const TournamentBrackets: React.FC<TournamentBracketsProps> = ({
         currentRound.length === 1 &&
         updatedMatch.played
       ) {
-        setTournament((prev) => ({
-          ...prev,
-          teamWinnerId:
-            updatedMatch.scoreA > updatedMatch.scoreB
-              ? currentRound[0].teamA.id ?? ""
-              : currentRound[0].teamB.id ?? "",
-        }));
+        if (leagueType === "leagueOne")
+          setTournament((prev) => ({
+            ...prev,
+            teamWinnerId:
+              updatedMatch.scoreA > updatedMatch.scoreB
+                ? currentRound[0].teamA.id ?? ""
+                : currentRound[0].teamB.id ?? "",
+          }));
+        else
+          setTournament((prev) => ({
+            ...prev,
+            teamLeagueTwoWinnerId:
+              updatedMatch.scoreA > updatedMatch.scoreB
+                ? currentRound[0].teamA.id ?? ""
+                : currentRound[0].teamB.id ?? "",
+          }));
       }
 
       setRounds(updatedRounds);
+      setRoundNames(updatedNames);
     }
   };
 
-  const renderMatch = (match: Match, roundIndex: number) => {
-    const isPlayed = match.scoreA !== "" && match.scoreB !== "";
+  const renderMatch = (
+    match: Match,
+    roundIndex: number,
+    matchIndex: number
+  ) => {
+    const handleMatchTimeChange = (time: Dayjs | null) => {
+      if (time) {
+        const timeObj = time.toDate();
+
+        const updatedRounds = [...rounds];
+
+        if (matchIndex != -1) {
+          const roundDatesTmp = [...roundDates];
+          const currentDate = roundDatesTmp[roundIndex][matchIndex];
+
+          const newDate = new Date(
+            currentDate.getFullYear(),
+            currentDate.getMonth(),
+            currentDate.getDate(),
+            timeObj.getHours(),
+            timeObj.getMinutes(),
+            timeObj.getSeconds()
+          );
+
+          roundDatesTmp[roundIndex][matchIndex] = newDate;
+          setRoundDates(roundDatesTmp);
+        }
+        setRounds(updatedRounds);
+      }
+    };
 
     return (
       <Paper
-        key={match.id}
+        key={match.id + roundIndex.toString() + uuidv4()}
         sx={{ padding: 2, marginBottom: 2, background: "#3b3e8f" }}
       >
         <Grid container alignItems="center">
@@ -267,37 +466,52 @@ const TournamentBrackets: React.FC<TournamentBracketsProps> = ({
         >
           <Grid size={{ xs: 5 }}>
             <Typography>{match.teamA.name} Puntaje:</Typography>
-            <TextField
-              type="text"
-              value={match.scoreA}
-              onChange={(e) => {
-                if (isNaN(Number(e.target.value))) return;
-                setScore(match.id, roundIndex, "scoreA", e.target.value);
+            <CustomNumberInput
+              aria-label=""
+              placeholder=""
+              value={Number(match.scoreA)}
+              onChange={(e, val) => {
+                e.preventDefault();
+                setScore(
+                  match.id,
+                  roundIndex,
+                  "scoreA",
+                  val?.toString() ?? "0"
+                );
               }}
             />
           </Grid>
           <Grid size={{ xs: 5 }}>
             <Typography>{match.teamB.name} Puntaje:</Typography>
-            <TextField
-              type="text"
-              value={match.scoreB}
-              onChange={(e) => {
-                if (isNaN(Number(e.target.value))) return;
-                setScore(match.id, roundIndex, "scoreB", e.target.value);
+            <CustomNumberInput
+              aria-label=""
+              placeholder=""
+              value={Number(match.scoreB)}
+              onChange={(e, val) => {
+                e.preventDefault();
+                setScore(
+                  match.id,
+                  roundIndex,
+                  "scoreB",
+                  val?.toString() ?? "0"
+                );
               }}
             />
           </Grid>
+          <Grid size={{ xs: 10 }}>
+            <br />
+            <TimePicker
+              label="Hora"
+              value={dayjs(
+                roundDates[roundIndex]
+                  ? roundDates[roundIndex][matchIndex] ?? new Date()
+                  : new Date()
+              )}
+              onChange={handleMatchTimeChange}
+            />
+            <br />
+          </Grid>
         </Grid>
-
-        {!isPlayed ? (
-          <Typography align="center" sx={{ marginTop: 2 }}>
-            Aún no se ha jugado
-          </Typography>
-        ) : (
-          <Typography align="center" sx={{ marginTop: 2 }}>
-            Partida jugada
-          </Typography>
-        )}
       </Paper>
     );
   };
@@ -307,16 +521,73 @@ const TournamentBrackets: React.FC<TournamentBracketsProps> = ({
       return <Typography>No hay enfrentamientos creados aún.</Typography>;
     }
 
-    return rounds.map((round, roundIndex) => (
-      <div key={`round-${roundIndex}`}>
-        <Typography variant="h6" sx={{ marginBottom: 2 }}>
-          {roundIndex + 1 === calculateRoundsNumber(initialTeams.length)
-            ? "Final"
-            : `Ronda ${roundIndex + 1}`}
-        </Typography>
-        {round.map((match) => renderMatch(match, roundIndex))}
+    const handleMatchDateChange = (date: Dayjs | null) => {
+      if (date) {
+        const dateObj = date.toDate();
+
+        const updatedRounds = [...rounds];
+        const currentRound = updatedRounds[selectedRound];
+        const roundDatesTmp = [...roundDates];
+
+        for (let index = 0; index < currentRound.length; index++) {
+          const currDate = roundDatesTmp[selectedRound][index] ?? new Date();
+
+          const newDate = new Date(
+            dateObj.getFullYear(),
+            dateObj.getMonth(),
+            dateObj.getDate(),
+            currDate.getHours(),
+            currDate.getMinutes()
+          );
+
+          roundDatesTmp[selectedRound][index] = newDate;
+          setRoundDates(roundDatesTmp);
+        }
+
+        setRounds([...updatedRounds]);
+      }
+    };
+
+    return (
+      <div
+        key={`round-${selectedRound}`}
+        style={{ marginBottom: 16, marginTop: 40 }}
+      >
+        <Divider />
+        <div style={{ marginBottom: 12 }}>
+          <TextField
+            label="Nombre de ronda"
+            type="text"
+            placeholder="Eg: Cuartos de final"
+            value={
+              roundNames[selectedRound] != undefined
+                ? roundNames[selectedRound]
+                : `Ronda ${selectedRound + 1}`
+            }
+            onChange={(e) => {
+              const roundsNamesC = [...roundNames];
+              roundsNamesC[selectedRound] = e.target.value;
+              setRoundNames(roundsNamesC);
+            }}
+          />
+
+          <DatePicker
+            label="Fecha"
+            value={dayjs(
+              matchesProgram[selectedRound]
+                ? matchesProgram[selectedRound][0].dateTime.toDate() ??
+                    new Date()
+                : new Date()
+            )}
+            onChange={handleMatchDateChange}
+          />
+        </div>
+
+        {rounds[selectedRound].map((match, index) =>
+          renderMatch(match, selectedRound, index)
+        )}
       </div>
-    ));
+    );
   };
 
   const renderCustomSeed = ({
@@ -347,6 +618,7 @@ const TournamentBrackets: React.FC<TournamentBracketsProps> = ({
     return (
       <Seed mobileBreakpoint={breakpoint} style={{ fontSize: 16 }}>
         <SeedItem>
+          <Typography variant="body2">{seed.date}</Typography>
           <SeedTeam
             style={
               isTeamAWinner
@@ -383,7 +655,10 @@ const TournamentBrackets: React.FC<TournamentBracketsProps> = ({
     }
 
     const bracketRounds: RoundProps[] = rounds.map((round, roundIndex) => ({
-      title: round.length === 1 ? "FINAL" : `Ronda ${roundIndex + 1}`,
+      title:
+        roundNames[roundIndex] != undefined
+          ? roundNames[roundIndex]
+          : `Ronda ${roundIndex + 1}`,
       seeds: round.map((match) => ({
         id: match.id,
         teams: [
@@ -424,107 +699,136 @@ const TournamentBrackets: React.FC<TournamentBracketsProps> = ({
         </Typography>
       )}
 
-      <form onSubmit={handleSubmit}>
-        {rounds.length === 0 && (
-          <Button
-            variant="contained"
-            color="primary"
-            onClick={() => setRounds([[]])}
-            sx={{ marginBottom: 2 }}
-          >
-            Iniciar Primera Ronda
-          </Button>
-        )}
+      {leagueType === "leagueTwo" && rounds.length === 0 && (
+        <TeamSelector
+          tournament={tournament}
+          onSelectLeagueTwoTeams={(selectedTeamsIds: string[]) => {
+            setTournament((prev) => ({
+              ...prev,
+              leagueTwoTeamsIds: selectedTeamsIds,
+            }));
+          }}
+        />
+      )}
 
-        {rounds.length > 0 && remainingTeams.length > 1 && (
-          <div>
-            <Typography variant="h6" sx={{ marginBottom: 2 }}>
-              Añadir Enfrentamiento en Ronda {rounds.length}
-            </Typography>
-
-            <Grid container spacing={1} sx={{ marginBottom: 2 }}>
-              <Grid size={{ sm: 4.5, xs: 6 }}>
-                <Select
-                  fullWidth
-                  value={selectedTeamA}
-                  onChange={(e) => setSelectedTeamA(e.target.value)}
-                  displayEmpty
-                >
-                  <MenuItem value="">Seleccionar Equipo A</MenuItem>
-                  {remainingTeams.map((team) => (
-                    <MenuItem key={team.id} value={team.id}>
-                      {team.name}
-                    </MenuItem>
-                  ))}
-                  <MenuItem key={"no-team"} value={"no-team"}>
-                    Sin equipo
-                  </MenuItem>
-                </Select>
-              </Grid>
-
-              <Grid size={{ sm: 4.5, xs: 6 }}>
-                <Select
-                  fullWidth
-                  value={selectedTeamB}
-                  onChange={(e) => setSelectedTeamB(e.target.value)}
-                  displayEmpty
-                >
-                  <MenuItem value="">Seleccionar Equipo B</MenuItem>
-                  {remainingTeams.map((team) => (
-                    <MenuItem key={team.id} value={team.id}>
-                      {team.name}
-                    </MenuItem>
-                  ))}
-                  <MenuItem key={"no-team"} value={"no-team"}>
-                    Sin equipo
-                  </MenuItem>
-                </Select>
-              </Grid>
-
-              <Grid size={{ sm: 3, xs: 12 }}>
-                <Button
-                  variant="contained"
-                  color="secondary"
-                  onClick={addManualMatch}
-                  disabled={!selectedTeamA || !selectedTeamB}
-                >
-                  Añadir
-                </Button>
-              </Grid>
-            </Grid>
-
+      <LocalizationProvider dateAdapter={AdapterDayjs}>
+        <form onSubmit={handleSubmit}>
+          {rounds.length === 0 && (
             <Button
               variant="contained"
-              color="secondary"
-              onClick={generateRandomMatch}
-              disabled={remainingTeams.length < 2}
+              color="primary"
+              onClick={() => setRounds([[]])}
+              sx={{ marginBottom: 2 }}
             >
-              Generar Enfrentamiento Aleatorio
+              Iniciar Primera Ronda
             </Button>
-          </div>
-        )}
+          )}
 
-        <br />
+          {rounds.length > 0 && remainingTeams.length > 1 && (
+            <div>
+              <Typography variant="h6" sx={{ marginBottom: 2 }}>
+                Añadir Enfrentamiento en Ronda {roundNames[rounds.length - 1]}
+              </Typography>
 
-        <div>{renderRounds()}</div>
+              <Grid container spacing={1} sx={{ marginBottom: 2 }}>
+                <Grid size={{ sm: 4.5, xs: 6 }}>
+                  <Select
+                    fullWidth
+                    value={selectedTeamA}
+                    onChange={(e) => setSelectedTeamA(e.target.value)}
+                    displayEmpty
+                  >
+                    <MenuItem value="">Seleccionar Equipo A</MenuItem>
+                    {remainingTeams.map((team) => (
+                      <MenuItem key={team.id} value={team.id}>
+                        {team.name}
+                      </MenuItem>
+                    ))}
+                    <MenuItem key={"no-team"} value={"no-team"}>
+                      Sin equipo
+                    </MenuItem>
+                  </Select>
+                </Grid>
 
-        <br />
+                <Grid size={{ sm: 4.5, xs: 6 }}>
+                  <Select
+                    fullWidth
+                    value={selectedTeamB}
+                    onChange={(e) => setSelectedTeamB(e.target.value)}
+                    displayEmpty
+                  >
+                    <MenuItem value="">Seleccionar Equipo B</MenuItem>
+                    {remainingTeams.map((team) => (
+                      <MenuItem key={team.id} value={team.id}>
+                        {team.name}
+                      </MenuItem>
+                    ))}
+                    <MenuItem key={"no-team"} value={"no-team"}>
+                      Sin equipo
+                    </MenuItem>
+                  </Select>
+                </Grid>
 
-        <div>{renderRoundsBrackets()}</div>
+                <Grid size={{ sm: 3, xs: 12 }}>
+                  <Button
+                    variant="contained"
+                    color="secondary"
+                    onClick={addManualMatch}
+                    disabled={!selectedTeamA || !selectedTeamB}
+                  >
+                    Añadir
+                  </Button>
+                </Grid>
+              </Grid>
 
-        <LoadingButton
-          type="submit"
-          fullWidth
-          variant="contained"
-          color="primary"
-          disabled={loading}
-          loading={loading}
-          className={styles.continueButton}
-          style={{ marginTop: 24 }}
-        >
-          Guardar
-        </LoadingButton>
-      </form>
+              <Button
+                variant="contained"
+                color="secondary"
+                onClick={generateRandomMatch}
+                disabled={remainingTeams.length < 2}
+              >
+                Generar Enfrentamiento Aleatorio
+              </Button>
+            </div>
+          )}
+
+          <br />
+
+          <Tabs
+            value={selectedRound}
+            onChange={(_event, newValue) => setSelectedRound(newValue)}
+            aria-label="match rounds"
+            variant="scrollable"
+          >
+            {roundNames.map((roundKey, index) => (
+              <Tab key={index} label={roundKey} />
+            ))}
+          </Tabs>
+
+          <br />
+
+          <div>{renderRounds()}</div>
+
+          <br />
+
+          <div>{renderRoundsBrackets()}</div>
+
+          <br />
+
+          <LoadingButton
+            type="submit"
+            fullWidth
+            variant="contained"
+            color="primary"
+            disabled={loading}
+            loading={loading}
+            className={styles.continueButton}
+            style={{ marginTop: 24 }}
+          >
+            Guardar
+          </LoadingButton>
+        </form>
+      </LocalizationProvider>
     </div>
   );
 };
