@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { FormControl, Typography, Box } from "@mui/material";
 import Autocomplete from "@mui/material/Autocomplete";
 import TextField from "@mui/material/TextField";
@@ -44,6 +44,10 @@ const RankingSetter: React.FC<RankingSetterProps> = ({
     fourthTeamId: "none",
   });
   const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    setRankings(tournament.rankings)
+  }, [tournament])
 
   const handleRankingChange =
     (position: keyof Rankings) => (value: string | null) => {

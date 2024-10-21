@@ -25,6 +25,8 @@ import { useUserContext } from "../contexts/UserContext";
 import { WPP_NUMBER } from "../utils/constants";
 import ConfirmationModal from "../components/tournament/tourForm/ConfirmationModal";
 import { doc, getDoc, updateDoc } from "firebase/firestore";
+import TransmisionViewSection from "./tournamentView/TransmisionViewSection";
+import { getEmptyTournament } from "../utils/methods";
 
 const TournamentDetails: React.FC = () => {
   const { fakeId } = useParams<{ fakeId: string }>();
@@ -128,7 +130,7 @@ const TournamentDetails: React.FC = () => {
       {
         id: 5,
         value: "TRANS. PARTIDAS",
-        component: <MatchesViewSection tournament={tournament} />,
+        component: <TransmisionViewSection tournament={tournament ?? getEmptyTournament()} />,
       },
       {
         id: 3,
