@@ -167,7 +167,7 @@ const TeamView: React.FC = () => {
   
         await updateDoc(tournamentDocRef, {
           teams: updatedTeams,
-          participants : (tournament.participants || 0) -1
+          participants : tournament.participants - 1
         });
   
         setTeam({
@@ -200,7 +200,6 @@ const TeamView: React.FC = () => {
       return;
     }
 
-    console.log(user.uid);
     setMemberToDelete(user.uid);
   
     try {
@@ -214,9 +213,8 @@ const TeamView: React.FC = () => {
   };
   
   
-  // Navigation handlers
   const handleGoBack = () => {
-    navigate(-1); // Go back to the previous page
+    navigate(-1);
   };
 
   const handleModalClose = () => {
@@ -235,7 +233,7 @@ const TeamView: React.FC = () => {
     <div
       className={`${styles.codeAction} container ${styles.teamCodeContainer}`}
     >
-      <h4>Code:</h4>
+      <h4>Código:</h4>
       <div
         className={styles.teamCodeFigure}
         onClick={handleCopyCode}
@@ -285,7 +283,7 @@ const TeamView: React.FC = () => {
             <path d="M15.41 7L14 5.59 8.59 11 14 16.41 15.41 15 11.83 11.41z" />
           </svg>
           <p>
-            back
+            volver
             </p>
       </button>
         </div>
@@ -327,8 +325,8 @@ const TeamView: React.FC = () => {
                 <thead>
                   <tr>
                     <th>Nickname</th>
-                    <th>Role</th>
-                    {(user?.uid === captainId || isAdmin) && <th>Edit</th>}
+                    <th>Rol</th>
+                    {(user?.uid === captainId || isAdmin) && <th>Editar</th>}
                   </tr>
                 </thead>
                 <tbody>
