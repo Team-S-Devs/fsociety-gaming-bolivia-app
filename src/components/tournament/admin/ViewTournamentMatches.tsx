@@ -226,7 +226,7 @@ const ViewTournamentMatches: React.FC<Props> = ({
   };
 
   return (
-    <Container>
+    <div>
       <Typography variant="h5" gutterBottom>
         Transmisión de partidas
       </Typography>
@@ -325,6 +325,7 @@ const ViewTournamentMatches: React.FC<Props> = ({
         )}
 
         <br />
+      </Box>
         <TransmisionPreview
           selectedRound={selectedRound}
           tournament={tournament}
@@ -332,8 +333,7 @@ const ViewTournamentMatches: React.FC<Props> = ({
           roundDate={roundDates[selectedRound] ?? new Date()}
           matchesProgram={matchesProgram}
         />
-      </Box>
-    </Container>
+    </div>
   );
 };
 
