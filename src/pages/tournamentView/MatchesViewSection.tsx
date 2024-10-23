@@ -35,7 +35,7 @@ const MatchesViewSection: React.FC<MatchesViewSectionProps> = ({
       );
 
       const selectedProcess =
-        Object.keys(selectedLeague) > Object.keys(selectedProgram)
+        Object.keys(selectedLeague).length > Object.keys(selectedProgram).length
           ? selectedLeague
           : selectedProgram;
 
@@ -54,7 +54,7 @@ const MatchesViewSection: React.FC<MatchesViewSectionProps> = ({
   }, [tournament?.matches, tournament?.matchesProgram, leagueType]);
 
   useEffect(() => {
-    if (tournament?.finalMatch && tournament?.finalProgram) setLeagueType(3);
+    if (tournament?.finalMatch && tournament?.finalProgram) setLeagueType(2);
   }, [tournament?.finalMatch, tournament?.finalProgram]);
 
   useEffect(() => {
@@ -66,6 +66,7 @@ const MatchesViewSection: React.FC<MatchesViewSectionProps> = ({
         )
         .map((key) => tournament.matches[key])
     );
+
     setRounds2(
       Object.keys(tournament.matchesLeagueTwo)
         .sort(
@@ -191,7 +192,7 @@ const MatchesViewSection: React.FC<MatchesViewSectionProps> = ({
     }
 
     return baseCategories;
-  }, [tournament]);
+  }, [tournament, rounds, rounds2]);
 
   return (
     <div>
@@ -202,7 +203,7 @@ const MatchesViewSection: React.FC<MatchesViewSectionProps> = ({
             categoryNum={leagueType}
             setCategoryNum={setLeagueType}
           />
-          {leagueCategories[leagueType].component}
+          {leagueCategories[leagueType]?.component ?? <></>}
         </div>
       )}
     </div>

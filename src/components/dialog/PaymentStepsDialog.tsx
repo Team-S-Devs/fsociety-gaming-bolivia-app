@@ -45,24 +45,24 @@ const PaymentQRDisplay: React.FC<PaymentQRDisplayProps> = ({ data, price }) => {
       sx={{ marginTop: 4 }}
     >
       <Grid size={{ xs: 12 }}>
-        <Typography variant="body1">
+        <Typography variant="body2">
           <strong>Número de cuenta:</strong> {data?.accountNumber ?? ""}
         </Typography>
       </Grid>
 
       <Grid size={{ xs: 12 }}>
-        <Typography variant="body1">
+        <Typography variant="body2">
           <strong>Pagar a:</strong> {data?.accountName ?? ""}
         </Typography>
       </Grid>
 
       <Grid size={{ xs: 12 }}>
-        <Typography variant="body1">
+        <Typography variant="body2">
           <strong>Banco:</strong> {data?.bank ?? ""}
         </Typography>
       </Grid>
       <Grid size={{ xs: 12 }}>
-        <Typography variant="body1">
+        <Typography variant="body2">
           <strong>Monto a pagar:</strong> Bs. {price}
         </Typography>
       </Grid>

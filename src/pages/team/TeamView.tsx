@@ -200,7 +200,6 @@ const TeamView: React.FC = () => {
       return;
     }
 
-    console.log(user.uid);
     setMemberToDelete(user.uid);
   
     try {
@@ -214,9 +213,8 @@ const TeamView: React.FC = () => {
   };
   
   
-  // Navigation handlers
   const handleGoBack = () => {
-    navigate(-1); // Go back to the previous page
+    navigate(-1); 
   };
 
   const handleModalClose = () => {

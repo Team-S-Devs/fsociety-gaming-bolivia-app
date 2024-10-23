@@ -9,6 +9,7 @@ interface Props {
   roundDate: Date;
   roundName: string;
   selectedRound: number;
+  isFinal?: boolean;
 }
 
 interface MatchProgramDisplayProps {
@@ -72,6 +73,7 @@ const TransmisionPreview: React.FC<Props> = ({
   roundDate,
   roundName,
   selectedRound,
+  isFinal = false,
 }) => {
   const matchPrograms = matchesProgram[selectedRound];
 
@@ -105,19 +107,21 @@ const TransmisionPreview: React.FC<Props> = ({
           {matchPrograms?.map((matchProgram, matchIdx) => {
             const matchNumber =
               calculateStartingMatchNumber(selectedRound) + matchIdx;
-            const match = tournament.matches[roundName]?.[matchIdx];
+            const match = isFinal
+              ? tournament.finalMatch
+              : tournament.matches[roundName]?.[matchIdx];
 
             const teamA =
               match?.teamA ||
               ({
-                name: `Ganador Partida ${
+                name: isFinal ? "Ganador Liga 1" : `Ganador Partida ${
                   matchNumber - matchPrograms.length * 2 + matchIdx
                 }`,
               } as Team);
             const teamB =
               match?.teamB ||
               ({
-                name: `Ganador Partida ${
+                name: isFinal ? "Ganador Liga 2" : `Ganador Partida ${
                   matchNumber - matchPrograms.length * 2 + matchIdx + 1
                 }`,
               } as Team);

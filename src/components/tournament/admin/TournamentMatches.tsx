@@ -83,12 +83,14 @@ const TournamentBrackets: React.FC<TournamentBracketsProps> = ({
       ? tournament.matchesProgram
       : tournament.matchesLeagueTwoProgram ?? {};
 
-  const paidTeams = tournament.teams.filter((team) =>
-    team.members.every((player) =>
-      tournament.paidUsersId.some(
-        (paidUser) => paidUser.userId === player.memberId
+  const paidTeams = tournament.teams.filter(
+    (team) =>
+      !team.deleted &&
+      team.members.every((player) =>
+        tournament.paidUsersId.some(
+          (paidUser) => paidUser.userId === player.memberId
+        )
       )
-    )
   );
 
   const initialTeams =
@@ -126,7 +128,7 @@ const TournamentBrackets: React.FC<TournamentBracketsProps> = ({
       .map((key) => selectedLeague[key]);
 
     const selectedProcess =
-      Object.keys(selectedLeague) > Object.keys(selectedProgram)
+      Object.keys(selectedLeague).length > Object.keys(selectedProgram).length
         ? selectedLeague
         : selectedProgram;
 
@@ -391,12 +393,7 @@ const TournamentBrackets: React.FC<TournamentBracketsProps> = ({
               value={Number(match.scoreA)}
               onChange={(e, val) => {
                 e.preventDefault();
-                setScore(
-                  match.id,
-                  roundIndex,
-                  "scoreA",
-                  val?.toString() ?? "0"
-                );
+                setScore(match.id, roundIndex, "scoreA", val?.toString() ?? "");
               }}
             />
           </Grid>
@@ -408,12 +405,7 @@ const TournamentBrackets: React.FC<TournamentBracketsProps> = ({
               value={Number(match.scoreB)}
               onChange={(e, val) => {
                 e.preventDefault();
-                setScore(
-                  match.id,
-                  roundIndex,
-                  "scoreB",
-                  val?.toString() ?? "0"
-                );
+                setScore(match.id, roundIndex, "scoreB", val?.toString() ?? "");
               }}
             />
           </Grid>

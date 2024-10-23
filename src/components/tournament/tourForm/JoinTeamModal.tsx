@@ -30,6 +30,7 @@ interface JoinTeamModalProps {
   closeModal: () => void;
   setUserNoTeam: Dispatch<SetStateAction<boolean>>;
   setUserTeam: Dispatch<SetStateAction<Team | null>>;
+  view?: "default" | "createTeam" | "joinTeam" | "enterWithoutTeam";
 }
 
 const JoinTeamModal: React.FC<JoinTeamModalProps> = ({
@@ -38,10 +39,11 @@ const JoinTeamModal: React.FC<JoinTeamModalProps> = ({
   closeModal,
   setUserTeam,
   setUserNoTeam,
+  view = "default",
 }) => {
   const [modalView, setModalView] = useState<
     "default" | "createTeam" | "joinTeam" | "enterWithoutTeam"
-  >("default");
+  >(view);
   const [teamName, setTeamName] = useState("");
   const [teamCode, setTeamCode] = useState("");
   const [inputTeamCode, setInputTeamCode] = useState("");
@@ -299,7 +301,7 @@ const JoinTeamModal: React.FC<JoinTeamModalProps> = ({
 
   const closeHandler = () => {
     closeModal();
-    setModalView("default");
+    setModalView(view);
     setTeamCode("");
     setTeamName("");
     setInputTeamCode("");
@@ -396,7 +398,10 @@ const JoinTeamModal: React.FC<JoinTeamModalProps> = ({
       {modalView === "enterWithoutTeam" && (
         <div className={styles.modalForm}>
           <h3 className={styles.modalTitle}>Entrar sin equipo</h3>
-          <CustomDropdown selectedRange={selectedRange} setSelectedRange={setSelectedRange} />
+          <CustomDropdown
+            selectedRange={selectedRange}
+            setSelectedRange={setSelectedRange}
+          />
 
           {error && <p style={{ color: "red" }}>{error}</p>}
 

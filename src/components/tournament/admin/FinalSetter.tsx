@@ -59,6 +59,12 @@ const FinalSetter: React.FC<FinalSetterProps> = ({
       const tournamentTmp = { ...tournament };
       if (tournamentTmp.finalProgram)
         tournamentTmp.finalProgram.dateTime = Timestamp.fromDate(dateObj);
+      else
+        tournamentTmp.finalProgram = {
+          dateTime: Timestamp.fromDate(dateObj),
+          online: true,
+        };
+      setTournament(tournamentTmp);
     }
   };
 

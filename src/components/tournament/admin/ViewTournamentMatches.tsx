@@ -148,7 +148,7 @@ const ViewTournamentMatches: React.FC<Props> = ({
       );
 
       const selectedProcess =
-        Object.keys(selectedLeague) > Object.keys(selectedProgram)
+        Object.keys(selectedLeague).length > Object.keys(selectedProgram).length
           ? selectedLeague
           : selectedProgram;
 

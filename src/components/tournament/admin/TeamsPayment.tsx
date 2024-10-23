@@ -10,6 +10,7 @@ import {
   Divider,
   TextField,
   Autocomplete,
+  IconButton,
 } from "@mui/material";
 import { Timestamp } from "firebase/firestore";
 import { BiExpand } from "react-icons/bi";
@@ -18,6 +19,8 @@ import Grid from "@mui/material/Grid2";
 import { LoadingButton } from "@mui/lab";
 import styles from "../../../assets/styles/buttons.module.css";
 import { timestampToDate } from "../../../utils/methods";
+import { MdDelete, MdSettingsBackupRestore } from "react-icons/md";
+import JoinTeamModal from "../tourForm/JoinTeamModal";
 
 interface TeamsPaymentProps {
   tournament: Tournament;
@@ -87,17 +90,19 @@ const TeamsPayment: React.FC<TeamsPaymentProps> = ({
     setTournament({ ...updatedTournament });
   };
 
-  const handleMarkAllAsPaid = (teamIndex: number) => {
+  const handleMarkAllAsPaid = (teamId: string) => {
     const updatedTournament = { ...tournament };
-    tournament.teams[teamIndex].members.forEach((player) => {
-      if (!hasUserPaid(player.memberId || "")) {
-        updatedTournament.paidUsersId.push({
-          paidAt: Timestamp.now(),
-          userId: player.memberId || "not-paid",
-        });
-        updatedTournament.paidUsersJustId.push(player.memberId);
-      }
-    });
+    const team = updatedTournament.teams.find((t) => t.id === teamId);
+    if (team)
+      team.members.forEach((player) => {
+        if (!hasUserPaid(player.memberId || "")) {
+          updatedTournament.paidUsersId.push({
+            paidAt: Timestamp.now(),
+            userId: player.memberId || "not-paid",
+          });
+          updatedTournament.paidUsersJustId.push(player.memberId);
+        }
+      });
     setTournament(updatedTournament);
   };
 
@@ -110,6 +115,9 @@ const TeamsPayment: React.FC<TeamsPaymentProps> = ({
         (user) => user.memberId === userId
       );
       if (player) {
+        if (team.members.length === 0) {
+          team.captainId = player.memberId;
+        }
         team.members.push(player);
         updatedTournament.usersNoTeam = updatedTournament.usersNoTeam.filter(
           (user) => user.memberId !== userId
@@ -128,10 +136,6 @@ const TeamsPayment: React.FC<TeamsPaymentProps> = ({
       )
     );
   }
-
-  const availableTeams = tournament.teams.filter(
-    (team) => team.members.length < Number(tournament.teamLimit)
-  );
 
   const filterTeamsSearch = (teams: Team[]) => {
     const filteredTeams = teams.filter(
@@ -156,20 +160,35 @@ const TeamsPayment: React.FC<TeamsPaymentProps> = ({
     const team = updatedTournament.teams.find((team) => team.id === teamId);
 
     if (team) {
-      // Filtrar al jugador del equipo
-      team.members = team.members.filter((member) => member.user.id !== userId);
-
-      // Añadir al jugador a la lista de "sin equipo"
       const removedPlayer = tournament.teams
         .flatMap((team) => team.members)
-        .find((player) => player.user.id === userId);
+        .find((player) => player.memberId === userId);
+
+      team.members = team.members.filter(
+        (member) => member.memberId !== userId
+      );
 
       if (removedPlayer) {
+        if (team.captainId === removedPlayer.memberId) {
+          team.captainId =
+            team.members.length > 0 ? team.members[0].memberId : "";
+        }
         updatedTournament.usersNoTeam.push(removedPlayer);
       }
 
       setTournament(updatedTournament);
     }
+  };
+
+  const availableTeams = tournament.teams.filter(
+    (team) => team.members.length < Number(tournament.teamLimit)
+  );
+
+  const handleToggleRemoveTeam = (teamId: string) => {
+    const updatedTournament = { ...tournament };
+    const team = updatedTournament.teams.find((t) => t.id === teamId);
+    if (team) team.deleted = !team.deleted;
+    setTournament(updatedTournament);
   };
 
   const renderUsersNoTeam = () => (
@@ -351,6 +370,8 @@ const TeamsPayment: React.FC<TeamsPaymentProps> = ({
     </>
   );
 
+  const [showCreateTeamModal, setShowCreateTeamModal] = useState(false);
+
   return (
     <div>
       {error && (
@@ -364,6 +385,35 @@ const TeamsPayment: React.FC<TeamsPaymentProps> = ({
           {success}
         </Typography>
       )}
+
+      <Button
+        className={styles.continueButton}
+        onClick={() => setShowCreateTeamModal(true)}
+      >
+        Crear equipo
+      </Button>
+
+      <br />
+      <br />
+
+      <div style={{ maxHeight: window.screenY }}>
+        <JoinTeamModal
+          view="createTeam"
+          tournament={tournament}
+          isModalOpen={showCreateTeamModal}
+          closeModal={() => setShowCreateTeamModal(false)}
+          setUserNoTeam={function (
+            _value: React.SetStateAction<boolean>
+          ): void {
+            throw new Error("Function not implemented.");
+          }}
+          setUserTeam={function (
+            _value: React.SetStateAction<Team | null>
+          ): void {
+            throw new Error("Function not implemented.");
+          }}
+        />
+      </div>
 
       <form onSubmit={handleSubmit}>
         <TextField
@@ -389,7 +439,9 @@ const TeamsPayment: React.FC<TeamsPaymentProps> = ({
         </Typography>
         <Divider sx={{ marginBottom: 2 }} />
         {filterTeamsSearch(
-          tournament.teams.filter((team) => allTeamMembersPaid(team))
+          tournament.teams.filter(
+            (team) => !team.deleted && allTeamMembersPaid(team)
+          )
         ).map((team, teamIndex) => (
           <Accordion
             key={team.name + teamIndex}
@@ -398,7 +450,18 @@ const TeamsPayment: React.FC<TeamsPaymentProps> = ({
             onChange={handleChangePaid(team.id ?? "false")}
           >
             <AccordionSummary expandIcon={<BiExpand />}>
-              <Typography>{team.name}</Typography>
+              <Grid container justifyContent={"center"} alignItems={"center"}>
+                <Grid size={{ xs: 8 }}>
+                  <Typography>{team.name}</Typography>
+                </Grid>
+                <Grid size={{ xs: 4 }}>
+                  <IconButton
+                    onClick={() => handleToggleRemoveTeam(team.id ?? "")}
+                  >
+                    <MdDelete color="#f48894" />
+                  </IconButton>
+                </Grid>
+              </Grid>
             </AccordionSummary>
             <AccordionDetails>
               {team.range && (
@@ -420,7 +483,9 @@ const TeamsPayment: React.FC<TeamsPaymentProps> = ({
         </Typography>
         <Divider sx={{ marginBottom: 2 }} />
         {filterTeamsSearch(
-          tournament.teams.filter((team) => !allTeamMembersPaid(team))
+          tournament.teams.filter(
+            (team) => !team.deleted && !allTeamMembersPaid(team)
+          )
         ).map((team, teamIndex) => (
           <Accordion
             key={team.name + teamIndex}
@@ -429,14 +494,25 @@ const TeamsPayment: React.FC<TeamsPaymentProps> = ({
             onChange={handleChangeNotPaid(team.id ?? "false")}
           >
             <AccordionSummary expandIcon={<BiExpand />}>
-              <Typography>{team.name}</Typography>
+              <Grid container justifyContent={"center"} alignItems={"center"}>
+                <Grid size={{ xs: 8 }}>
+                  <Typography>{team.name}</Typography>
+                </Grid>
+                <Grid size={{ xs: 4 }}>
+                  <IconButton
+                    onClick={() => handleToggleRemoveTeam(team.id ?? "")}
+                  >
+                    <MdDelete color="#f48894" />
+                  </IconButton>
+                </Grid>
+              </Grid>
             </AccordionSummary>
             <AccordionDetails>
               {rendermembers(team.id ?? "", team.members, team.captainId)}
               <Button
                 variant="contained"
                 color="secondary"
-                onClick={() => handleMarkAllAsPaid(teamIndex)}
+                onClick={() => handleMarkAllAsPaid(team.id ?? "")}
                 sx={{ marginTop: 2 }}
               >
                 Marcar a todos como pagados
@@ -446,6 +522,30 @@ const TeamsPayment: React.FC<TeamsPaymentProps> = ({
         ))}
 
         {renderUsersNoTeam()}
+
+        <Typography variant="h6" sx={{ marginTop: 4 }}>
+          Equipos eliminados
+        </Typography>
+        <Divider sx={{ marginBottom: 2 }} />
+
+        {tournament.teams
+          .filter((team) => team.deleted)
+          .map((team) => (
+            <AccordionSummary>
+              <Grid container justifyContent={"center"} alignItems={"center"}>
+                <Grid size={{ xs: 8 }}>
+                  <Typography>{team.name}</Typography>
+                </Grid>
+                <Grid size={{ xs: 4 }}>
+                  <IconButton
+                    onClick={() => handleToggleRemoveTeam(team.id ?? "")}
+                  >
+                    <MdSettingsBackupRestore color="#bef488" />
+                  </IconButton>
+                </Grid>
+              </Grid>
+            </AccordionSummary>
+          ))}
 
         <LoadingButton
           type="submit"
