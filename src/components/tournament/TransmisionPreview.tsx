@@ -1,7 +1,7 @@
 import React from "react";
-import { Typography, Box, Container, Card } from "@mui/material";
+import { Typography, Box } from "@mui/material";
 import { Tournament, Team, MatchProgramSet } from "../../interfaces/interfaces";
-import Grid from "@mui/material/Grid2";
+import styles from "../../assets/styles/transmisionPreview.module.css";
 
 interface Props {
   tournament: Tournament;
@@ -14,7 +14,7 @@ interface Props {
 
 interface MatchProgramDisplayProps {
   matchProgram: MatchProgramSet;
-  matchNumber: number;
+  matchNumber: number | string;
   teamA: Team;
   teamB: Team;
 }
@@ -36,34 +36,18 @@ const MatchProgramDisplay: React.FC<MatchProgramDisplayProps> = ({
   }
 
   return (
-    <Card elevation={3} style={{ padding: "10px", marginBottom: "10px" }}>
-      <Grid
-        container
-        justifyContent="space-between"
-        alignItems="center"
-        spacing={2}
-      >
-        <Grid size={{ xs: 12, md: 5 }}>
-          <Typography variant="body1">
-            {matchNumber}. {teamA.name} <strong>vs</strong> {teamB.name}
-          </Typography>
-        </Grid>
-        <Grid size={{ xs: 6, md: 3 }}>
-          <Typography>
-            {matchProgram.dateTime ? formatTime(matchDate) : "TBD"}
-          </Typography>
-        </Grid>
-        <Grid size={{ xs: 6, md: 2 }}>
-          <div
-            style={{ display: "flex", alignItems: "center", marginBottom: 8 }}
-          >
-            <Typography>
-              {matchProgram.online ? "TRANS." : "OFFLINE"}
-            </Typography>
-          </div>
-        </Grid>
-      </Grid>
-    </Card>
+    <tr className={styles.matchRow}>
+      <td className={styles.matchCell}>{matchNumber}</td>
+      <td className={`${styles.matchCell} ${styles.teamCell}`}>
+        {teamA.name} <strong>vs</strong> {teamB.name}
+      </td>
+      <td className={styles.matchCell}>{formatTime(matchDate)}</td>
+      <td className={styles.matchCell}>
+        <Typography className={styles.matchStatus}>
+          {matchProgram.online ? "TRANS." : "OFFLINE"}
+        </Typography>
+      </td>
+    </tr>
   );
 };
 
@@ -94,20 +78,26 @@ const TransmisionPreview: React.FC<Props> = ({
   }
 
   return (
-    <Container style={{ textTransform: "uppercase" }}>
-      <br />
-      <Box sx={{ padding: "20px" }}>
-        <Typography variant="h6">
+    <div className={styles.principalContainer}>
+      <Box className={styles.boxContainer}>
+        <Typography variant="h6" className={styles.roundTitle}>
           {roundName} : {formatDate(roundDate)}
         </Typography>
 
-        <br />
-
-        <Grid container spacing={2} direction="column">
-          {matchPrograms?.map((matchProgram, matchIdx) => {
-            const matchNumber =
-              calculateStartingMatchNumber(selectedRound) + matchIdx;
-            const match = isFinal
+        <table className={styles.matchesTable}>
+          <thead>
+            <tr>
+              <th className={styles.tableHeader}>{isFinal ? "" : "N°"}</th>
+              <th className={styles.tableHeader}>Equipos</th>
+              <th className={styles.tableHeader}>Hora</th>
+              <th className={styles.tableHeader}>Estado</th>
+            </tr>
+          </thead>
+          <tbody>
+            {matchPrograms?.map((matchProgram, matchIdx) => {
+              const matchNumber =
+                calculateStartingMatchNumber(selectedRound) + matchIdx;
+              const match = isFinal
               ? tournament.finalMatch
               : tournament.matches[roundName]?.[matchIdx];
 
@@ -126,20 +116,20 @@ const TransmisionPreview: React.FC<Props> = ({
                 }`,
               } as Team);
 
-            return (
-              <Grid key={`${selectedRound}-${matchIdx}`} size={{ xs: 12 }}>
+              return (
                 <MatchProgramDisplay
+                  key={`${selectedRound}-${matchIdx}`}
                   matchProgram={matchProgram}
-                  matchNumber={matchNumber}
+                  matchNumber={isFinal ? "FINAL" : matchNumber}
                   teamA={teamA}
                   teamB={teamB}
                 />
-              </Grid>
-            );
-          })}
-        </Grid>
+              );
+            })}
+          </tbody>
+        </table>
       </Box>
-    </Container>
+    </div>
   );
 };
 

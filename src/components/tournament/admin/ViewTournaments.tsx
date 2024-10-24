@@ -3,7 +3,7 @@ import { DocumentSnapshot } from "firebase/firestore";
 import TournamentsTable from "./TournamentsTable";
 import { Tournament } from "../../../interfaces/interfaces";
 import {
-  getNumPages,
+  getNumPagesTournaments,
   getPaginatedTournaments,
 } from "../../../utils/firebaseMethods";
 import Loader from "../../Loader";
@@ -13,7 +13,6 @@ import { BiPlus } from "react-icons/bi";
 import { useNavigate } from "react-router-dom";
 import { PagesNames } from "../../../utils/constants";
 import styles from "../../../assets/styles/buttons.module.css";
-import { CollectionNames } from "../../../utils/collectionNames";
 
 const ViewTournaments: React.FC = () => {
   const numPerPage = 10;
@@ -38,7 +37,7 @@ const ViewTournaments: React.FC = () => {
   const isSmallScreen = useMediaQuery(theme.breakpoints.down("sm"));
 
   useEffect(() => {
-    getNumPages(CollectionNames.Tournaments, numPerPage).then((result) => {
+    getNumPagesTournaments(numPerPage).then((result) => {
       setPages(result.numPages);
       setTotalDocs(result.totalDocs);
     });

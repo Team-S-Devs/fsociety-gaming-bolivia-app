@@ -255,6 +255,7 @@ const TeamsPayment: React.FC<TeamsPaymentProps> = ({
                     option.name + " - Rango: " + (option.range ?? "Sin rango")
                   }
                   onChange={(_event, newValue) => {
+                    console.log(newValue);
                     if (newValue?.id) {
                       handleAssignToTeam(user.memberId ?? "", newValue.id);
                     }
@@ -402,16 +403,13 @@ const TeamsPayment: React.FC<TeamsPaymentProps> = ({
           tournament={tournament}
           isModalOpen={showCreateTeamModal}
           closeModal={() => setShowCreateTeamModal(false)}
+          setTournament={setTournament}
           setUserNoTeam={function (
             _value: React.SetStateAction<boolean>
-          ): void {
-            throw new Error("Function not implemented.");
-          }}
+          ): void {}}
           setUserTeam={function (
             _value: React.SetStateAction<Team | null>
-          ): void {
-            throw new Error("Function not implemented.");
-          }}
+          ): void {}}
         />
       </div>
 
@@ -541,6 +539,30 @@ const TeamsPayment: React.FC<TeamsPaymentProps> = ({
                     onClick={() => handleToggleRemoveTeam(team.id ?? "")}
                   >
                     <MdSettingsBackupRestore color="#bef488" />
+                  </IconButton>
+                </Grid>
+              </Grid>
+            </AccordionSummary>
+          ))}
+
+        <Typography variant="h6" sx={{ marginTop: 4 }}>
+          Equipos sin jugadores
+        </Typography>
+        <Divider sx={{ marginBottom: 2 }} />
+
+        {tournament.teams
+          .filter((team) => team.members.length === 0 && !team.deleted)
+          .map((team) => (
+            <AccordionSummary>
+              <Grid container justifyContent={"center"} alignItems={"center"}>
+                <Grid size={{ xs: 8 }}>
+                  <Typography>{team.name}</Typography>
+                </Grid>
+                <Grid size={{ xs: 4 }}>
+                  <IconButton
+                    onClick={() => handleToggleRemoveTeam(team.id ?? "")}
+                  >
+                    <MdDelete color="#f48894" />
                   </IconButton>
                 </Grid>
               </Grid>
