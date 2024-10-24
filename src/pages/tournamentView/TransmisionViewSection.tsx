@@ -24,27 +24,27 @@ const TransmisionViewSection: React.FC<TransmisionViewProps> = ({
 
   const [roundDates, setRoundDates] = useState<Date[]>([]);
 
-  const selectedLeague =
-    leagueType === 0 ? tournament.matches : tournament.matchesLeagueTwo;
-
-  const selectedProgram =
-    leagueType === 0
-      ? tournament.matchesProgram
-      : tournament.matchesLeagueTwoProgram;
-
   useEffect(() => {
-    if (tournament.finalMatch && tournament.finalProgram) setLeagueType(3);
+    if (tournament.finalMatch && tournament.finalProgram) setLeagueType(2);
   }, [tournament.finalMatch, tournament.finalProgram]);
 
   useEffect(() => {
     const generateMatchesProgram = () => {
       const roundNames: string[] = [];
+      const selectedProgram =
+        leagueType === 0
+          ? tournament.matchesProgram
+          : tournament.matchesLeagueTwoProgram;
+
+      const selectedLeague =
+        leagueType === 0 ? tournament.matches : tournament.matchesLeagueTwo;
+
       const matchesNamesInProgram = Object.keys(selectedProgram ?? {}).sort(
         (a, b) => selectedProgram[b].length - selectedProgram[a].length
       );
 
       const selectedProcess =
-        Object.keys(selectedLeague) > Object.keys(selectedProgram)
+        Object.keys(selectedLeague).length > Object.keys(selectedProgram).length
           ? selectedLeague
           : selectedProgram;
 
@@ -74,7 +74,7 @@ const TransmisionViewSection: React.FC<TransmisionViewProps> = ({
       );
     };
 
-    if (leagueType === 3 && tournament.finalProgram) {
+    if (leagueType === 2 && tournament.finalProgram) {
       setMatchesProgram([[tournament.finalProgram]]);
       setRoundKeys(["Final"]);
     } else generateMatchesProgram();
@@ -102,7 +102,7 @@ const TransmisionViewSection: React.FC<TransmisionViewProps> = ({
       },
     ];
 
-    if (tournament.finalMatch && tournament.finalProgram) {
+    if (tournament.finalProgram) {
       baseCategories.push({
         id: 2,
         value: "FINAL",
@@ -123,6 +123,30 @@ const TransmisionViewSection: React.FC<TransmisionViewProps> = ({
     [tournament, roundKeys, leagueType]
   );
 
+  const getClosestDateIndex = (dates: Date[]) => {
+    const today = new Date();
+
+    return dates.reduce((closestIndex, currentDate, currentIndex, array) => {
+      const diffCurrent = Math.abs(currentDate.getTime() - today.getTime());
+      const diffClosest = Math.abs(
+        array[closestIndex].getTime() - today.getTime()
+      );
+
+      return diffCurrent < diffClosest ? currentIndex : closestIndex;
+    }, 0);
+  };
+
+  useEffect(() => {
+    const idx = getClosestDateIndex(
+      matchesProgram.map((matchProgram) => {
+        return matchProgram[0]?.dateTime.toDate() ?? new Date();
+      })
+    );
+    setSelectedRound(idx);
+  }, [roundKeys]);
+
+  const finalMathProgram = tournament.finalProgram;
+
   return (
     <>
       <CategoriesSlider
@@ -130,13 +154,26 @@ const TransmisionViewSection: React.FC<TransmisionViewProps> = ({
         categoryNum={leagueType}
         setCategoryNum={setLeagueType}
       />
-      <CategoriesSlider
-        categories={roundsCategories}
-        categoryNum={selectedRound}
-        setCategoryNum={setSelectedRound}
-      />
-      {leagueType === 3 ? (
-        <></>
+      {leagueType != 2 && (
+        <CategoriesSlider
+          categories={roundsCategories}
+          categoryNum={selectedRound}
+          setCategoryNum={setSelectedRound}
+        />
+      )}
+      {leagueType === 2 ? (
+        <>
+          {finalMathProgram && (
+            <TransmisionPreview
+              matchesProgram={[[finalMathProgram]]}
+              tournament={tournament}
+              roundDate={finalMathProgram.dateTime.toDate()}
+              roundName={"FINAL"}
+              selectedRound={0}
+              isFinal
+            />
+          )}
+        </>
       ) : roundKeys.length === 0 ? (
         <Typography>Aún no hay partidas programadas.</Typography>
       ) : (

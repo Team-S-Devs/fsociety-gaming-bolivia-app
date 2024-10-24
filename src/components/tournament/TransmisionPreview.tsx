@@ -9,11 +9,12 @@ interface Props {
   roundDate: Date;
   roundName: string;
   selectedRound: number;
+  isFinal?: boolean;
 }
 
 interface MatchProgramDisplayProps {
   matchProgram: MatchProgramSet;
-  matchNumber: number;
+  matchNumber: number | string;
   teamA: Team;
   teamB: Team;
 }
@@ -56,6 +57,7 @@ const TransmisionPreview: React.FC<Props> = ({
   roundDate,
   roundName,
   selectedRound,
+  isFinal = false,
 }) => {
   const matchPrograms = matchesProgram[selectedRound];
 
@@ -85,7 +87,7 @@ const TransmisionPreview: React.FC<Props> = ({
         <table className={styles.matchesTable}>
           <thead>
             <tr>
-              <th className={styles.tableHeader}>N°</th>
+              <th className={styles.tableHeader}>{isFinal ? "" : "N°"}</th>
               <th className={styles.tableHeader}>Equipos</th>
               <th className={styles.tableHeader}>Hora</th>
               <th className={styles.tableHeader}>Estado</th>
@@ -95,28 +97,30 @@ const TransmisionPreview: React.FC<Props> = ({
             {matchPrograms?.map((matchProgram, matchIdx) => {
               const matchNumber =
                 calculateStartingMatchNumber(selectedRound) + matchIdx;
-              const match = tournament.matches[roundName]?.[matchIdx];
+              const match = isFinal
+              ? tournament.finalMatch
+              : tournament.matches[roundName]?.[matchIdx];
 
-              const teamA =
-                match?.teamA ||
-                ({
-                  name: `Ganador Partida ${
-                    matchNumber - matchPrograms.length * 2 + matchIdx
-                  }`,
-                } as Team);
-              const teamB =
-                match?.teamB ||
-                ({
-                  name: `Ganador Partida ${
-                    matchNumber - matchPrograms.length * 2 + matchIdx + 1
-                  }`,
-                } as Team);
+            const teamA =
+              match?.teamA ||
+              ({
+                name: isFinal ? "Ganador Liga 1" : `Ganador Partida ${
+                  matchNumber - matchPrograms.length * 2 + matchIdx
+                }`,
+              } as Team);
+            const teamB =
+              match?.teamB ||
+              ({
+                name: isFinal ? "Ganador Liga 2" : `Ganador Partida ${
+                  matchNumber - matchPrograms.length * 2 + matchIdx + 1
+                }`,
+              } as Team);
 
               return (
                 <MatchProgramDisplay
                   key={`${selectedRound}-${matchIdx}`}
                   matchProgram={matchProgram}
-                  matchNumber={matchNumber}
+                  matchNumber={isFinal ? "FINAL" : matchNumber}
                   teamA={teamA}
                   teamB={teamB}
                 />

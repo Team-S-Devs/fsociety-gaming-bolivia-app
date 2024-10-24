@@ -4,7 +4,6 @@ import {
   Tabs,
   Tab,
   Box,
-  Container,
   Card,
   Switch,
   TextField,
@@ -12,7 +11,11 @@ import {
 } from "@mui/material";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import dayjs, { Dayjs } from "dayjs";
-import { Tournament, Team, MatchProgramSet } from "../../../interfaces/interfaces";
+import {
+  Tournament,
+  Team,
+  MatchProgramSet,
+} from "../../../interfaces/interfaces";
 import { Timestamp } from "firebase/firestore";
 import { TimePicker } from "@mui/x-date-pickers/TimePicker";
 import { v4 } from "uuid";
@@ -148,7 +151,7 @@ const ViewTournamentMatches: React.FC<Props> = ({
       );
 
       const selectedProcess =
-        Object.keys(selectedLeague) > Object.keys(selectedProgram)
+        Object.keys(selectedLeague).length > Object.keys(selectedProgram).length
           ? selectedLeague
           : selectedProgram;
 
@@ -326,13 +329,13 @@ const ViewTournamentMatches: React.FC<Props> = ({
 
         <br />
       </Box>
-        <TransmisionPreview
-          selectedRound={selectedRound}
-          tournament={tournament}
-          roundName={roundKeys[selectedRound]}
-          roundDate={roundDates[selectedRound] ?? new Date()}
-          matchesProgram={matchesProgram}
-        />
+      <TransmisionPreview
+        selectedRound={selectedRound}
+        tournament={tournament}
+        roundName={roundKeys[selectedRound]}
+        roundDate={roundDates[selectedRound] ?? new Date()}
+        matchesProgram={matchesProgram}
+      />
     </div>
   );
 };

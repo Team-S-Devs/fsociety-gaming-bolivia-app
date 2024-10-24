@@ -7,6 +7,7 @@ import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { getEmptyTournament } from "../../../utils/methods";
 import { LoadingButton } from "@mui/lab";
 import styles from "../../../assets/styles/buttons.module.css";
+import FinalMatchProgram from "./FinalMatchProgram";
 
 interface TabPanelProps {
   children?: React.ReactNode;
@@ -202,6 +203,7 @@ const TournamentLeaguesProgram: React.FC<TournamentLeaguesProgramProps> = ({
           >
             <Tab label="Liga 1" {...a11yProps(0)} />
             <Tab label="Liga 2" {...a11yProps(1)} />
+            <Tab label="FINAL" {...a11yProps(2)} />
           </Tabs>
         </Box>
         <LocalizationProvider dateAdapter={AdapterDayjs}>
@@ -224,6 +226,9 @@ const TournamentLeaguesProgram: React.FC<TournamentLeaguesProgramProps> = ({
               matchesProgram={matchesProgram2}
               setMatchesProgram={setMatchesProgram2}
             />
+          </CustomTabPanel>
+          <CustomTabPanel value={selectedLeague} index={2}>
+            <FinalMatchProgram tournament={tournament} />
           </CustomTabPanel>
         </LocalizationProvider>
         <LoadingButton

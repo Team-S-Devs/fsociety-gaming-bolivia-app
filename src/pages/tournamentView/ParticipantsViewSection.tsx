@@ -11,20 +11,21 @@ interface ParticipantsViewSectionProps {
 const ParticipantsViewSection: React.FC<ParticipantsViewSectionProps> = ({
   tournament,
 }) => {
+  const teams = tournament?.teams.filter((team) => !team.deleted) ?? [];
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 10;
   const navigate = useNavigate();
 
   const paginatedTeams = () => {
     return (
-      tournament?.teams.slice(
+      teams.slice(
         (currentPage - 1) * itemsPerPage,
         currentPage * itemsPerPage
       ) || []
     );
   };
 
-  const totalTeams = tournament?.teams.length || 0;
+  const totalTeams = teams.length || 0;
   const totalPages = Math.ceil(totalTeams / itemsPerPage);
 
   const handleNext = () => {

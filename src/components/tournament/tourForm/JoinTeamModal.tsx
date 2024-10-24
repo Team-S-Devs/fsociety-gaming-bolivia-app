@@ -23,6 +23,7 @@ import {
 import { useUserContext } from "../../../contexts/UserContext";
 import { CollectionNames } from "../../../utils/collectionNames";
 import CustomDropdown from "./CustomDropDown";
+import { v4 } from "uuid";
 
 interface JoinTeamModalProps {
   tournament: Tournament | null;
@@ -30,6 +31,8 @@ interface JoinTeamModalProps {
   closeModal: () => void;
   setUserNoTeam: Dispatch<SetStateAction<boolean>>;
   setUserTeam: Dispatch<SetStateAction<Team | null>>;
+  view?: "default" | "createTeam" | "joinTeam" | "enterWithoutTeam";
+  setTournament?: React.Dispatch<React.SetStateAction<Tournament>>;
 }
 
 const JoinTeamModal: React.FC<JoinTeamModalProps> = ({
@@ -38,10 +41,12 @@ const JoinTeamModal: React.FC<JoinTeamModalProps> = ({
   closeModal,
   setUserTeam,
   setUserNoTeam,
+  view = "default",
+  setTournament,
 }) => {
   const [modalView, setModalView] = useState<
     "default" | "createTeam" | "joinTeam" | "enterWithoutTeam"
-  >("default");
+  >(view);
   const [teamName, setTeamName] = useState("");
   const [teamCode, setTeamCode] = useState("");
   const [inputTeamCode, setInputTeamCode] = useState("");
@@ -81,10 +86,11 @@ const JoinTeamModal: React.FC<JoinTeamModalProps> = ({
       setTeamCode(generatedCode);
 
       const newTeam: Team = {
-        id: user.uid,
+        id: v4(),
         name: teamName,
         captainId: user.uid,
         code: generatedCode,
+        deleted: false,
         members: [
           {
             memberId: user.uid,
@@ -96,16 +102,31 @@ const JoinTeamModal: React.FC<JoinTeamModalProps> = ({
         banner: { ref: "Team Banner", url: "" },
       };
 
+      if (view === "createTeam") {
+        newTeam.members = [];
+        newTeam.captainId = "";
+      }
+
       if (tournament) {
-        const tournamentRef = doc(
-          db,
-          CollectionNames.Tournaments,
-          tournament.id!
-        );
-        await updateDoc(tournamentRef, {
-          teams: arrayUnion(newTeam),
-          participants: tournament.participants + 1,
-        });
+        if (view !== "createTeam") {
+          const tournamentRef = doc(
+            db,
+            CollectionNames.Tournaments,
+            tournament.id!
+          );
+          await updateDoc(tournamentRef, {
+            teams: arrayUnion(newTeam),
+            participants: tournament.participants + 1,
+          });
+        }
+
+        const updatedTournament = { ...tournament };
+        updatedTournament.teams.push(newTeam);
+
+        if (setTournament) {
+          console.log(updatedTournament);
+          setTournament(updatedTournament);
+        }
 
         setError("");
         setIsTeamSaving(false);
@@ -117,6 +138,7 @@ const JoinTeamModal: React.FC<JoinTeamModalProps> = ({
       }
     } catch (error) {
       setError("Ocurrió un error al guardar el equipo. Inténtalo nuevamente.");
+      console.log(error);
       setIsTeamSaving(false);
     }
   };
@@ -299,7 +321,7 @@ const JoinTeamModal: React.FC<JoinTeamModalProps> = ({
 
   const closeHandler = () => {
     closeModal();
-    setModalView("default");
+    setModalView(view);
     setTeamCode("");
     setTeamName("");
     setInputTeamCode("");
@@ -396,7 +418,10 @@ const JoinTeamModal: React.FC<JoinTeamModalProps> = ({
       {modalView === "enterWithoutTeam" && (
         <div className={styles.modalForm}>
           <h3 className={styles.modalTitle}>Entrar sin equipo</h3>
-          <CustomDropdown selectedRange={selectedRange} setSelectedRange={setSelectedRange} />
+          <CustomDropdown
+            selectedRange={selectedRange}
+            setSelectedRange={setSelectedRange}
+          />
 
           {error && <p style={{ color: "red" }}>{error}</p>}
 

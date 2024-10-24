@@ -30,7 +30,7 @@ const TeamSelector: React.FC<TeamSelectorProps> = ({
   };
 
   const initialTeams = tournament.teams.filter((team) =>
-    team.members.every((player) =>
+    !team.deleted && team.members.every((player) =>
       tournament.paidUsersId.some(
         (paidUser) => paidUser.userId === player.memberId
       )

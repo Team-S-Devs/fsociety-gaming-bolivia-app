@@ -67,7 +67,7 @@ export const getPaginatedBanners = async (
     tournamentsCollection,
     where("deleted", "==", false),
     orderBy("position", "desc"),
-    limit(numPerPage),
+    limit(numPerPage)
   );
 
   if (direction === "next" && startAfterDoc) {
@@ -102,6 +102,21 @@ export const getNumPages = async (
   const dataCollection = collection(db, collectionName);
   const countSnapshot = (await getCountFromServer(dataCollection)).data().count;
   const numPages = Math.ceil(countSnapshot / numPerPage);
+  return { numPages, totalDocs: countSnapshot };
+};
+
+export const getNumPagesTournaments = async (
+  numPerPage: number
+): Promise<{ numPages: number; totalDocs: number }> => {
+  const tournamentsRef = collection(db, CollectionNames.Tournaments);
+
+  const tournamentsQuery = query(tournamentsRef, where("deleted", "==", false));
+
+  const countSnapshot = (await getCountFromServer(tournamentsQuery)).data()
+    .count;
+
+  const numPages = Math.ceil(countSnapshot / numPerPage);
+
   return { numPages, totalDocs: countSnapshot };
 };
 

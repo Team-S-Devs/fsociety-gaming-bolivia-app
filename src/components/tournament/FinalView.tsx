@@ -1,6 +1,6 @@
 import React from "react";
 import { Tournament } from "../../interfaces/interfaces";
-import { Box, Paper, Typography } from "@mui/material";
+import { Box, Card, Typography } from "@mui/material";
 import Grid from "@mui/material/Grid2";
 import { MdSports } from "react-icons/md";
 import { BiCheckCircle } from "react-icons/bi";
@@ -13,7 +13,7 @@ const FinalView: React.FC<FinalViewProps> = ({ tournament }) => {
   return (
     <div>
       {tournament?.finalMatch && tournament?.finalProgram && (
-        <Paper elevation={3} sx={{ padding: 4, borderRadius: 3 }}>
+        <Card elevation={3} sx={{ padding: 4, borderRadius: 3 }}>
           <Typography variant="h4" align="center" gutterBottom>
             Final del Torneo
           </Typography>
@@ -75,7 +75,7 @@ const FinalView: React.FC<FinalViewProps> = ({ tournament }) => {
               </Typography>
             </Box>
           </Box>
-        </Paper>
+        </Card>
       )}
     </div>
   );

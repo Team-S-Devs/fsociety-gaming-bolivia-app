@@ -29,7 +29,7 @@ const SliderHome: React.FC = () => {
         const bannerList: Banner[] = querySnapshot.docs.map((doc) => doc.data() as Banner);
         setBanners(bannerList);
       } catch (error) {
-        console.error("Error fetching banners: ", error);
+        alert("Error obteniendo Banners, recarga la página.");
       }
       setLoading(false);
     };

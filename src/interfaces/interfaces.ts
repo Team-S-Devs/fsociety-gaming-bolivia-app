@@ -149,6 +149,7 @@ export interface Team {
   banner: ImageRefPath;
   range?: string;
   members: TeamMember[];
+  deleted?: boolean;
 }
 
 /* Slider */

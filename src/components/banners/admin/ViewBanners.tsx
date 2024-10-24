@@ -56,8 +56,7 @@ const ViewBanners: React.FC = () => {
         setLastDoc(data.lastDoc);
         setLoading(false);
       })
-      .catch((e) => {
-        console.log(e)
+      .catch((_e) => {
         setError(true);
         setLoading(false);
       });
