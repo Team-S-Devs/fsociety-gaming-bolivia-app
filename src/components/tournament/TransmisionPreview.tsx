@@ -43,9 +43,9 @@ const MatchProgramDisplay: React.FC<MatchProgramDisplayProps> = ({
       </td>
       <td className={styles.matchCell}>{formatTime(matchDate)}</td>
       <td className={styles.matchCell}>
-        <Typography className={styles.matchStatus}>
+        <div className={styles.matchStatus}>
           {matchProgram.online ? "TRANS." : "OFFLINE"}
-        </Typography>
+        </div>
       </td>
     </tr>
   );
