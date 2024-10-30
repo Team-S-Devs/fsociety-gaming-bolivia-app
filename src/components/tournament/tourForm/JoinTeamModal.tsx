@@ -58,76 +58,78 @@ const JoinTeamModal: React.FC<JoinTeamModalProps> = ({
 
   const handleSaveTeam = async () => {
     setIsTeamSaving(true);
-
-    if (!teamName) {
-      setError("El nombre del equipo es obligatorio");
+  
+    const trimmedTeamName = teamName.trim();
+    if (trimmedTeamName.length < 3 || trimmedTeamName.length > 30) {
+      setError("El nombre del equipo debe tener entre 3 y 30 caracteres y no puede estar en blanco");
       setIsTeamSaving(false);
       return;
     }
-
+  
     const user = auth.currentUser;
     if (!user) {
       setError("Usuario no autenticado");
       setIsTeamSaving(false);
       return;
     }
-
+  
     try {
       if (!userInfo) {
         setError("Usuario no encontrado en la base de datos.");
         setIsTeamSaving(false);
         return;
       }
-
-      const generatedCode = Math.random()
-        .toString(36)
-        .substring(2, 8)
-        .toUpperCase();
-      setTeamCode(generatedCode);
-
-      const newTeam: Team = {
-        id: v4(),
-        name: teamName,
-        captainId: user.uid,
-        code: generatedCode,
-        deleted: false,
-        members: [
-          {
-            memberId: user.uid,
-            user: userInfo,
-            paidAt: "not-paid",
-            joinedAt: Timestamp.now(),
-          },
-        ],
-        banner: { ref: "Team Banner", url: "" },
-      };
-
-      if (view === "createTeam") {
-        newTeam.members = [];
-        newTeam.captainId = "";
-      }
-
+  
+      let existingTeams: Team[] = [];
+  
       if (tournament) {
+        const tournamentRef = doc(db, CollectionNames.Tournaments, tournament.id!);
+        const tournamentSnap = await getDoc(tournamentRef);
+  
+        if (tournamentSnap.exists()) {
+          const tournamentData = tournamentSnap.data();
+          existingTeams = tournamentData.teams || [];
+  
+          const isDuplicateName = existingTeams.some((team: Team) => team.name.toLowerCase() === trimmedTeamName.toLowerCase());
+          
+          if (isDuplicateName) {
+            setError("Ya existe un equipo con ese nombre. Elige otro.");
+            setIsTeamSaving(false);
+            return;
+          }
+        }
+  
+        const generatedCode = Math.random().toString(36).substring(2, 8).toUpperCase();
+        setTeamCode(generatedCode);
+  
+        const newTeam: Team = {
+          id: v4(),
+          name: trimmedTeamName,
+          captainId: user.uid,
+          code: generatedCode,
+          deleted: false,
+          members: [
+            {
+              memberId: user.uid,
+              user: userInfo,
+              paidAt: "not-paid",
+              joinedAt: Timestamp.now(),
+            },
+          ],
+          banner: { ref: "Team Banner", url: "" },
+        };
+  
         if (view !== "createTeam") {
-          const tournamentRef = doc(
-            db,
-            CollectionNames.Tournaments,
-            tournament.id!
-          );
           await updateDoc(tournamentRef, {
             teams: arrayUnion(newTeam),
             participants: tournament.participants + 1,
           });
         }
-
-        const updatedTournament = { ...tournament };
-        updatedTournament.teams.push(newTeam);
-
+  
         if (setTournament) {
-          console.log(updatedTournament);
-          setTournament(updatedTournament);
+          setTournament({ ...tournament, teams: [...existingTeams, newTeam] });
         }
-
+  
         setError("");
         setIsTeamSaving(false);
         setIsTeamSaved(true);
@@ -138,10 +140,10 @@ const JoinTeamModal: React.FC<JoinTeamModalProps> = ({
       }
     } catch (error) {
       setError("Ocurrió un error al guardar el equipo. Inténtalo nuevamente.");
-      console.log(error);
       setIsTeamSaving(false);
     }
   };
+  
 
   const handleJoinTeam = async () => {
     setIsTeamSaving(true);

@@ -1,6 +1,5 @@
-import React from "react";
+import React, { useEffect, useRef } from "react";
 import styles from "../../../assets/styles/tournamentCard.module.css";
-
 import rango1 from "../../../assets/ranges/rango1-min.png";
 import rango2 from "../../../assets/ranges/rango2-min.png";
 import rango3 from "../../../assets/ranges/rango3-min.png";
@@ -38,14 +37,32 @@ const CustomDropdown: React.FC<CustomDropdownProps> = ({
   disabled = false,
 }) => {
   const [isOpen, setIsOpen] = React.useState(false);
+  const dropdownRef = useRef<HTMLDivElement>(null);
 
   const handleSelect = (range: RangeUser) => {
     setSelectedRange(range);
     setIsOpen(false);
   };
 
+  const handleClickOutside = (event: MouseEvent) => {
+    if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+      setIsOpen(false);
+    }
+  };
+
+  useEffect(() => {
+    if (isOpen) {
+      document.addEventListener("mousedown", handleClickOutside);
+    } else {
+      document.removeEventListener("mousedown", handleClickOutside);
+    }
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [isOpen]);
+
   return (
-    <div className={styles.dropdownContainer}>
+    <div className={styles.dropdownContainer} ref={dropdownRef}>
       <div
         className={styles.dropdownSelected}
         onClick={() => !disabled && setIsOpen(!isOpen)}
