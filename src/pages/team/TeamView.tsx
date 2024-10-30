@@ -271,22 +271,22 @@ const TeamView: React.FC = () => {
               isAdmin={isAdmin}
               onUpdate={(updatedTeam) => setTeam(updatedTeam)}
             />
-        <div className={styles.navigationButtons}>
-        <button onClick={handleGoBack} className={styles.backButton}>
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            width="24"
-            height="24"
-            viewBox="0 0 24 24"
-            fill="white"
-          >
-            <path d="M15.41 7L14 5.59 8.59 11 14 16.41 15.41 15 11.83 11.41z" />
-          </svg>
-          <p>
-            volver
-            </p>
-      </button>
-        </div>
+            <div className={styles.navigationButtons}>
+              <button onClick={handleGoBack} className={styles.backButton}>
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="24"
+                  height="24"
+                  viewBox="0 0 24 24"
+                  fill="white"
+                >
+                  <path d="M15.41 7L14 5.59 8.59 11 14 16.41 15.41 15 11.83 11.41z" />
+                </svg>
+                <p>
+                  volver
+                  </p>
+              </button>
+            </div>
           </div>
           
 
