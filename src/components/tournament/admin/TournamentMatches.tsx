@@ -486,7 +486,7 @@ const TournamentBrackets: React.FC<TournamentBracketsProps> = ({
             label="Fecha"
             value={dayjs(
               matchesProgram[selectedRound]
-                ? matchesProgram[selectedRound][0].dateTime.toDate() ??
+                ? matchesProgram[selectedRound][0]?.dateTime?.toDate() ??
                     new Date()
                 : new Date()
             )}
