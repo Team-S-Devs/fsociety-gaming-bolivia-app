@@ -44,7 +44,7 @@ const TournamentCard: React.FC<TournamentCardProps> = ({ tournament }) => {
           </div>
           <div>
             <ItemInfoText
-              text={`Participantes: ${tournament.participants}`}
+              text={`Equipos: ${tournament.teams.filter(team => !team.deleted).length}`}
               icon={<FaUserPlus />}
             />
           </div>

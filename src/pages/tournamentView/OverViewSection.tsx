@@ -29,8 +29,8 @@ const OverViewSection: React.FC<OverViewSectionProps> = ({ tournament }) => {
         <>
           <div className={styles.detailsTourDetails}>
             <InfoContainerStyled
-              leftText="Participantes:"
-              rightText={`${tournament.participants}`}
+              leftText="Equipos:"
+              rightText={`${tournament.teams.filter(team => !team.deleted).length}`}
               icon={<FaUsers />}
             />
             <InfoContainerStyled

@@ -122,7 +122,6 @@ const JoinTeamModal: React.FC<JoinTeamModalProps> = ({
         if (view !== "createTeam") {
           await updateDoc(tournamentRef, {
             teams: arrayUnion(newTeam),
-            participants: tournament.participants + 1,
           });
         }
   
@@ -212,7 +211,6 @@ const JoinTeamModal: React.FC<JoinTeamModalProps> = ({
 
               await updateDoc(tournamentRef, {
                 teams: updatedTeams,
-                participants: tournament.participants + 1,
               });
 
               setError("");
