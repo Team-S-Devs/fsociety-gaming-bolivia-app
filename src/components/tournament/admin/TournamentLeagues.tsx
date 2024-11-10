@@ -1,5 +1,5 @@
 import { Box, Tab, Tabs, Typography } from "@mui/material";
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import TournamentMatches from "./TournamentMatches";
 import {
   Match,
@@ -76,7 +76,6 @@ const TournamentLeagues: React.FC<TournamentLeaguesProps> = ({
 
   const [loading, setLoading] = useState<boolean>(false);
 
-
   function hasDuplicates(arr: string[]) {
     const seen = new Set();
 
@@ -118,11 +117,19 @@ const TournamentLeagues: React.FC<TournamentLeaguesProps> = ({
         const matchesProgramTmp: MatchProgramSet[] = [];
 
         for (let j = 0; j < round.length; j++) {
-          const date = roundDates[i] ? roundDates[i][j] ? roundDates[i][j] : new Date() : new Date();
-          const online = matchesProgram[i] ? matchesProgram[i][j] ? matchesProgram[i][j].online : false : false;
+          const date = roundDates[i]
+            ? roundDates[i][j]
+              ? roundDates[i][j]
+              : new Date()
+            : new Date();
+          const online = matchesProgram[i]
+            ? matchesProgram[i][j]
+              ? matchesProgram[i][j].online
+              : false
+            : false;
 
           matchesProgramTmp.push({
-            dateTime:  Timestamp.fromDate(date),
+            dateTime: Timestamp.fromDate(date),
             online: online,
           });
         }
@@ -249,14 +256,9 @@ const TournamentLeagues: React.FC<TournamentLeaguesProps> = ({
           />
         </CustomTabPanel>
 
-        {
-          !!tournament.teamWinnerId && tournament.teamLeagueTwoWinnerId && (
-            <FinalSetter
-              tournament={tournament}
-              setTournament={setTournament}
-            />
-          )
-        }
+        {!!tournament.teamWinnerId && tournament.teamLeagueTwoWinnerId && (
+          <FinalSetter tournament={tournament} setTournament={setTournament} />
+        )}
 
         <LoadingButton
           type="submit"

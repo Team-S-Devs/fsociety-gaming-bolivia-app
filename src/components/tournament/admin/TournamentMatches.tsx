@@ -390,7 +390,9 @@ const TournamentBrackets: React.FC<TournamentBracketsProps> = ({
             <CustomNumberInput
               aria-label=""
               placeholder=""
-              value={Number(match.scoreA)}
+              value={
+                isNaN(parseInt(match.scoreA)) ? undefined : Number(match.scoreA)
+              }
               onChange={(e, val) => {
                 e.preventDefault();
                 setScore(match.id, roundIndex, "scoreA", val?.toString() ?? "");
@@ -402,7 +404,9 @@ const TournamentBrackets: React.FC<TournamentBracketsProps> = ({
             <CustomNumberInput
               aria-label=""
               placeholder=""
-              value={Number(match.scoreB)}
+              value={
+                isNaN(parseInt(match.scoreB)) ? undefined : Number(match.scoreB)
+              }
               onChange={(e, val) => {
                 e.preventDefault();
                 setScore(match.id, roundIndex, "scoreB", val?.toString() ?? "");

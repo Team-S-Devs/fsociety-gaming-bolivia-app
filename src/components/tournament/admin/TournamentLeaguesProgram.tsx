@@ -8,6 +8,7 @@ import { getEmptyTournament } from "../../../utils/methods";
 import { LoadingButton } from "@mui/lab";
 import styles from "../../../assets/styles/buttons.module.css";
 import FinalMatchProgram from "./FinalMatchProgram";
+import { Timestamp } from "firebase/firestore";
 
 interface TabPanelProps {
   children?: React.ReactNode;
@@ -110,9 +111,21 @@ const TournamentLeaguesProgram: React.FC<TournamentLeaguesProgramProps> = ({
         const matchesProgramTmp: MatchProgramSet[] = [];
 
         for (let j = 0; j < round.length; j++) {
+          const dateTime = matchesProgram[i]
+            ? matchesProgram[i][j]
+              ? matchesProgram[i][j].dateTime
+              : Timestamp.now()
+            : Timestamp.now();
+
+          const online = matchesProgram[i]
+            ? matchesProgram[i][j]
+              ? matchesProgram[i][j].online
+              : false
+            : false;
+
           matchesProgramTmp.push({
-            dateTime: matchesProgram[i][j].dateTime,
-            online: matchesProgram[i][j].online ?? false,
+            dateTime,
+            online,
           });
         }
         roundProgram[
