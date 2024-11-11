@@ -83,7 +83,6 @@ const TournamentBrackets: React.FC<TournamentBracketsProps> = ({
       ? tournament.matchesProgram
       : tournament.matchesLeagueTwoProgram ?? {};
 
-      
   const paidTeams = tournament.teams.filter(
     (team) =>
       !team.deleted &&
@@ -516,10 +515,13 @@ const TournamentBrackets: React.FC<TournamentBracketsProps> = ({
     const teamA = seed.teams[0];
     const teamB = seed.teams[1];
 
+    const teamAScore = parseInt(teamA.score);
+    const teamBScore = parseInt(teamB.score);
+
     const isTeamAWinner =
-      teamA.score !== "" && teamB.score !== "" && teamA.score > teamB.score;
+      !isNaN(teamAScore) && !isNaN(teamBScore) && teamAScore > teamBScore;
     const isTeamBWinner =
-      teamA.score !== "" && teamB.score !== "" && teamB.score > teamA.score;
+      !isNaN(teamAScore) && !isNaN(teamBScore) && teamBScore > teamAScore;
 
     const winnerTeam = isTeamAWinner ? teamA : teamB;
 
