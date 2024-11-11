@@ -24,7 +24,6 @@ import {
   Team,
   Tournament,
 } from "../../../interfaces/interfaces";
-import { calculateRoundsNumber } from "../../../utils/methods";
 import { Timestamp } from "firebase/firestore";
 import dayjs, { Dayjs } from "dayjs";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
@@ -107,6 +106,23 @@ const TournamentBrackets: React.FC<TournamentBracketsProps> = ({
   const [selectedRound, setSelectedRound] = useState(0);
 
   useEffect(() => {
+    const handleKeyDown = (event: {
+      key: string;
+      preventDefault: () => void;
+    }) => {
+      if (event.key === "Enter") {
+        event.preventDefault();
+        console.log("Tecla Enter bloqueada en toda la página");
+      }
+    };
+
+    document.addEventListener("keydown", handleKeyDown);
+    return () => {
+      document.removeEventListener("keydown", handleKeyDown);
+    };
+  }, []);
+
+  useEffect(() => {
     const matchesNamesInProgram = Object.keys(selectedProgram).sort(
       (a, b) => selectedProgram[b].length - selectedProgram[a].length
     );
@@ -154,16 +170,25 @@ const TournamentBrackets: React.FC<TournamentBracketsProps> = ({
 
     if (matches.length === 0) setRemainingTeams(initialTeams);
     else {
-      const teams = matches[matches.length - 1]
-        .map((match) => [match.teamA, match.teamB])
-        .flat();
+      const teams = matches
+        .flatMap(round => round) // Aplana la matriz de rondas
+        .flatMap(match => [match.teamA, match.teamB]);// Extrae todos los equipos de cada match
+
+      console.log(initialTeams, "INITIAL TEAMS");
+
       setRemainingTeams(
         initialTeams.filter(
           (team) => !teams.some((selectedTeam) => selectedTeam.id === team.id)
         )
       );
+
+      console.log(
+        initialTeams.filter(
+          (team) => !teams.some((selectedTeam) => selectedTeam.id === team.id)
+        )
+      );
     }
-  }, [tournament.matches, tournament.matchesLeagueTwo]);
+  }, [tournament.matches, tournament.matchesLeagueTwo, tournament.leagueTwoTeamsIds]);
 
   useEffect(() => {
     setRoundDates(
@@ -304,8 +329,7 @@ const TournamentBrackets: React.FC<TournamentBracketsProps> = ({
         }
       }
 
-      if (
-        calculateRoundsNumber(initialTeams.length) === rounds.length &&
+      if (  /*  calculateRoundsNumber(initialTeams.length) === rounds.length && */
         currentRound.length === 1 &&
         updatedMatch.played
       ) {
@@ -324,6 +348,17 @@ const TournamentBrackets: React.FC<TournamentBracketsProps> = ({
               updatedMatch.scoreA > updatedMatch.scoreB
                 ? currentRound[0].teamA.id ?? ""
                 : currentRound[0].teamB.id ?? "",
+          }));
+      } else {
+        if (leagueType === "leagueOne")
+          setTournament((prev) => ({
+            ...prev,
+            teamWinnerId: "",
+          }));
+        else
+          setTournament((prev) => ({
+            ...prev,
+            teamLeagueTwoWinnerId: "",
           }));
       }
 

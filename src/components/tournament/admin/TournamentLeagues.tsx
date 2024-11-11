@@ -133,6 +133,12 @@ const TournamentLeagues: React.FC<TournamentLeaguesProps> = ({
             online: online,
           });
         }
+        /*  roundProgram[
+          roundNames[i] != undefined ? roundNames[i] : `Ronda-${i}`
+        ] = {
+          pos: i,
+          matches: matchesProgramTmp
+        }; */
         roundProgram[
           roundNames[i] != undefined ? roundNames[i] : `Ronda-${i}`
         ] = matchesProgramTmp;

@@ -5,6 +5,8 @@ import {
   TextField,
   Checkbox,
   Autocomplete,
+  ThemeProvider,
+  createTheme,
 } from "@mui/material";
 import { Team, Tournament } from "../../../interfaces/interfaces";
 
@@ -29,12 +31,14 @@ const TeamSelector: React.FC<TeamSelectorProps> = ({
     onSelectLeagueTwoTeams(value.map((teams) => teams.id ?? ""));
   };
 
-  const initialTeams = tournament.teams.filter((team) =>
-    !team.deleted && team.members.every((player) =>
-      tournament.paidUsersId.some(
-        (paidUser) => paidUser.userId === player.memberId
+  const initialTeams = tournament.teams.filter(
+    (team) =>
+      !team.deleted &&
+      team.members.every((player) =>
+        tournament.paidUsersId.some(
+          (paidUser) => paidUser.userId === player.memberId
+        )
       )
-    )
   );
 
   return (
@@ -55,7 +59,10 @@ const TeamSelector: React.FC<TeamSelectorProps> = ({
         )}
         renderOption={(props, option, { selected }) => (
           <li {...props}>
-            <Checkbox checked={selected} />
+            <ThemeProvider theme={createTheme({ palette: { mode: "dark" } })}>
+              <Checkbox checked={selected} />
+            </ThemeProvider>
+
             {option.name}
           </li>
         )}
