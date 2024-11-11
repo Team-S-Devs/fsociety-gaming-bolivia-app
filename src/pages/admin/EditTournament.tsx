@@ -4,9 +4,9 @@ import {
   collection,
   query,
   where,
-  getDocs,
   updateDoc,
   doc,
+  onSnapshot,
 } from "firebase/firestore";
 import { Container } from "@mui/material";
 import { useParams } from "react-router-dom";
@@ -69,15 +69,17 @@ const EditTournament: React.FC = () => {
   const [docId, setDocId] = useState<string | null>(null);
 
   useEffect(() => {
-    const fetchTournamentByFakeId = async () => {
-      setError(null);
-      setLoading(true);
-      try {
-        const q = query(
-          collection(db, CollectionNames.Tournaments),
-          where("fakeId", "==", fakeId)
-        );
-        const querySnapshot = await getDocs(q);
+    const q = query(
+      collection(db, CollectionNames.Tournaments),
+      where("fakeId", "==", fakeId)
+    );
+
+    // Start listening for real-time updates
+    const unsubscribe = onSnapshot(
+      q,
+      (querySnapshot) => {
+        setError(null);
+        setLoading(false);
 
         if (!querySnapshot.empty) {
           const tournamentDoc = querySnapshot.docs[0];
@@ -87,13 +89,14 @@ const EditTournament: React.FC = () => {
         } else {
           setError("Torneo no encontrado.");
         }
-      } catch (error) {
+      },
+      (_error) => {
         setError("Error obteniendo los datos del torneo.");
+        setLoading(false);
       }
-      setLoading(false);
-    };
+    );
 
-    fetchTournamentByFakeId();
+    return () => unsubscribe();
   }, [fakeId]);
 
   const handleUploadImage = async (

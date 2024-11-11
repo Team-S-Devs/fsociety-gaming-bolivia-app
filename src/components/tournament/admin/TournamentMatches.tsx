@@ -83,6 +83,7 @@ const TournamentBrackets: React.FC<TournamentBracketsProps> = ({
       ? tournament.matchesProgram
       : tournament.matchesLeagueTwoProgram ?? {};
 
+      
   const paidTeams = tournament.teams.filter(
     (team) =>
       !team.deleted &&
