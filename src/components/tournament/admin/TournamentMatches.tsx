@@ -618,6 +618,15 @@ const TournamentBrackets: React.FC<TournamentBracketsProps> = ({
         />
       )}
 
+      <Button
+        variant="outlined"
+        color="secondary"
+        style={{ marginTop: 4, marginBottom: 16 }}
+        onClick={() => setRounds([])}
+      >
+        Vaciar Enfrentamientos
+      </Button>
+
       <LocalizationProvider dateAdapter={AdapterDayjs}>
         <div>
           {rounds.length === 0 && (
