@@ -99,11 +99,18 @@ export const getEmptyAdminSettings = (): AdminSettingsInterface => {
   };
 };
 
+const nearestPowerOfTwo = (teamsLength: number) => {
+  const lowerPower = Math.pow(2, Math.floor(Math.log2(teamsLength)));
+  const higherPower = Math.pow(2, Math.ceil(Math.log2(teamsLength)));
+
+  // Return the one that is closer to the original number
+  return (teamsLength - lowerPower < higherPower - teamsLength) ? lowerPower : higherPower;
+};
+
 export const calculateRoundsNumber = (teamsLength: number): number => {
-  if ((teamsLength & (teamsLength - 1)) !== 0) {
-    return -1;
-  }
-  return Math.log2(teamsLength);
+  const nearest = nearestPowerOfTwo(teamsLength);
+  console.log(nearest)
+  return Math.log2(nearest);
 };
 
 export const timestampToDate = (firebaseTimestamp: Timestamp): string => {
